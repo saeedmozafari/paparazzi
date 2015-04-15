@@ -91,9 +91,7 @@ void gy86_mpu_event( void ) {
     
     //RATES_ASSIGN(imu.gyro_unscaled, imu_aut_aux.mpu.data_rates.rates.p, -imu_aut_aux.mpu.data_rates.rates.q, -imu_aut_aux.mpu.data_rates.rates.r);
     //VECT3_ASSIGN(imu.accel_unscaled, imu_aut_aux.mpu.data_accel.vect.x, -imu_aut_aux.mpu.data_accel.vect.y, -imu_aut_aux.mpu.data_accel.vect.z);
-    imu_aut_aux.gyr_valid = TRUE;
-    imu_aut_aux.acc_valid = TRUE;
-    
+        
     imu_aut_aux.mpu.data_available = FALSE;
   }
 }

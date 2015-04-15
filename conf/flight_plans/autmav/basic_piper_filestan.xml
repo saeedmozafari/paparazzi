@@ -1,0 +1,54 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1115" ground_alt="1035" lat0="35.435071" lon0="51.639084" max_dist_from_home="400" name="Basic" security_height="25">
+  <header>
+    #include "subsystems/datalink/datalink.h"
+</header>
+  <waypoints>
+    <waypoint name="HOME" x="0" y="0"/>
+    <waypoint name="STDBY" x="-3.8" y="10.4"/>
+    <waypoint name="1" x="9.8" y="-12.3"/>
+    <waypoint name="2" x="81.3" y="22.3"/>
+    <waypoint name="AF" x="-42.0" y="69.7" height="35.0"/>
+    <waypoint name="TD" x="39.6" y="-70.8" height="35.0"/>
+    <waypoint name="_BASELEG" x="25.8" y="112.3"/>
+  </waypoints>
+  <exceptions>
+    <exception cond="datalink_time > 15" deroute="Standby"/>
+  </exceptions>
+  <blocks>
+    <block name="Wait GPS">
+      <set value="1" var="kill_throttle"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+	  <set value="80" var="nav_radius"/>	
+    </block>
+    <block name="Standby">
+      <set value="0" var="kill_throttle"/>
+      <circle radius="nav_radius" wp="STDBY"/>
+    </block>
+    <block name="Figure 8 around wp 1">
+      <eight center="1" radius="nav_radius" turn_around="2"/>
+    </block>
+    <block name="Oval s1-s2">
+      <oval p1="TD" p2="AF" radius="nav_radius"/>
+    </block>
+    <block name="Approach Left AF-TD">
+      <set value="-DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
+      <deroute block="Approach"/>
+    </block>
+    <block name="Approach">
+      <call fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
+      <circle radius="nav_radius" until="NavCircleCount() > 0.5" wp="_BASELEG"/>
+      <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-(nav_radius/fabs(nav_radius))*10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
+    </block>
+    <block name="final">
+      <go from="AF" hmode="route" wp="TD"/>
+      <deroute block="Oval s1-s2"/>
+    </block>
+  </blocks>
+</flight_plan>

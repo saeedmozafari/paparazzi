@@ -1,0 +1,79 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1090" ground_alt="1035" lat0="35.498582" lon0="51.277865" max_dist_from_home="800" name="Basic" security_height="10">
+  <header>
+    #include "subsystems/datalink/datalink.h"
+</header>
+  <waypoints>
+    <waypoint name="HOME" x="0" y="0"/>
+    <waypoint name="STDBY" x="355.2" y="-202.6"/>
+    <waypoint name="1" x="407.6" y="-230.0"/>
+    <waypoint name="2" x="446.7" y="-113.2"/>
+    <waypoint name="s1" x="267.0" y="-150.2"/>
+    <waypoint name="s2" x="460.7" y="-257.4"/>
+    <waypoint name="MOB" x="126.5" y="27.4"/>
+    <waypoint alt="1050.0" name="AF" x="45.8" y="-23.0"/>
+    <waypoint alt="1035.0" name="TD" x="227.3" y="-124.9"/>
+    <waypoint name="_BASELEG" x="25.8" y="112.3"/>
+    <waypoint name="CLIMB" x="-96.4" y="61.5"/>
+  </waypoints>
+  <exceptions>
+    <exception cond="datalink_time > 22" deroute="Standby"/>
+  </exceptions>
+  <blocks>
+    <block name="Wait GPS">
+      <set value="1" var="kill_throttle"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+    </block>
+    <block name="Holding point">
+      <set value="1" var="kill_throttle"/>
+      <set value="100" var="nav_radius"/>
+      <attitude roll="0" throttle="0" vmode="throttle"/>
+    </block>
+    <block name="Takeoff">
+      <exception cond="GetPosAlt() > GetAltRef()+18" deroute="Standby"/>
+      <set value="0" var="kill_throttle"/>
+      <set value="0" var="autopilot_flight_time"/>
+      <go from="HOME" hmode="route" pitch="30" throttle="0.8" vmode="throttle" wp="CLIMB"/>
+    </block>
+    <block name="Standby">
+      <circle radius="nav_radius" wp="STDBY"/>
+    </block>
+    <block name="Figure 8 around wp 1">
+      <eight center="1" radius="nav_radius" turn_around="2"/>
+    </block>
+    <block name="Oval s1-s2">
+      <oval p1="s1" p2="s2" radius="nav_radius"/>
+    </block>
+    <block name="MOB">
+      <call fun="NavSetWaypointHere(WP_MOB)"/>
+      <circle radius="nav_radius" wp="MOB"/>
+    </block>
+    <block name="Land Right AF-TD">
+      <set value="DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
+      <deroute block="land"/>
+    </block>
+    <block name="Land Left AF-TD">
+      <set value="-DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
+      <deroute block="land"/>
+    </block>
+    <block name="land">
+      <call fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
+      <circle radius="nav_radius" until="NavCircleCount() > 0.5" wp="_BASELEG"/>
+      <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-(nav_radius/fabs(nav_radius))*10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
+    </block>
+    <block name="final">
+      <exception cond="GetAltRef() + 5 > GetPosAlt()" deroute="flare"/>
+      <go climb="-0.7" from="AF" hmode="route" vmode="climb" wp="TD"/>
+    </block>
+    <block name="flare">
+      <go approaching_time="0" from="AF" hmode="route" throttle="0.0" vmode="throttle" wp="TD"/>
+      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+    </block>
+  </blocks>
+</flight_plan>

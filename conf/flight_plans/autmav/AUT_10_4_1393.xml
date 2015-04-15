@@ -1,0 +1,127 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1217" ground_alt="1214" lat0="35 42 17.823" lon0="51 24 41.194" max_dist_from_home="40" name="aut" security_height="0.8">
+  <header>
+#include "autopilot.h"
+</header>
+  <waypoints>
+    <waypoint name="HOME" x="-0.5" y="-0.9"/>
+    <waypoint name="CLIMB" x="0.0" y="5.0"/>
+    <waypoint name="p1" x="20.9" y="7.1"/>
+    <waypoint name="p2" x="-22.5" y="4.7"/>
+    <waypoint name="p3" x="22.5" y="-10.2"/>
+    <waypoint name="p4" x="-22.3" y="-12.4"/>
+    <waypoint name="p5" x="21.2" y="-3.6"/>
+    <waypoint name="p6" x="-22.4" y="-5.4"/>
+    <waypoint name="p7" x="-10.4" y="-5.9"/>
+    <waypoint name="p8" x="10.1" y="-6.3"/>
+    <waypoint name="p9" x="-3.5" y="-13.8"/>
+    <waypoint name="p10" x="5.9" y="-13.5"/>
+    <waypoint name="land" x="-11.5" y="5.1"/>
+    <waypoint name="land_here" x="12.4" y="5.9"/>
+  </waypoints>
+  <blocks>
+    <block name="Wait GPS">
+      <call fun="NavKillThrottle()"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(),5)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call fun="nav_set_heading_current()"/>
+    </block>
+    <block name="Holding point">
+      <call fun="NavKillThrottle()"/>
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+    <block name="Start Engine" strip_button="StartEngine" strip_icon="takeoff.png">
+      <call fun="NavResurrect()"/>
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+    <block name="Takeoff" strip_button="Takeoff" strip_icon="takeoff.png">
+      <exception cond="stateGetPositionEnu_f()->z > 3.0" deroute="Standby"/>
+      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call fun="nav_set_heading_current()"/>
+      <stay climb="0.5" vmode="climb" wp="CLIMB"/>
+    </block>
+    <block name="Standby">
+      <call fun="NavSetWaypointHere(WP_CLIMB)"/>      
+      <stay height="3" vmode="alt" wp="CLIMB"/>
+    </block>
+    <block name="go_p1">
+      <go height="3" wp="p1"/>
+      <stay height="3" until="stage_time>5" wp="p1"/>
+      <call fun="nav_set_heading_towards_waypoint(WP_HOME)" until="stage_time>5"/>
+    </block>
+    <block name="height_p1">
+      <go height="5" wp="p1"/>
+      <stay height="5" until="stage_time>5" wp="p1"/>
+    </block>
+    <block name="go_p2">
+      <go height="3" wp="p2"/>
+      <stay height="3" until="stage_time>5" wp="p2"/>
+    </block>
+    <block name="go_p3">
+      <go height="3" wp="p3"/>
+      <stay height="3" until="stage_time>5" wp="p3"/>
+    </block>
+    <block name="go_p4">
+      <go height="3" wp="p4"/>
+      <stay height="3" until="stage_time>5" wp="p4"/>
+    </block>
+    <block name="go_p5">
+      <go height="3" wp="p5"/>
+      <stay height="3" until="stage_time>5" wp="p5"/>
+    </block>
+    <block name="go_p6">
+      <go height="3" wp="p6"/>
+      <stay height="3" until="stage_time>5" wp="p6"/>
+    </block>
+    <block name="go_p7">
+      <go height="3" wp="p7"/>
+      <stay height="3" until="stage_time>5" wp="p7"/>
+    </block>
+    <block name="go_p8">
+      <go height="3" wp="p8"/>
+      <stay height="3" until="stage_time>5" wp="p8"/>
+    </block>
+    <block name="go_p9">
+      <go height="3" wp="p9"/>
+      <stay height="3" until="stage_time>5" wp="p9"/>
+    </block>
+    <block name="go_p10">
+      <go height="3" wp="p10"/>
+      <stay height="3" until="stage_time>5" wp="p10"/>
+    </block>
+    <block name="heading 0">
+      <call fun="nav_set_heading_deg(0)"/>
+      <while cond="10>block_time"/>
+    </block>
+    <block name="heading 180">
+      <call fun="nav_set_heading_deg(180)"/>
+      <while cond="10>block_time"/>
+    </block>
+    <block name="go_land">
+      <go height="3" wp="land"/>
+      <stay height="3" until="stage_time>5" wp="land"/>
+    </block>
+    <block name="flare">
+      <call fun="NavStartDetectGround()"/>
+      <exception cond="NavDetectGround()" deroute="landed"/>
+      <exception cond="!nav_is_in_flight()" deroute="landed"/>
+      <stay climb="-0.5" vmode="climb" wp="land"/>
+    </block>
+    <block name="flare_here">
+      <call fun="NavStartDetectGround()"/>
+      <call fun="NavSetWaypointHere(WP_land_here)"/>
+      <exception cond="NavDetectGround()" deroute="landed"/>
+      <exception cond="!nav_is_in_flight()" deroute="landed"/>
+      <stay climb="-0.5" vmode="climb" wp="land_here"/>
+    </block>
+    <block name="landed">
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+  </blocks>
+</flight_plan>

@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+	<module name="px4flow_i2c" dir="autmav">
+		<doc>
+			<description>
+		     px4flow optical flow module i2c driver 
+   			</description>
+		</doc>
+  
+ 		<header>
+ 	  		<file name="px4flow_i2c.h"/>
+ 	 	</header>
+  
+ 		<init fun="px4flow_i2c_init()"/>
+		
+  		<event fun="px4flow_i2c_event()"/> 
+
+  		<makefile>
+			<file name="px4flow_i2c.c"/>
+		</makefile>
+ 
+ </module>

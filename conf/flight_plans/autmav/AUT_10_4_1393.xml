@@ -47,7 +47,7 @@
       <stay climb="0.5" vmode="climb" wp="CLIMB"/>
     </block>
     <block name="Standby">
-      <call fun="NavSetWaypointHere(WP_CLIMB)"/>      
+      <call fun="NavSetWaypointHere(WP_HOME)"/>      
       <stay height="3" vmode="alt" wp="CLIMB"/>
     </block>
     <block name="go_p1">

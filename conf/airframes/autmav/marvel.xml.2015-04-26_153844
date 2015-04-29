@@ -46,6 +46,7 @@
     <load name="autmav/px4flow_i2c.xml">
 		<define name="PX4FLOW_I2C_DEV" value="i2c2"/>
 	</load> -->
+
   </modules> 
 
   <servos driver="Pwm">
@@ -148,22 +149,22 @@
   <section name="STABILIZATION_ATTITUDE" prefix="STABILIZATION_ATTITUDE_">
 
     <!-- setpoints -->
-    <define name="SP_MAX_PHI" value="25." unit="deg"/>
-    <define name="SP_MAX_THETA" value="25." unit="deg"/>
+    <define name="SP_MAX_PHI" value="15." unit="deg"/>
+    <define name="SP_MAX_THETA" value="15." unit="deg"/>
     <define name="SP_MAX_R" value="30." unit="deg/s"/>
     <define name="DEADBAND_P" value="500"/>
     <define name="DEADBAND_Q" value="500"/>
     <define name="DEADBAND_R" value="500"/>
 
     <!-- reference -->
-    <define name="REF_OMEGA_P" value="600" unit="deg/s"/>
+    <define name="REF_OMEGA_P" value="200" unit="deg/s"/>
     <define name="REF_ZETA_P" value="0.85"/>
-    <define name="REF_MAX_P" value="700." unit="deg/s"/>
+    <define name="REF_MAX_P" value="600." unit="deg/s"/>
     <define name="REF_MAX_PDOT" value="RadOfDeg(8000.)"/>
 
     <define name="REF_OMEGA_Q" value="600" unit="deg/s"/>
     <define name="REF_ZETA_Q" value="0.85"/>
-    <define name="REF_MAX_Q" value="700." unit="deg/s"/>
+    <define name="REF_MAX_Q" value="600." unit="deg/s"/>
     <define name="REF_MAX_QDOT" value="RadOfDeg(8000.)"/>
 
     <define name="REF_OMEGA_R" value="200" unit="deg/s"/>

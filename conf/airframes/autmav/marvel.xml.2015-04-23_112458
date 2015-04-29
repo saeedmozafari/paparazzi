@@ -46,6 +46,7 @@
     <load name="autmav/px4flow_i2c.xml">
 		<define name="PX4FLOW_I2C_DEV" value="i2c2"/>
 	</load> -->
+
   </modules> 
 
   <servos driver="Pwm">
@@ -156,33 +157,33 @@
     <define name="DEADBAND_R" value="500"/>
 
     <!-- reference -->
-    <define name="REF_OMEGA_P" value="600" unit="deg/s"/>
+    <define name="REF_OMEGA_P" value="150" unit="deg/s"/>
     <define name="REF_ZETA_P" value="0.85"/>
-    <define name="REF_MAX_P" value="700." unit="deg/s"/>
-    <define name="REF_MAX_PDOT" value="RadOfDeg(8000.)"/>
+    <define name="REF_MAX_P" value="300." unit="deg/s"/>
+    <define name="REF_MAX_PDOT" value="RadOfDeg(7000.)"/>
 
-    <define name="REF_OMEGA_Q" value="600" unit="deg/s"/>
+    <define name="REF_OMEGA_Q" value="400" unit="deg/s"/>
     <define name="REF_ZETA_Q" value="0.85"/>
-    <define name="REF_MAX_Q" value="700." unit="deg/s"/>
-    <define name="REF_MAX_QDOT" value="RadOfDeg(8000.)"/>
+    <define name="REF_MAX_Q" value="300." unit="deg/s"/>
+    <define name="REF_MAX_QDOT" value="RadOfDeg(7000.)"/>
 
-    <define name="REF_OMEGA_R" value="200" unit="deg/s"/>
+    <define name="REF_OMEGA_R" value="150" unit="deg/s"/>
     <define name="REF_ZETA_R" value="0.85"/>
-    <define name="REF_MAX_R" value="300." unit="deg/s"/>
-    <define name="REF_MAX_RDOT" value="RadOfDeg(4000.)"/>
+    <define name="REF_MAX_R" value="90." unit="deg/s"/>
+    <define name="REF_MAX_RDOT" value="RadOfDeg(900.)"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN" value="175"/>
-    <define name="PHI_DGAIN" value="180"/>
-    <define name="PHI_IGAIN" value="160"/>
+    <define name="PHI_PGAIN" value="240"/>
+    <define name="PHI_DGAIN" value="75"/>
+    <define name="PHI_IGAIN" value="0"/>
 
-    <define name="THETA_PGAIN" value="175"/>
-    <define name="THETA_DGAIN" value="180"/>
-    <define name="THETA_IGAIN" value="160"/>
+    <define name="THETA_PGAIN" value="240"/>
+    <define name="THETA_DGAIN" value="75"/>
+    <define name="THETA_IGAIN" value="0"/>
 
-    <define name="PSI_PGAIN" value="250"/>
-    <define name="PSI_DGAIN" value="440"/>
-    <define name="PSI_IGAIN" value="100"/>
+    <define name="PSI_PGAIN" value="50"/>
+    <define name="PSI_DGAIN" value="350"/>
+    <define name="PSI_IGAIN" value="10"/>
 
     <!-- feedforward -->
     <define name="PHI_DDGAIN" value="0"/>
@@ -208,7 +209,7 @@
   </section>
 
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
-    <define name="MAX_BANK" value="20" unit="deg"/>
+    <define name="MAX_BANK" value="30" unit="deg"/>
 	<define name="REF_MAX_SPEED" value="1." unit="m/s"/>
     <define name="PGAIN" value="30"/>
     <define name="DGAIN" value="60"/>

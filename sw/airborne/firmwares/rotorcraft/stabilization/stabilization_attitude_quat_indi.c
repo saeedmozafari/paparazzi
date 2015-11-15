@@ -66,6 +66,9 @@ struct IndiVariables indi = {
   {0., 0., 0.}
 };
 
+struct Int32Eulers stab_att_sp_euler;
+struct Int32Quat   stab_att_sp_quat;
+
 // Variables for adaptation
 struct FloatRates filtered_rate_estimation = {0., 0., 0.};
 struct FloatRates filtered_rate_deriv_estimation  = {0., 0., 0.};
@@ -129,8 +132,6 @@ static void send_att_indi(struct transport_tx *trans, struct link_device *dev)
 void stabilization_attitude_init(void)
 {
 
-  stabilization_attitude_ref_init();
-
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, "STAB_ATTITUDE_INDI", send_att_indi);
 #endif
@@ -141,8 +142,6 @@ void stabilization_attitude_enter(void)
 
   /* reset psi setpoint to current psi angle */
   stab_att_sp_euler.psi = stabilization_attitude_get_heading_i();
-
-  stabilization_attitude_ref_enter();
 
   FLOAT_RATES_ZERO(indi.filtered_rate);
   FLOAT_RATES_ZERO(indi.filtered_rate_deriv);
@@ -192,7 +191,7 @@ void stabilization_attitude_set_earth_cmd_i(struct Int32Vect2 *cmd, int32_t head
   quat_from_earth_cmd_i(&stab_att_sp_quat, cmd, heading);
 }
 
-static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err, bool_t in_flight)
+static void attitude_run_indi(int32_t indi_commands[], struct Int32Quat *att_err, bool_t in_flight __attribute__((unused)))
 {
   //Calculate required angular acceleration
   struct FloatRates *body_rate = stateGetBodyRates_f();

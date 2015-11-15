@@ -37,6 +37,28 @@
 #include <linux/i2c-dev.h>
 #include <linux/types.h>
 
+#include "boards/bebop.h"
+
+struct video_config_t bottom_camera = {
+  .w = 640,
+  .h = 480,
+  .dev_name = "/dev/video0",
+  .subdev_name = NULL,
+  .format = V4L2_PIX_FMT_UYVY,
+  .buf_cnt = 60,
+  .filters = 0
+};
+
+struct video_config_t front_camera = {
+  .w = 1408,
+  .h = 2112,
+  .dev_name = "/dev/video1",
+  .subdev_name = "/dev/v4l-subdev1",
+  .format = V4L2_PIX_FMT_SGBRG10,
+  .buf_cnt = 10,
+  .filters = VIDEO_FILTER_DEBAYER
+};
+
 static bool_t write_reg(int fd, char *addr_val, uint8_t cnt)
 {
   char resp[cnt - 2];
@@ -73,6 +95,7 @@ static bool_t _write(int fd, char *data, uint8_t cnt)
 
 /**
  * Initialisation of the Aptina MT9V117 CMOS sensor
+ * (1/6 inch VGA, bottom camera)
  */
 void mt9v117_init(void)
 {
@@ -356,6 +379,7 @@ uint16_t mt9f002_read_reg16(uint16_t reg)
 
 /**
  * Initialisation of the Aptina MT9F002 CMOS sensor
+ * (1/2.3 inch 14Mp, front camera)
  */
 void mt9f002_init(void)
 {

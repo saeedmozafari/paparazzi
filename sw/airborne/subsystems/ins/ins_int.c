@@ -218,9 +218,9 @@ void ins_int_init(void)
   INT32_VECT3_ZERO(ins_int.ltp_accel);
 
 #if PERIODIC_TELEMETRY
-  register_periodic_telemetry(DefaultPeriodic, "INS", send_ins);
-  register_periodic_telemetry(DefaultPeriodic, "INS_Z", send_ins_z);
-  register_periodic_telemetry(DefaultPeriodic, "INS_REF", send_ins_ref);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_INS, send_ins);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_INS_Z, send_ins_z);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_INS_REF, send_ins_ref);
 #endif
 }
 
@@ -517,7 +517,8 @@ static void gps_cb(uint8_t sender_id __attribute__((unused)),
 
 static void vel_est_cb(uint8_t sender_id __attribute__((unused)),
                        uint32_t stamp __attribute__((unused)),
-                       float x, float y, float z, float noise)
+                       float x, float y, float z,
+                       float noise __attribute__((unused)))
 {
 
   struct FloatVect3 vel_body = {x, y, z};

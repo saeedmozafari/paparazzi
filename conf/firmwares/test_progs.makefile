@@ -81,7 +81,7 @@ MODEM_BROADCAST   ?= TRUE
 UDP_MODEM_PORT_LOWER=$(shell echo $(MODEM_DEV) | tr A-Z a-z)
 
 COMMON_TELEMETRY_CFLAGS += -DUSE_$(MODEM_DEV) -D$(MODEM_DEV)_PORT_OUT=$(MODEM_PORT_OUT) -D$(MODEM_DEV)_PORT_IN=$(MODEM_PORT_IN)
-COMMON_TELEMETRY_CFLAGS += -D$(MODEM_DEV)_BROADCAST=$(MODEM_BROADCAST) -D$(MODEM_DEV)_HOST=\"$(MODEM_HOST)\"
+COMMON_TELEMETRY_CFLAGS += -D$(MODEM_DEV)_BROADCAST=$(MODEM_BROADCAST) -D$(MODEM_DEV)_HOST=$(MODEM_HOST)
 COMMON_TELEMETRY_CFLAGS += -DPPRZ_UART=$(UDP_MODEM_PORT_LOWER)
 COMMON_TELEMETRY_CFLAGS += -DDOWNLINK_DEVICE=$(UDP_MODEM_PORT_LOWER)
 else
@@ -473,3 +473,20 @@ test_settings.srcs   += subsystems/settings.c
 test_settings.srcs   += $(SRC_ARCH)/subsystems/settings_arch.c
 test_settings.srcs   += test/subsystems/test_settings.c
 test_settings.CFLAGS += -DUSE_PERSISTENT_SETTINGS
+
+
+#
+# test_module
+#
+# configuration
+#   SYS_TIME_LED
+#   MODEM_PORT
+#   MODEM_BAUD
+#
+test_module.ARCHDIR = $(ARCH)
+test_module.CFLAGS += $(COMMON_TEST_CFLAGS)
+test_module.srcs   += $(COMMON_TEST_SRCS)
+test_module.CFLAGS += $(COMMON_TELEMETRY_CFLAGS)
+test_module.srcs   += $(COMMON_TELEMETRY_SRCS)
+test_module.srcs   += mcu_periph/i2c.c $(SRC_ARCH)/mcu_periph/i2c_arch.c
+test_module.srcs   += test/test_module.c

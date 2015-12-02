@@ -7,7 +7,7 @@
       Airspeed sensor module using the MS45xxDO digital pressure sensor via I2C.
       Needs one of the differential versions with 14bit pressure and 11bit temperature.
     </description>
-    <define name="MS45XX_I2C_DEV" value="i2cX" description="set i2c peripheral (default: i2c2)"/>
+    <define name="MS45XX_I2C_DEV" value="i2c1" description="set i2c peripheral (default: i2c2)"/>
     <define name="MS45XX_I2C_ADDR" value="0x50" description="i2c slave address (default: 0x50)"/>
     <define name="MS45XX_PRESSURE_RANGE" value="1|2|5|15|30|50|100|150" description="pressure range in psi (default: 1)"/>
     <define name="MS45XX_OUTPUT_TYPE" value="0|1" description="set to 0 for output type A, to 1 for output type B (default: type A)"/>

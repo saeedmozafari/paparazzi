@@ -1,4 +1,4 @@
-<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+<!DOCTYPE flight_plan SYSTEM "../../flight_plan.dtd">
 
 <flight_plan alt="1160" ground_alt="1035" lat0="35.7614332" lon0="51.0746474" max_dist_from_home="800" name="Basic" security_height="10">
   <header>
@@ -7,8 +7,8 @@
   <waypoints>
     <waypoint name="HOME" x="0" y="0"/>
     <waypoint name="STDBY" x="355.2" y="-202.6" height="150.0"/>
-    <waypoint alt="1050.0" name="AF" x="45.8" y="-23.0"/>
-    <waypoint alt="1035.0" name="TD" x="227.3" y="-124.9"/>
+    <waypoint name="AF" x="45.8" y="-23.0"/>
+    <waypoint name="TD" x="227.3" y="-124.9"/>
     <waypoint name="_BASELEG" x="25.8" y="112.3"/>
     <waypoint name="CLIMB" x="-96.4" y="61.5"/>
   </waypoints>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Piotr Esden-Tempski <piotr@esden.net>
+ * Copyright (C) 2015 Piotr Esden-Tempski <piotr@esden.net>
  *
  * This file is part of paparazzi.
  *
@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef CONFIG_LISA_MX_COMMON_H
-#define CONFIG_LISA_MX_COMMON_H
+#ifndef CONFIG_ELLE0_COMMON_H
+#define CONFIG_ELLE0_COMMON_H
 
-#define BOARD_LISA_MX
+#define BOARD_ELLE0
 
-/* Lisa/M has a 12MHz external clock and 168MHz internal. */
-#define EXT_CLK 12000000
+/* ELLE0 has a 25MHz external clock and 168MHz internal. */
+#define EXT_CLK 25000000
 #define AHB_CLK 168000000
 
 /*
@@ -53,7 +53,7 @@
 #define LED_2_GPIO_OFF gpio_set
 #define LED_2_AFIO_REMAP ((void)0)
 
-/* green, shared with ADC12 (ADC_6 on connector ANALOG2) */
+/* orange, on PC2 */
 #ifndef USE_LED_3
 #define USE_LED_3 1
 #endif
@@ -62,51 +62,6 @@
 #define LED_3_GPIO_ON gpio_clear
 #define LED_3_GPIO_OFF gpio_set
 #define LED_3_AFIO_REMAP ((void)0)
-
-/* red, shared with ADC15 (ADC_4 on connector ANALOG2) */
-#ifndef USE_LED_4
-#define USE_LED_4 1
-#endif
-#define LED_4_GPIO GPIOC
-#define LED_4_GPIO_PIN GPIO5
-#define LED_4_GPIO_ON gpio_clear
-#define LED_4_GPIO_OFF gpio_set
-#define LED_4_AFIO_REMAP ((void)0)
-
-/* green, on PC15 */
-#ifndef USE_LED_5
-#define USE_LED_5 1
-#endif
-#define LED_5_GPIO GPIOC
-#define LED_5_GPIO_PIN GPIO15
-#define LED_5_GPIO_ON gpio_clear
-#define LED_5_GPIO_OFF gpio_set
-#define LED_5_AFIO_REMAP ((void)0)
-
-/*
- * LEDs not populated by default
- */
-/* PC3, ADC13 on ADC_1 */
-#define LED_6_GPIO GPIOC
-#define LED_6_GPIO_PIN GPIO3
-#define LED_6_GPIO_ON gpio_clear
-#define LED_6_GPIO_OFF gpio_set
-#define LED_6_AFIO_REMAP ((void)0)
-
-/* PC0, ADC10 on ADC_2 */
-#define LED_7_GPIO GPIOC
-#define LED_7_GPIO_PIN GPIO0
-#define LED_7_GPIO_ON gpio_clear
-#define LED_7_GPIO_OFF gpio_set
-#define LED_7_AFIO_REMAP ((void)0)
-
-/* PC1, ADC11 on ADC_3 */
-#define LED_8_GPIO GPIOC
-#define LED_8_GPIO_PIN GPIO1
-#define LED_8_GPIO_ON gpio_clear
-#define LED_8_GPIO_OFF gpio_set
-#define LED_8_AFIO_REMAP ((void)0)
-
 
 /*
  * not actual LEDS, used as GPIOs
@@ -147,27 +102,11 @@
 #define UART2_GPIO_PORT_TX GPIOA
 #define UART2_GPIO_TX GPIO2
 
-#if REMAP_UART3 // For UART4 we need to remap UART 3
-#define UART3_GPIO_AF GPIO_AF7
-#define UART3_GPIO_PORT_RX GPIOB
-#define UART3_GPIO_RX GPIO11
-#define UART3_GPIO_PORT_TX GPIOB
-#define UART3_GPIO_TX GPIO10
-
-#define UART4_GPIO_AF GPIO_AF8
-#define UART4_GPIO_PORT_RX GPIOC
-#define UART4_GPIO_RX GPIO11
-#define UART4_GPIO_PORT_TX GPIOC
-#define UART4_GPIO_TX GPIO10
-
-#else
 #define UART3_GPIO_AF GPIO_AF7
 #define UART3_GPIO_PORT_RX GPIOC
 #define UART3_GPIO_RX GPIO11
 #define UART3_GPIO_PORT_TX GPIOC
 #define UART3_GPIO_TX GPIO10
-#endif
-
 
 #define UART5_GPIO_AF GPIO_AF8
 #define UART5_GPIO_PORT_RX GPIOD
@@ -175,20 +114,12 @@
 #define UART5_GPIO_PORT_TX GPIOC
 #define UART5_GPIO_TX GPIO12
 
-#define UART6_GPIO_AF GPIO_AF8
-#define UART6_GPIO_PORT_RX GPIOC
-#define UART6_GPIO_RX GPIO7
-#define UART6_GPIO_PORT_TX GPIOC
-#define UART6_GPIO_TX GPIO6
-
 /*
  * Spektrum
  */
 /* The line that is pulled low at power up to initiate the bind process */
-/* These are not common between versions of lisa/mx and thus defined in the
- * version specific header files. */
-/* #define SPEKTRUM_BIND_PIN GPIO0 */
-/* #define SPEKTRUM_BIND_PIN_PORT GPIOB */
+#define SPEKTRUM_BIND_PIN GPIO0
+#define SPEKTRUM_BIND_PIN_PORT GPIOB
 
 #define SPEKTRUM_UART1_RCC RCC_USART1
 #define SPEKTRUM_UART1_BANK GPIOA
@@ -197,6 +128,14 @@
 #define SPEKTRUM_UART1_IRQ NVIC_USART1_IRQ
 #define SPEKTRUM_UART1_ISR usart1_isr
 #define SPEKTRUM_UART1_DEV USART1
+
+#define SPEKTRUM_UART2_RCC RCC_USART2
+#define SPEKTRUM_UART2_BANK GPIOA
+#define SPEKTRUM_UART2_PIN GPIO3
+#define SPEKTRUM_UART2_AF GPIO_AF7
+#define SPEKTRUM_UART2_IRQ NVIC_USART2_IRQ
+#define SPEKTRUM_UART2_ISR usart2_isr
+#define SPEKTRUM_UART2_DEV USART2
 
 #define SPEKTRUM_UART5_RCC RCC_UART5
 #define SPEKTRUM_UART5_BANK GPIOD
@@ -288,15 +227,12 @@
 #define SPI_SELECT_SLAVE5_PORT GPIOC
 #define SPI_SELECT_SLAVE5_PIN GPIO4
 
-
 #define SPI1_GPIO_PORT_NSS GPIOA
 #define SPI1_GPIO_NSS GPIO4
 
 #define SPI2_GPIO_PORT_NSS GPIOB
 #define SPI2_GPIO_NSS GPIO12
 
-#define SPI3_GPIO_PORT_NSS GPIOA
-#define SPI3_GPIO_NSS GPIO15
 
 /* I2C mapping */
 #define I2C1_GPIO_PORT GPIOB
@@ -402,12 +338,11 @@
 #define USE_PWM7 1
 #define USE_PWM8 1
 #define PWM_USE_TIM4 1
+#define ACTUATORS_PWM_NB 8
 #endif
 #else
 #define ACTUATORS_PWM_NB 6
 #endif
-
-// Servo numbering on LisaM silkscreen/docs starts with 1
 
 // PWM_SERVO_x is the index of the servo in the actuators_pwm_values array
 #if USE_PWM1
@@ -519,4 +454,4 @@
 #define USE_BARO_BOARD 1
 #endif
 
-#endif /* CONFIG_LISA_MX_COMMON_H */
+#endif /* CONFIG_ELLE0_1_0_H */

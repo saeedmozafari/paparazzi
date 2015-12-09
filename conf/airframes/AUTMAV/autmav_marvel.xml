@@ -38,12 +38,12 @@
   <modules>
     <load name="gps_ubx_ucenter.xml"/>
     <load name="geo_mag.xml"/>
-	<!--<load name="autmav/gy86_imu_baro.xml">
+	<load name="autmav/gy86_imu_baro.xml">
 		<define name="MS5611_I2C_DEV" value="i2c1"/>
 		<define name="USE_AUX_I2C_IMU" value="FALSE"/>
 		<define name="AUX_BARO_LED" value="4"/>	
 	</load>
-    <load name="autmav/px4flow_i2c.xml">
+   <!-- <load name="autmav/px4flow_i2c.xml">
 		<define name="PX4FLOW_I2C_DEV" value="i2c2"/>
 	</load> -->
   </modules> 

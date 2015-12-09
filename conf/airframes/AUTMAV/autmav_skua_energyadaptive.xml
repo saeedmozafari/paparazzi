@@ -17,12 +17,16 @@
           </subsystem>
 	  
     </target>
+    
+    <target name="sim" board="pc">
+    	<subsystem name="radio_control" type="ppm"/>
+    </target>
     <define name="USE_AIRSPEED"/>
     <define name="USE_KFF_UPDATE_ROLL"/>
     <define name="USE_KFF_UPDATE_PITCH"/>
     <define name="STRONG_WIND"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <subsystem name="radio_control" type="sbus"/>
+    
     <subsystem name="telemetry" type="transparent"/>
     <subsystem name="control" type="energyadaptive"/>
     <subsystem name="imu" type="apogee"/>
@@ -46,6 +50,7 @@
       <define name="MS45XX_OUTPUT_TYPE" value="0"/>
       <define name="MS45XX_PRESSURE_OFFSET" value="8549.0"/>  <!-- 8542.0-->
     </load>
+    <load name="tune_airspeed.xml"/>
   </modules>
 
   <!-- commands section -->
@@ -108,33 +113,34 @@
   </section>
 
   <section name="MISC">
-    <define name="CLIMB_AIRSPEED" value="13." unit="m/s"/>
-    <define name="NOMINAL_AIRSPEED" value="12." unit="m/s"/>
+    <define name="CLIMB_AIRSPEED" value="15." unit="m/s"/>
+    <define name="NOMINAL_AIRSPEED" value="13." unit="m/s"/>
     <define name="RACE_AIRSPEED" value="20." unit="m/s"/>
     <define name="GLIDE_AIRSPEED" value="12." unit="m/s"/>
-    <define name="STALL_AIRSPEED" value="8." unit="m/s"/>
+    <define name="STALL_AIRSPEED" value="11." unit="m/s"/>
     <define name="CARROT" value="5." unit="s"/>     <!-- unknown parameter !!!!! -->
     <define name="KILL_MODE_DISTANCE" value="(2.0*MAX_DIST_FROM_HOME)"/>
     <define name="DEFAULT_CIRCLE_RADIUS" value="100."/>
   </section>
 
   <section name="VERTICAL CONTROL" prefix="V_CTL_">
+    <define name="MAX_ACCELERATION" value="0.5"/>
+    <define name="GLIDE_RATIO" value="8.0"/>
     <define name="POWER_CTL_BAT_NOMINAL" value="11.1" unit="volt"/>
     <!-- outer loop proportional gain -->
     <define name="ALTITUDE_PGAIN" value="0.100"/>
     <!-- outer loop saturation -->
-    <define name="ALTITUDE_MAX_CLIMB" value="3."/> <!--default 2-->
+    <define name="ALTITUDE_MAX_CLIMB" value="2."/> <!--default 2-->
     <!-- auto throttle inner loop -->
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.6"/>
-    <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="0."/> <!-- default 0 -->
+    <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="0."/>
     <define name="AUTO_THROTTLE_CLIMB_THROTTLE_INCREMENT" value="0.1" unit="%/(m/s)"/>
     <define name="AUTO_THROTTLE_PITCH_OF_VZ_PGAIN" value="0.15"/>
 
-    <define name="AIRSPEED_PGAIN" value="1."/>
+    <define name="AIRSPEED_PGAIN" value="0.5"/>
 
     <define name="AUTO_THROTTLE_OF_AIRSPEED_PGAIN" value="0.069"/>
     <define name="AUTO_THROTTLE_OF_AIRSPEED_IGAIN" value="0.01"/>
-
     <define name="AUTO_PITCH_OF_AIRSPEED_PGAIN" value="0.01"/>
     <define name="AUTO_PITCH_OF_AIRSPEED_IGAIN" value="0.003"/>
     <define name="AUTO_PITCH_OF_AIRSPEED_DGAIN" value="0.03"/>
@@ -144,11 +150,11 @@
     <define name="ENERGY_DIFF_PGAIN" value="1."/>
     <define name="ENERGY_DIFF_IGAIN" value="0.2"/>
 
+    <define name="THROTTLE_SLEW_LIMITER" value="1" unit="s"/>
+    
     <define name="AUTO_GROUNDSPEED_SETPOINT" value="12.0" unit="m/s"/>
     <define name="AUTO_GROUNDSPEED_PGAIN" value="0.75"/>
     <define name="AUTO_GROUNDSPEED_IGAIN" value="0.25"/>
-
-    <define name="THROTTLE_SLEW_LIMITER" value="1" unit="s"/>
   </section>
 
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">

@@ -16,9 +16,9 @@
     <define name="USE_MAGNETOMETER" value="FALSE"/>
 	<define name="USE_I2C1"/>
 	   
-<subsystem name="radio_control" type="ppm"/>
+    <subsystem name="radio_control" type="ppm"/>
     <subsystem name="telemetry" type="transparent"/>
-    <subsystem name="control"/>
+    <subsystem name="energyadaptive"/>
     <subsystem name="imu" type="drotek_10dof_v2">    
       <configure name="DROTEK_2_I2C_DEV" value="i2c2"/>    
       <define name="IMU_DROTEK_2_ORIENTATION_IC_UP" value="1" /> 

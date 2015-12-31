@@ -55,10 +55,10 @@
 
   <!-- commands section -->
   <servos>
-    <servo name="THROTTLE"      no="0" min="988" neutral="988" max="2000"/>
-    <servo name="ELEVATOR"      no="1" min="1050" neutral="1450" max="1850"/>
-    <servo name="AILERON"       no="2" min="1050" neutral="1450" max="1850"/>
-    <servo name="RUDDER"        no="3" min="1850"  neutral="1450" max="1050"/>    
+    <servo name="THROTTLE"        no="0" min="988" neutral="988" max="2000"/>
+    <servo name="ELEVATOR_RIGHT"  no="1" min="1050" neutral="1450" max="1850"/>
+    <servo name="ELEVATOR_LEFT"   no="2" min="1850" neutral="1450" max="1050"/>
+    <servo name="AILERON"         no="3" min="1050"  neutral="1450" max="1850"/>    
   </servos>
 
   <commands>
@@ -78,12 +78,12 @@
 	<set command="YAW" value="@YAW"/>
   </auto_rc_commands>
   <section name="MIXER">
-    <define name="COMBI_SWITCH" value="0.3"/>
+    <define name="COMBI_SWITCH" value="0.5"/>
   </section>
   <command_laws>
     <set servo="THROTTLE"    value="@THROTTLE"/>
-    <set servo="ELEVATOR"    value="@PITCH"/>
-    <set servo="RUDDER"      value="-@YAW + @ROLL*COMBI_SWITCH"/>
+    <set servo="ELEVATOR_RIGHT"    value="@PITCH - @YAW * COMBI_SWITCH"/>
+    <set servo="ELEVATOR_LEFT"     value="@PITCH + @YAW * COMBI_SWITCH"/>
     <set servo="AILERON" value="@ROLL"/>
   </command_laws>
 

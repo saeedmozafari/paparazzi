@@ -1,0 +1,52 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1160" ground_alt="1035" lat0="35.286504" lon0="52.012179" max_dist_from_home="800" name="Basic" security_height="10">
+  <header>
+    #include "subsystems/datalink/datalink.h"
+</header>
+  <waypoints>
+    <waypoint name="HOME" x="-60.9" y="14.0"/>
+    <waypoint name="STDBY" x="-59.0" y="-11.3"/>
+    <waypoint name="STDBY2" x="-210.2" y="24.2" height="200"/>
+    <waypoint name="AF" x="-348.9" y="50.0"/>
+    <waypoint name="TD" x="243.2" y="-58.8" height="200"/>
+    <waypoint name="S1" x="-323.1" y="89.4" height="150"/>
+    <waypoint name="S2" x="146.3" y="-113.0"height="150"/>
+  </waypoints>
+  <exceptions>
+    <exception cond="datalink_time > 22" deroute="Standby"/>
+  </exceptions>
+  <blocks>
+    <block name="Wait GPS">
+      <set value="1" var="kill_throttle"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+    </block>
+    <block name="Holding point">
+      <set value="1" var="kill_throttle"/>
+      <set value="100" var="nav_radius"/>
+      <attitude roll="0" throttle="0" vmode="throttle"/>
+    </block>
+    <block name="Standby">
+      <circle radius="nav_radius" wp="STDBY"/>
+    </block>
+    <block name="Standby2">
+      <circle radius="nav_radius" wp="STDBY2"/>
+    </block>
+    <block name="go_1">
+      <go from="AF" hmode="route" wp="TD"/>
+    </block>
+    <block name="go_2">
+      <go from="TD" hmode="route" wp="AF"/>
+      <deroute block="go_1"/>
+    </block>
+    <block name="survey">
+      <survey_rectangle grid="60" orientation="NS" wp1="S1" wp2="S2"/>
+      <deroute block="Standby"/>
+    </block>
+  </blocks>
+</flight_plan>

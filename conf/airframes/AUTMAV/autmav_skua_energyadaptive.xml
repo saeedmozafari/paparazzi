@@ -12,6 +12,8 @@
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
 	  <define name="AUX_BARO_LED" value="none"/>
+	  <define name="USE_KFF_UPDATE_ROLL"/>
+   	  <define name="USE_KFF_UPDATE_PITCH"/>
 	  <subsystem name="radio_control"     type="sbus">
       	  	<configure name="SBUS_PORT" value="UART2"/>
           </subsystem>
@@ -22,8 +24,7 @@
     	<subsystem name="radio_control" type="ppm"/>
     </target>
     <define name="USE_AIRSPEED"/>
-    <define name="USE_KFF_UPDATE_ROLL"/>
-    <define name="USE_KFF_UPDATE_PITCH"/>
+    
     <define name="STRONG_WIND"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
     
@@ -51,6 +52,8 @@
       <define name="MS45XX_PRESSURE_OFFSET" value="8549.0"/>  <!-- 8542.0-->
     </load>
     <load name="tune_airspeed.xml"/>
+    <load name="baro_sim.xml"/>
+    <load name="air_data.xml"/>
   </modules>
 
   <!-- commands section -->

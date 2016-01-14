@@ -172,6 +172,8 @@ twog_1.0 + aspirin + ETS baro + ETS speed
 
 <!-- ########################################################################################### -->
    <section name="VERTICAL CONTROL" prefix="V_CTL_">
+    <define name="MAX_ACCELERATION" value="0.5"/>
+    <define name="GLIDE_RATIO" value="8.0"/>
     <define name="POWER_CTL_BAT_NOMINAL" value="11.1" unit="volt"/>
     <!-- outer loop proportional gain -->
     <define name="ALTITUDE_PGAIN" value="0.1049"/>

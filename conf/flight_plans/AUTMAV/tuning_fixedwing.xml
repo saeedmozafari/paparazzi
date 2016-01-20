@@ -3,9 +3,13 @@
 <flight_plan alt="1160" ground_alt="1035" lat0="35.286504" lon0="52.012179" max_dist_from_home="800" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
-</header>
+    #include "modules/nav/nav_catapult.h"
+  </header>
   <waypoints>
+    <waypoint name="CAM" x="-60.0" y="-14.0"/>
     <waypoint name="HOME" x="-60.9" y="14.0"/>
+    <waypoint name="TO" x="-60.9" y="14.0"/>
+    <waypoint name="CLIMB" x="-60.9" y="14.0"/>
     <waypoint name="STDBY" x="-59.0" y="-11.3"/>
     <waypoint name="STDBY2" x="-210.2" y="24.2" height="200"/>
     <waypoint name="AF" x="-348.9" y="50.0"/>
@@ -31,6 +35,19 @@
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
+   <!-- <block name="Arm Catapult" strip_button="Takeoff (wp CLIMB)" strip_icon="bungee_launch.png">
+      <exception cond="GetPosAlt() > GetAltRef()+20" deroute="Takeoff"/>
+      <set value="0" var="kill_throttle"/>
+      <call fun="nav_catapult_setup()" />
+      <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/> 
+    </block> -->
+    <block name="Takeoff" strip_button="Takeoff (wp CLIMB)" strip_icon="takeoff.png">
+      <exception cond="GetPosAlt() > GetAltRef()+35" deroute="Standby"/>
+      <go wp="CLIMB"/>
+    </block>
+    <block name="Disarm Catapult">
+      <deroute block="Standby"/>
+    </block>   
     <block name="Standby">
       <circle radius="nav_radius" wp="STDBY"/>
     </block>

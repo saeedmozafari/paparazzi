@@ -10,22 +10,22 @@
 
 
   <servos>
-    <servo name="MOTOR"         no="0" min="1290" neutral="1290" max="1810"/>
-    <servo name="AILEVON_LEFT"  no="1" min="2000" neutral="1510" max="1000"/>
+    <servo name="MOTOR" no="0" min="1290" neutral="1290" max="1810"/>
+    <servo name="AILEVON_LEFT" no="1" min="2000" neutral="1510" max="1000"/>
     <servo name="AILEVON_RIGHT" no="3" min="1000" neutral="1535" max="2000"/>
   </servos>
 
   <commands>
     <axis name="THROTTLE" failsafe_value="0"/>
-    <axis name="ROLL"     failsafe_value="0"/>
-    <axis name="PITCH"    failsafe_value="0"/>
-    <axis name="SHUTTER"    failsafe_value="0"/>
+    <axis name="ROLL" failsafe_value="0"/>
+    <axis name="PITCH" failsafe_value="0"/>
+    <axis name="SHUTTER" failsafe_value="0"/>
   </commands>
 
   <rc_commands>
     <set command="THROTTLE" value="@THROTTLE"/>
-    <set command="ROLL"     value="@ROLL"/>
-    <set command="PITCH"    value="@PITCH"/>
+    <set command="ROLL" value="@ROLL"/>
+    <set command="PITCH" value="@PITCH"/>
   </rc_commands>
 
   <section name="MIXER">
@@ -34,10 +34,10 @@
   </section>
 
   <command_laws>
-    <let var="aileron"  value="@ROLL  * AILEVON_AILERON_RATE"/>
+    <let var="aileron" value="@ROLL  * AILEVON_AILERON_RATE"/>
     <let var="elevator" value="@PITCH * AILEVON_ELEVATOR_RATE"/>
-    <set servo="MOTOR"         value="@THROTTLE"/>
-    <set servo="AILEVON_LEFT"  value="$elevator - $aileron"/>
+    <set servo="MOTOR" value="@THROTTLE"/>
+    <set servo="AILEVON_LEFT" value="$elevator - $aileron"/>
     <set servo="AILEVON_RIGHT" value="$elevator + $aileron"/>
   </command_laws>
 
@@ -69,7 +69,7 @@
   </section>
 
   <section name="IMU" prefix="IMU_">
-    <define name="GYRO_P_SIGN"  value="1"/>
+    <define name="GYRO_P_SIGN" value="1"/>
     <define name="GYRO_P_NEUTRAL" value="500"/>
     <!--define name="ADXRS300_RESISTOR_BRIDGE" value="(3.3/(3.3+1.8))"/-->
     <!--define name="ADXRS300_SENSITIVITY" value="5" unit="mV/(deg/s)"/-->
@@ -157,30 +157,30 @@
 
 
   <firmware name="fixedwing">
-    <target name="sim" 			board="pc" />
-    <target name="ap" 			board="tiny_1.1">
+    <target name="sim" board="pc"/>
+    <target name="ap" board="tiny_1.1">
       <module name="tune_airspeed"/>
       <module name="digital_cam" type="servo">
-        <define name="DC_SHUTTER_SERVO" value="COMMAND_SHUTTER" />
+        <define name="DC_SHUTTER_SERVO" value="COMMAND_SHUTTER"/>
       </module>
       <module name="openlog"/>
     </target>
 
-    <define name="AGR_CLIMB" />
-    <define name="LOITER_TRIM" />
+    <define name="AGR_CLIMB"/>
+    <define name="LOITER_TRIM"/>
 
     <module name="radio_control" type="ppm"/>
 
     <!-- Communication -->
-    <module name="telemetry" 	type="xbee_api">
-      <configure name="MODEM_BAUD" 		value="B9600"/>
+    <module name="telemetry" type="xbee_api">
+      <configure name="MODEM_BAUD" value="B9600"/>
     </module>
 
     <!-- Sensors -->
-    <module name="imu"       type="analog">
+    <module name="imu" type="analog">
       <configure name="GYRO_P" value="ADC_3"/>
     </module>
-    <module name="gps"       type="ublox_utm"/>
+    <module name="gps" type="ublox_utm"/>
     <module name="infrared_adc"/>
     <module name="ahrs" type="infrared"/>
     <module name="ins" type="alt_float"/>
@@ -204,8 +204,8 @@
   </section>
 
   <firmware name="setup">
-    <target name="tunnel"           board="tiny_1.1" />
-    <target name="usb_tunnel"       board="tiny_1.1">
+    <target name="tunnel" board="tiny_1.1"/>
+    <target name="usb_tunnel" board="tiny_1.1">
       <configure name="TUNNEL_PORT" value="UART0"/>
     </target>
   </firmware>

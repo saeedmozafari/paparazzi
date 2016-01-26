@@ -34,8 +34,8 @@
 
 #include "generated/settings.h"
 #include "subsystems/datalink/downlink.h"
-#include "messages.h"
-#include "dl_protocol.h"
+#include "pprzlink/messages.h"
+#include "pprzlink/dl_protocol.h"
 #include "mcu_periph/uart.h"
 
 #if defined RADIO_CONTROL && defined RADIO_CONTROL_TYPE_DATALINK
@@ -209,6 +209,10 @@ void dl_parse_msg(void)
         case 0x03:
           /* body NED offset position setpoints */
           autopilot_guided_goto_body_relative(x, y, z, yaw);
+          break;
+        case 0x70:
+          /* local NED with x/y/z as velocity and yaw as absolute angle */
+          autopilot_guided_move_ned(x, y, z, yaw);
           break;
         default:
           /* others not handled yet */

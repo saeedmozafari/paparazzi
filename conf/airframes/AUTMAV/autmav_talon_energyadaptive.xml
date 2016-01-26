@@ -26,6 +26,7 @@
     	<subsystem name="radio_control" type="ppm"/>
  	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
+   
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
@@ -49,13 +50,11 @@
     <load name="gps_ubx_ucenter.xml"/>
     <load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
-   <!--   <define name="MS45XX_I2C_ADDR" value="0x50"/>
-      <define name="MS45XX_PRESSURE_RANGE" value="1"/>
-      <define name="MS45XX_OUTPUT_TYPE" value="0"/>
-      <define name="MS45XX_PRESSURE_OFFSET" value="8606.700195"/> -->
+      <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
     </load>
     <load name="tune_airspeed.xml"/>
     <load name="baro_sim.xml"/>
+    <load name="air_data.xml"/>
     <!--<load name="nav_catapult.xml"/>-->
     <load name="digital_cam.xml">
       <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO12"/>
@@ -159,19 +158,19 @@
     <!-- auto throttle inner loop -->
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.5"/>
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="0."/>
-    <define name="AUTO_THROTTLE_CLIMB_THROTTLE_INCREMENT" value="0.08" unit="%/(m/s)"/>
-    <define name="AUTO_THROTTLE_PITCH_OF_VZ_PGAIN" value="0.07"/>
+    <define name="AUTO_THROTTLE_CLIMB_THROTTLE_INCREMENT" value="0.00" unit="%/(m/s)"/>
+    <define name="AUTO_THROTTLE_PITCH_OF_VZ_PGAIN" value="0.00"/>
 
-    <define name="AIRSPEED_PGAIN" value="0.00"/>
+    <define name="AIRSPEED_PGAIN" value="0.2"/>
     <define name="AUTO_THROTTLE_OF_AIRSPEED_PGAIN" value="0.00"/>
     <define name="AUTO_THROTTLE_OF_AIRSPEED_IGAIN" value="0.00"/>
-    <define name="AUTO_PITCH_OF_AIRSPEED_PGAIN" value="0.01"/>
+    <define name="AUTO_PITCH_OF_AIRSPEED_PGAIN" value="0.00"/>
     <define name="AUTO_PITCH_OF_AIRSPEED_IGAIN" value="0.00"/>
     <define name="AUTO_PITCH_OF_AIRSPEED_DGAIN" value="0.00"/>
 
-    <define name="ENERGY_TOT_PGAIN" value="0."/>
+    <define name="ENERGY_TOT_PGAIN" value="0.2"/>
     <define name="ENERGY_TOT_IGAIN" value="0."/>
-    <define name="ENERGY_DIFF_PGAIN" value="0."/>
+    <define name="ENERGY_DIFF_PGAIN" value="0.2"/>
     <define name="ENERGY_DIFF_IGAIN" value="0."/>
 
     <define name="THROTTLE_SLEW_LIMITER" value="1" unit="s"/>

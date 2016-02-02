@@ -3,8 +3,7 @@
 <airframe name="Skua">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0">
-          <configure name="PERIODIC_FREQUENCY" value="120"/>
+    <target name="ap" board="apogee_1.0_chibios">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
@@ -49,7 +48,7 @@
     <!--<load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
-    </load> -->
+    </load>  -->
     <load name="gps_ubx_ucenter.xml"/>
     <load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
@@ -181,7 +180,7 @@
     <define name="ENERGY_DIFF_PGAIN" value="0.2"/>
     <define name="ENERGY_DIFF_IGAIN" value="0.1"/>
 
-    <define name="THROTTLE_SLEW_LIMITER" value="1" unit="s"/>
+    <define name="THROTTLE_SLEW_LIMITER" value="1.0" unit="s"/>
     
   </section>
   

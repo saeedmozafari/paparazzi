@@ -30,6 +30,9 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
+    <block name="Airspeed calib">
+      <set value="1" var="kill_throttle"/>
+    </block>
     <block name="Holding point">
       <set value="1" var="kill_throttle"/>
       <set value="100" var="nav_radius"/>

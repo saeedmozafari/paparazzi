@@ -99,6 +99,15 @@ float v_ctl_throttle_igain;
 float v_ctl_throttle_ppart;
 float v_ctl_throttle_ipart;
 
+const float dt_attidude = 1.0 / ((float)CONTROL_FREQUENCY);
+const float dt_navigation = 1.0 / ((float)NAVIGATION_FREQUENCY);
+
+float gamma_err;
+float vdot_err;
+float vdot;
+struct FloatVect3 accel_meas_body;
+struct FloatVect3 accel_imu_f;
+
 #define V_CTL_AUTO_GROUNDSPEED_MAX_SUM_ERR 100
 
 pprz_t v_ctl_throttle_setpoint;
@@ -141,7 +150,9 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
  {
    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
-                         &v_ctl_auto_throttle_nominal_cruise_throttle, &v_ctl_throttle_ppart, &v_ctl_throttle_ipart);
+                         &v_ctl_auto_throttle_nominal_cruise_throttle, 
+                         &v_ctl_throttle_ppart, 
+                         &v_ctl_throttle_ipart);
  }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
@@ -271,9 +282,6 @@ void v_ctl_init(void)
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_ENERGYADAPTIVE_NEW, send_energy_new);
 }
 
-const float dt_attidude = 1.0 / ((float)CONTROL_FREQUENCY);
-const float dt_navigation = 1.0 / ((float)NAVIGATION_FREQUENCY);
-
 /**
  * outer loop
  * \brief Computes v_ctl_climb_setpoint and sets v_ctl_auto_throttle_submode
@@ -354,21 +362,19 @@ void v_ctl_climb_loop(void)
   // Actual Acceleration from IMU: attempt to reconstruct the actual kinematic acceleration
 #ifndef SITL
   /* convert last imu accel measurement to float */
-  struct FloatVect3 accel_imu_f;
-  ACCELS_BFP_OF_REAL(accel_imu_f, accel_imu_meas);
+  ACCELS_FLOAT_OF_BFP(accel_imu_f, accel_imu_meas);
   /* rotate from imu to body frame */
-  struct FloatVect3 accel_meas_body;
   float_quat_vmult(&accel_meas_body, &imu_to_body_quat, &accel_imu_f);
-  float vdot = accel_meas_body.x / 9.81f - sinf(stateGetNedToBodyEulers_f()->theta);
+  vdot = accel_meas_body.x / 9.81f - sinf(stateGetNedToBodyEulers_f()->theta);
 #else
-  float vdot = 0;
+  vdot = 0;
 #endif
 
   // Acceleration Error: positive means UAV needs to accelerate: needs extra energy
-  float vdot_err = low_pass_vdot(v_ctl_desired_acceleration - vdot);
+  vdot_err = low_pass_vdot(v_ctl_desired_acceleration - vdot);
 
   // Flight Path Outerloop: positive means needs to climb more: needs extra energy
-  float gamma_err  = (v_ctl_climb_setpoint - stateGetSpeedEnu_f()->z) / v_ctl_auto_airspeed_controlled;
+  gamma_err  = (v_ctl_climb_setpoint - stateGetSpeedEnu_f()->z) / v_ctl_auto_airspeed_controlled;
 
   // Total Energy Error: positive means energy should be added
   float en_tot_err = gamma_err + vdot_err;

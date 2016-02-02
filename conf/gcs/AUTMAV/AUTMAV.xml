@@ -16,13 +16,6 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="1084" y="511">
-          <property name="scale" value="1."/>
-          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
-          <property name="format" value="I_PART:%.5f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
         <papget type="message_field" display="text" x="1016" y="414">
           <property name="scale" value="1."/>
           <property name="field" value="ENERGYADAPTIVE_NEW:nominal_throttle"/>
@@ -51,6 +44,13 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
+        <papget type="message_field" display="text" x="463" y="468">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:pitch"/>
+          <property name="format" value="Desired_pitch:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
         <papget type="message_field" display="text" x="451" y="514">
           <property name="scale" value="1."/>
           <property name="field" value="DESIRED:climb"/>
@@ -58,10 +58,10 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="463" y="468">
-          <property name="scale" value="57.3"/>
-          <property name="field" value="DESIRED:pitch"/>
-          <property name="format" value="Desired_pitch:%.2f"/>
+        <papget type="message_field" display="text" x="1050" y="511">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
+          <property name="format" value="I_PART:%.5f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>

@@ -3,7 +3,7 @@
 <airframe name="Skua">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0_chibios">
+    <target name="ap" board="apogee_1.0">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
@@ -23,7 +23,7 @@
     
     <target name="sim" board="pc">
     	<subsystem name="radio_control" type="ppm"/>
- 	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
+ 		<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
     <define name="USE_AIRSPEED"/>
@@ -57,14 +57,14 @@
     <load name="tune_airspeed.xml"/>
     <load name="baro_sim.xml"/>
     <load name="air_data.xml"/>
-    <!--<load name="nav_catapult.xml"/>-->
+    <!--<load name="nav_catapult.xml"/>
     <load name="digital_cam.xml">
       <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO12"/>
     </load>
     <load name="cam_point.xml">
       <define name="POINT_CAM_PITCH_ROLL" value="1"/>
       <define name="SHOW_CAM_COORDINATES" value="1"/>
-    </load>
+    </load> -->
   </modules>
 
   <!-- commands section -->
@@ -177,7 +177,7 @@
 
     <define name="ENERGY_TOT_PGAIN" value="0."/>
     <define name="ENERGY_TOT_IGAIN" value="0."/>
-    <define name="ENERGY_DIFF_PGAIN" value="0.2"/>
+    <define name="ENERGY_DIFF_PGAIN" value="0.3"/>
     <define name="ENERGY_DIFF_IGAIN" value="0.1"/>
 
     <define name="THROTTLE_SLEW_LIMITER" value="1.0" unit="s"/>

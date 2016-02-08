@@ -1,28 +1,32 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1160" ground_alt="1035" lat0="35.286504" lon0="52.012179" max_dist_from_home="800" name="Basic" security_height="10">
+<flight_plan alt="1160" ground_alt="1035" lat0="35.286504" lon0="52.012179" max_dist_from_home="7000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
     #include "modules/nav/nav_catapult.h"
-  </header>
+    #include "modules/sensors/airspeed_ms45xx_i2c.h"
+</header>
   <waypoints>
     <waypoint name="CAM" x="-60.0" y="-14.0"/>
-    <waypoint name="HOME" x="-60.9" y="14.0"/>
-    <waypoint name="TO" x="-60.9" y="14.0"/>
-    <waypoint name="CLIMB" x="-60.9" y="14.0"/>
-    <waypoint name="STDBY" x="-59.0" y="-11.3"/>
-    <waypoint name="STDBY2" x="-210.2" y="24.2" height="200"/>
+    <waypoint name="HOME" x="-18.7" y="16.4"/>
+    <waypoint name="TO" x="-9.2" y="5.2"/>
+    <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
+    <waypoint name="STDBY" x="-70.0" y="20.6"/>
+    <waypoint name="STDBY2" x="-91.4" y="3.4" height="250"/>
+    <waypoint name="STDBY3" x="-111.7" y="23.9" height="350"/>
+    <waypoint name="R1" x="-886.9" y="-4907.6" height="350"/>
     <waypoint name="AF" x="-348.9" y="50.0"/>
-    <waypoint name="TD" x="243.2" y="-58.8" height="200"/>
-    <waypoint name="S1" x="-323.1" y="89.4" height="150"/>
-    <waypoint name="S2" x="146.3" y="-113.0"height="150"/>
+    <waypoint height="200" name="TD" x="243.2" y="-58.8"/>
+    <waypoint name="S1" x="-348.8" y="115.2"/>
+    <waypoint name="S2" x="69.0" y="-288.0"/>
   </waypoints>
   <exceptions>
-    <exception cond="datalink_time > 22" deroute="Standby"/>
+    <exception cond="datalink_time > 20" deroute="Standby"/>
   </exceptions>
   <blocks>
     <block name="Wait GPS">
       <set value="1" var="kill_throttle"/>
+      <call fun="nav_catapult_disarm()"/>
       <while cond="!GpsFixValid()"/>
     </block>
     <block name="Geo init">
@@ -30,32 +34,37 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <block name="Airspeed calib">
-      <set value="1" var="kill_throttle"/>
-    </block>
     <block name="Holding point">
       <set value="1" var="kill_throttle"/>
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
-   <!-- <block name="Arm Catapult" strip_button="Takeoff (wp CLIMB)" strip_icon="bungee_launch.png">
-      <exception cond="GetPosAlt() > GetAltRef()+20" deroute="Takeoff"/>
+    <block name="Airspeed calibration" strip_button="Takeoff">
+      <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
+      <deroute block="Holding point"/>
+    </block> 
+    <block name="Arm Catapult" strip_button="Takeoff">
+      <exception cond="GetPosAlt() > GetAltRef()+40" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>
-      <call fun="nav_catapult_setup()" />
-      <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/> 
-    </block> -->
-    <block name="Takeoff" strip_button="Takeoff (wp CLIMB)" strip_icon="takeoff.png">
-      <exception cond="GetPosAlt() > GetAltRef()+35" deroute="Standby"/>
-      <go wp="CLIMB"/>
+      <call fun="nav_catapult_setup()"/>
+      <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
     </block>
     <block name="Disarm Catapult">
+      <call fun="nav_catapult_disarm()"/>
       <deroute block="Standby"/>
-    </block>   
+    </block>
     <block name="Standby">
       <circle radius="nav_radius" wp="STDBY"/>
     </block>
     <block name="Standby2">
       <circle radius="nav_radius" wp="STDBY2"/>
+    </block>
+    <block name="Standby3">
+      <circle radius="nav_radius" wp="STDBY3"/>
+    </block>
+    <block name="Range_1">
+      <go from="STDBY3" hmode="route" wp="R1"/>
+      <deroute block="Standby3"/>
     </block>
     <block name="go_1">
       <go from="AF" hmode="route" wp="TD"/>

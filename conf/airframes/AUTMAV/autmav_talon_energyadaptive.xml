@@ -23,7 +23,7 @@
     
     <target name="sim" board="pc">
     	<subsystem name="radio_control" type="ppm"/>
- 		<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
+ 	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
     <define name="USE_AIRSPEED"/>
@@ -45,10 +45,10 @@
   </firmware>
 
   <modules>
-    <!--<load name="airspeed_ets.xml">
+     <load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
-    </load>  -->
+    </load> 
     <load name="gps_ubx_ucenter.xml"/>
     <load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
@@ -57,14 +57,14 @@
     <load name="tune_airspeed.xml"/>
     <load name="baro_sim.xml"/>
     <load name="air_data.xml"/>
-    <!--<load name="nav_catapult.xml"/>
+    <load name="nav_catapult.xml"/>
     <load name="digital_cam.xml">
       <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO12"/>
     </load>
     <load name="cam_point.xml">
       <define name="POINT_CAM_PITCH_ROLL" value="1"/>
       <define name="SHOW_CAM_COORDINATES" value="1"/>
-    </load> -->
+    </load> 
   </modules>
 
   <!-- commands section -->
@@ -141,8 +141,8 @@
   </section>
 
   <section name="MISC">
-    <define name="NOMINAL_AIRSPEED" value="12.0" unit="m/s"/>
-    <define name="RACE_AIRSPEED" value="16.0" unit="m/s"/>
+    <define name="NOMINAL_AIRSPEED" value="9.0" unit="m/s"/>
+    <define name="RACE_AIRSPEED" value="15.0" unit="m/s"/>
     <define name="STALL_AIRSPEED" value="5.0" unit="m/s"/>
     <define name="CARROT" value="5." unit="s"/>    
     <define name="KILL_MODE_DISTANCE" value="(2.0*MAX_DIST_FROM_HOME)"/>
@@ -211,8 +211,8 @@
  </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">
-    <define name="MOTOR_DELAY" value="0.75" unit="seconds"/>
-    <define name="HEADING_DELAY" value="3.0" unit="seconds"/>
+    <define name="MOTOR_DELAY" value="0.1" unit="seconds"/>
+    <define name="HEADING_DELAY" value="2.0" unit="seconds"/>
     <define name="ACCELERATION_THRESHOLD" value="0.1"/>
     <define name="INITIAL_PITCH" value="20.0" unit="deg"/>
     <define name="INITIAL_THROTTLE" value="1.0"/>

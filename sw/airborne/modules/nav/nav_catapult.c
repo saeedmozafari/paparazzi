@@ -144,8 +144,7 @@ bool_t nav_catapult_setup(void)
 
 bool_t nav_catapult_run(uint8_t _to, uint8_t _climb)
 {
-  float alt = WaypointAlt(_climb);
-
+  
   nav_catapult_armed = 1;
 
   // No Roll, Climb Pitch, No motor Phase
@@ -172,8 +171,8 @@ bool_t nav_catapult_run(uint8_t _to, uint8_t _climb)
   }
   // Normal Climb: Heading Locked by Waypoint Target
   else if (nav_catapult_launch == 0xffff) {
-    NavVerticalAltitudeMode(alt, 0);  // vertical mode (folow glideslope)
-    NavVerticalAutoThrottleMode(0);   // throttle mode
+    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);   // thro
+    NavVerticalThrottleMode(9600 * (nav_catapult_initial_throttle));
     NavGotoWaypoint(_climb);        // horizontal mode (stay on localiser)
   } else {
     // Store Heading, move Climb
@@ -203,3 +202,8 @@ bool_t nav_select_touch_down(uint8_t _td)
   return FALSE;
 }
 
+bool_t nav_catapult_disarm(void)
+{
+  nav_catapult_armed = 0;
+  return FALSE;
+}

@@ -16,13 +16,6 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="1016" y="414">
-          <property name="scale" value="1."/>
-          <property name="field" value="ENERGYADAPTIVE_NEW:nominal_throttle"/>
-          <property name="format" value="NOMINAL_THR:%.2f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
         <papget type="message_field" display="text" x="1075" y="464">
           <property name="scale" value="1."/>
           <property name="field" value="ENERGYADAPTIVE_NEW:throttle_p_part"/>
@@ -40,7 +33,7 @@
         <papget type="message_field" display="text" x="27" y="513">
           <property name="scale" value="1."/>
           <property name="field" value="AIRSPEED:airspeed_cnt"/>
-          <property name="format" value="CNTL_Airspeed:%.2f"/>
+          <property name="format" value="Desired_Airspeed:%.2f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
@@ -51,6 +44,13 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
+        <papget type="message_field" display="text" x="1050" y="511">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
+          <property name="format" value="I_PART:%.5f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
         <papget type="message_field" display="text" x="451" y="514">
           <property name="scale" value="1."/>
           <property name="field" value="DESIRED:climb"/>
@@ -58,10 +58,10 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="1050" y="511">
+        <papget type="message_field" display="text" x="1016" y="414">
           <property name="scale" value="1."/>
-          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
-          <property name="format" value="I_PART:%.5f"/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:nominal_throttle"/>
+          <property name="format" value="NOMINAL_THR:%.2f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>

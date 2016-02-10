@@ -13,15 +13,15 @@
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
     <waypoint name="STDBY" x="-70.0" y="20.6"/>
     <waypoint name="STDBY2" x="-91.4" y="3.4" height="250"/>
-    <waypoint name="STDBY3" x="-111.7" y="23.9" height="350"/>
-    <waypoint name="R1" x="-886.9" y="-4907.6" height="350"/>
+    <waypoint name="STDBY3" x="-111.7" y="23.9" height="400"/>
+    <waypoint name="R1" x="-886.9" y="-4907.6" height="400"/>
     <waypoint name="AF" x="-348.9" y="50.0"/>
     <waypoint height="200" name="TD" x="243.2" y="-58.8"/>
     <waypoint name="S1" x="-348.8" y="115.2"/>
     <waypoint name="S2" x="69.0" y="-288.0"/>
   </waypoints>
   <exceptions>
-    <exception cond="datalink_time > 20" deroute="Standby"/>
+    <exception cond="datalink_time > 1500" deroute="Standby3"/> 
   </exceptions>
   <blocks>
     <block name="Wait GPS">
@@ -39,7 +39,7 @@
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Takeoff">
+    <block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
     </block> 

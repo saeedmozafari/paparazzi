@@ -13,7 +13,7 @@
  		<init fun="px4flow_i2c_init()"/>
 		
   		<event fun="px4flow_i2c_event()"/> 
-
+<periodic fun="guidance_pack_periodic()" freq="60."/>
   		<makefile>
 			<file name="px4flow_i2c.c"/>
 		</makefile>

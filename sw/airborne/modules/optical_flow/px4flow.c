@@ -29,7 +29,8 @@
 #include "modules/optical_flow/px4flow.h"
 #include "modules/datalink/mavlink_decoder.h"
 #include "subsystems/abi.h"
-
+#include "subsystems/datalink/telemetry.h"
+ 
 struct mavlink_optical_flow optical_flow;
 bool_t optical_flow_available;
 
@@ -58,7 +59,17 @@ static void decode_optical_flow_msg(struct mavlink_message *msg __attribute__((u
                               0.0f,
                               PX4FLOW_NOISE);
 }
-
+static void send_px4flow(struct transport_tx *trans, struct link_device *dev)
+ {
+   pprz_msg_send_PX4FLOW(trans, dev, AC_ID,
+                        &optical_flow.sensor_id,
+                        &optical_flow.flow_x,
+                        &optical_flow.flow_y,
+                        &optical_flow.flow_comp_m_x,
+                        &optical_flow.flow_comp_m_y,
+                        &optical_flow.quality,
+                        &optical_flow.ground_distance);
+ }
 /** Initialization function
  */
 void px4flow_init(void)
@@ -70,25 +81,6 @@ void px4flow_init(void)
   req.callback = decode_optical_flow_msg;
   req.msg.payload = (uint8_t *)(&optical_flow);
   mavlink_register_msg(&mavlink_tp, &req);
-
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_PX4FLOW, send_px4flow);
 }
-
-// Messages
-#include "mcu_periph/uart.h"
-#include "pprzlink/messages.h"
-#include "subsystems/datalink/downlink.h"
-
-/** Downlink message for debug
- */
-void px4flow_downlink(void)
-{
-  DOWNLINK_SEND_PX4FLOW(DefaultChannel, DefaultDevice,
-                        &optical_flow.sensor_id,
-                        &optical_flow.flow_x,
-                        &optical_flow.flow_y,
-                        &optical_flow.flow_comp_m_x,
-                        &optical_flow.flow_comp_m_y,
-                        &optical_flow.quality,
-                        &optical_flow.ground_distance);
-}
-
+ 

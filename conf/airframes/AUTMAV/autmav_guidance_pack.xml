@@ -4,7 +4,7 @@
 
   <firmware name="rotorcraft">
     <target name="ap" board="apogee_1.0">
-		<configure name="USE_BARO_BOARD" value="FALSE"/>		
+		<configure name="USE_BARO_BOARD" value="TRUE"/>		
 		<configure name="BARO_LED" value="4"/>
 		<configure name="RADIO_CONTROL_LED" value="none"/>
 		<configure name="AHRS_ALIGNER_LED" value="2"/>
@@ -35,10 +35,6 @@
     <load name="autmav/guidance_pack.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
     <load name="geo_mag.xml"/>
-    <load name="baro_mpl3115.xml">
-	<define name="BARO_MPL3115_I2C_SLAVE_ADDR" value="0x60" />        
-	<define name="BARO_MPL3115_I2C_DEV" value="i2c1"/>
-    </load>
   </modules> 
 
   <servos driver="Pwm">

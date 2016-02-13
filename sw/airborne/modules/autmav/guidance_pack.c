@@ -12,7 +12,8 @@
 */ 
 
 #include "modules/autmav/guidance_pack.h"
-
+#include "modules/autmav/sbus_command.h"
+  
 void guidance_pack_init( void )
 {
  

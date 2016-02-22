@@ -862,7 +862,12 @@
     <field name="data_rate" type="uint32" unit="bytes/s"/>
   </message>
   
-  <!--107 is free -->
+  <message name="GUIDANCE_PACK" id="107">
+    <field name="roll_cmd" type="float"/>
+    <field name="pitch_cmd" type="float"/>
+    <field name="yaw_cmd" type="float"/>
+    <field name="throttle_cmd" type="float"/>
+  </message>
   <!--108 is free -->
 
   <message name="MULTIGAZE_METERS" id="109">

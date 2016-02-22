@@ -2,23 +2,27 @@
 
 <module name="guidance_pack" dir="autmav">
   <doc>
-    <description> Guidance Pack </description>
+    <description> Basic Guidance Pack using paparazzi guidance through rc sbus output to another autopilot </description>
   </doc>
+
   <header>
     <file name="guidance_pack.h"/>
   </header>
+  
   <init fun="guidance_pack_init()"/>
-  <periodic fun="guidance_pack_periodic()" freq="60."/>
+  <periodic fun="guidance_pack_periodic()" freq="60." autorun="LOCK"/>
+  <periodic fun="guidance_pack_downlink()" freq="2." autorun="LOCK"/>
   <event fun="guidance_pack_event()"/>
+  
+  
+
   <makefile target="ap">
     <file name="guidance_pack.c"/>
     <file name="sbus_command.c"/>
-    <define name="USE_UART6"/>
-    <define name="SBUS_COMMAND_PORT" value="uart6"/>
-    <define name="UART6_BAUD" value="100000"/>
-    <define name="UART6_STOP" value="USTOP_2"/>
-    <define name="UART6_PARITY" value="UPARITY_EVEN"/>
+  </makefile>
 
+  <makefile target="nps">
+    <file name="guidance_pack.c"/>
   </makefile>
 </module>
 

@@ -183,8 +183,8 @@ bool_t nav_catapult_run(uint8_t _to, uint8_t _climb)
 
     float dir_L = sqrt(dir_x * dir_x + dir_y * dir_y);
 
-    WaypointX(_climb) = nav_catapult_x + (dir_x / dir_L) * 300;
-    WaypointY(_climb) = nav_catapult_y + (dir_y / dir_L) * 300;
+    WaypointX(_climb) = nav_catapult_x + (dir_x / dir_L) * 450;
+    WaypointY(_climb) = nav_catapult_y + (dir_y / dir_L) * 450;
 
     DownlinkSendWp(&(DefaultChannel).trans_tx, &(DefaultDevice).device, _climb);
   }

@@ -44,7 +44,7 @@
       <deroute block="Holding point"/>
     </block> 
     <block name="Arm Catapult" strip_button="Takeoff">
-      <exception cond="GetPosAlt() > GetAltRef()+40" deroute="Disarm Catapult"/>
+      <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>

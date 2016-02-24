@@ -1,0 +1,56 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1217" ground_alt="1214" lat0="35.286504" lon0="52.012179" max_dist_from_home="400" name="aut" security_height="0.8">
+  <header>
+#include "autopilot.h"
+</header>
+  <waypoints>
+    <waypoint name="HOME" x="-0.5" y="-0.9"/>
+    <waypoint name="CLIMB" x="0.0" y="5.0"/>
+    <waypoint name="TARGET" x="5.0" y="0.0" height="25"/>
+    <waypoint name="LAND" x="-11.5" y="5.1"/>
+  </waypoints>
+  <blocks>
+    <block name="Wait GPS">
+      <call fun="NavKillThrottle()"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(),5)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call fun="nav_set_heading_current()"/>
+    </block>
+    <block name="Holding point">
+      <call fun="NavKillThrottle()"/>
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+    <block name="Start Engine" strip_button="StartEngine" strip_icon="takeoff.png">
+      <call fun="NavResurrect()"/>
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+    <block name="Takeoff" strip_button="Takeoff" strip_icon="takeoff.png">
+      <exception cond="stateGetPositionEnu_f()->z > 10.0" deroute="Standby"/>
+      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call fun="nav_set_heading_current()"/>
+      <stay climb="0.5" vmode="climb" wp="CLIMB"/>
+    </block>
+    <block name="Standby">
+      <stay height="10" vmode="alt" wp="CLIMB"/>
+    </block>
+    <block name="target">
+      <stay wp="TARGET"/>
+    </block>
+    <block name="flare_here">
+      <call fun="NavStartDetectGround()"/>
+      <call fun="NavSetWaypointHere(WP_LAND)"/>
+      <exception cond="NavDetectGround()" deroute="landed"/>
+      <exception cond="!nav_is_in_flight()" deroute="landed"/>
+      <stay climb="-0.5" vmode="climb" wp="LAND"/>
+    </block>
+    <block name="landed">
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block>
+  </blocks>
+</flight_plan>

@@ -13,6 +13,7 @@
 
 //header files
 #include "modules/autmav/sbus_command.h"
+#include "subsystems/radio_control/sbus.h"
 
 // variables 
 uint8_t sbusData[25];
@@ -100,10 +101,19 @@ int FUTABA_SBUS_PassthroughRet(void) {
 }
 void FUTABA_SBUS_UpdateServos(void) {
   // Send data to servos
-  // Passtrough mode = false >> send own servo data
-  // Passtrough mode = true >> send received channel data
+  // Passtrough mode = 0 >> send own servo data
+  // Passtrough mode = 1 >> send received channel data from the same UART channel
+  // Passtrough mode = 2 >> send received channel data from the default autopilot channel
   uint8_t i,ch;
-  if (sbus_passthrough==0) {
+
+  //sending radio commands to external autopilot
+  if (sbus_passthrough == 2) {
+    for (i=1; i<17; i++) {
+        FUTABA_SBUS_Servo(i,RC_PPM_TICKS_OF_USEC(sbus.ppm[i-1]) + 8);
+    }
+  }
+  
+  if ((sbus_passthrough == 0) || (sbus_passthrough == 2)) {
     // clear received channel data
     for (i=1; i<24; i++) {
       sbusData[i] = 0;

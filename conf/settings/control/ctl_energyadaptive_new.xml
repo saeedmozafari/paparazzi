@@ -37,7 +37,7 @@
 
 
       <dl_settings name="energy_loop">
-        <dl_setting MAX="45" MIN="8.0" STEP="0.5" VAR="v_ctl_auto_airspeed_setpoint" shortname="airspeed sp" />
+        <dl_setting MAX="20.0" MIN="5.0" STEP="0.5" VAR="v_ctl_auto_airspeed_setpoint" shortname="airspeed sp" />
 
         <dl_setting MAX="1" MIN="0.0" STEP="0.05" VAR="v_ctl_auto_throttle_nominal_cruise_throttle" shortname="cruise throttle" />
         <dl_setting MAX="1" MIN="-1" STEP="0.05" VAR="v_ctl_auto_throttle_nominal_cruise_pitch" shortname="cruise pitch" />
@@ -62,7 +62,7 @@
       </dl_settings>
       
       <dl_settings name="energy_new">
-        <dl_setting MAX="45" MIN="8.0" STEP="0.5" VAR="v_ctl_auto_airspeed_setpoint" shortname="airspeed sp" />
+        <dl_setting MAX="20.0" MIN="5.0" STEP="0.5" VAR="v_ctl_auto_airspeed_setpoint" shortname="airspeed sp" />
 
         <dl_setting MAX="1" MIN="0.0" STEP="0.05" VAR="v_ctl_auto_throttle_nominal_cruise_throttle" shortname="cruise throttle" />
         <dl_setting MAX="1" MIN="-1" STEP="0.05" VAR="v_ctl_auto_throttle_nominal_cruise_pitch" shortname="cruise pitch" />

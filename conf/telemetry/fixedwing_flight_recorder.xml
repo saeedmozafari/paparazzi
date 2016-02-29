@@ -118,11 +118,8 @@
   </process>
   <process name="FlightRecorder">
     <mode name="default">
-      <message name="ATTITUDE"            period="0.05"/>
-      <message name="PX4FLOW"             period="0.05"/>
-      <message name="IMU_ACCEL"           period=".02"/>
-      <message name="IMU_GYRO"            period=".02"/>
-      <message name="IMU_MAG"             period=".02"/>
+      <message name="ATTITUDE"            period="0.1"/>
+      <message name="PX4FLOW"             period="0.1"/>
     </mode>
   </process>
 </telemetry>

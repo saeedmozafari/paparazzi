@@ -3,45 +3,50 @@
 <airframe name="Marvel">
 
   <firmware name="rotorcraft">
-    <target name="ap" board="apogee_1.0">
+    <target name="ap" board="stm32f4_discovery">
 		<configure name="USE_BARO_BOARD" value="FALSE"/>		
-		<configure name="BARO_LED" value="4"/>
+		<configure name="BARO_LED" value="6"/>
 		<configure name="RADIO_CONTROL_LED" value="none"/>
-		<configure name="AHRS_ALIGNER_LED" value="2"/>
-		<configure name="GPS_LED" value="3"/>
-		<configure name="SYS_TIME_LED" value="1"/>
-		<configure name="GUIDANCE_H_REF_MAX_SPEED" value="1.5"/>
- 		<subsystem name="radio_control" type="sbus">
+		<configure name="AHRS_ALIGNER_LED" value="5"/>
+		<configure name="GPS_LED" value="4"/>
+		<configure name="SYS_TIME_LED" value="3"/>
+		<subsystem name="radio_control" type="sbus">
       		<configure name="SBUS_PORT" value="UART2"/>
-		<define name="NO_RC_THRUST_LIMIT" value="TRUE"/>
-    	</subsystem>
+			<define name="NO_RC_THRUST_LIMIT" value="TRUE"/>
+     </subsystem>
     </target>
 
     <target name="nps" board="pc">
 		<subsystem name="fdm" type="jsbsim"/>
-     	        <subsystem name="radio_control" type="ppm"/>
+        <subsystem name="radio_control" type="ppm"/>
     </target>
-	
-	<subsystem name="telemetry" type="transparent"/>
+    
+    <subsystem name="telemetry" type="transparent">
+		<configure name="MODEM_PORT" value="UART1"/>
+    </subsystem>
     <subsystem name="imu" type="drotek_10dof_v2">    
-      <configure name="DROTEK_2_I2C_DEV" value="i2c2"/>    
+      <configure name="DROTEK_2_I2C_DEV" value="i2c1"/>    
       <define name="IMU_DROTEK_2_ORIENTATION_IC_UP" value="1" /> 
       <define name="DROTEK_2_MPU_I2C_ADDR" value="MPU60X0_ADDR"/>
     </subsystem> 
-    <subsystem name="gps" type="ublox"/>
-    <subsystem name="stabilization" type="passthrough"/>
+    <subsystem name="gps"           type="ublox">
+	  <configure name="GPS_PORT" value="UART4"/>
+    </subsystem>
+	    
+	<subsystem name="gps" type="piksi">
+      <configure name="PIKSI_GPS_PORT" value="UART5"/>
+      <configure name="SECONDARY_GPS" value="piksi"/>
+    </subsystem>
+	<subsystem name="stabilization" type="passthrough"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="extended"/>
     <subsystem name="actuators" type="pwm"/>
     <subsystem name="motor_mixing"/>
   </firmware>
-
   <modules>
     <load name="autmav/guidance_pack.xml">
-		<define name="SBUS_COMMAND_PORT" value="uart6"/>    	
-		<define name="USE_UART6"/>
-   		<define name="UART6_BAUD" value="100000"/>
- 		<define name="UART6_STOP" value="USTOP_2"/>
+		<define name="SBUS_COMMAND_PORT" value="uart2"/>    	
+		
     		<define name="UART6_PARITY" value="UPARITY_EVEN"/>
 		
 		<define name="SBUS_PASSTHROUGH_CH"  value="8"/>
@@ -71,10 +76,10 @@
 				
     </load>
     <load name="baro_ms5611_i2c.xml">
-        <configure name="MS5611_I2C_DEV" value="i2c2"/>
+        <configure name="MS5611_I2C_DEV" value="i2c1"/>
     </load>
-    <load name="gps_ubx_ucenter.xml"/>
     <load name="geo_mag.xml"/>
+	<load name="gps_ubx_ucenter.xml"/>
   </modules> 
 
   <servos driver="Pwm">
@@ -198,7 +203,8 @@
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
     <define name="MAX_BANK" value="20" unit="deg"/>
     <define name="USE_SPEED_REF" value="TRUE"/>
-    <define name="PGAIN" value="50"/>
+    <define name="REF_MAX_SPEED" value="2" unit="m/s"/>
+    <define name="PGAIN" value="40"/>
     <define name="DGAIN" value="100"/>
     <define name="AGAIN" value="70"/>
     <define name="IGAIN" value="20"/>

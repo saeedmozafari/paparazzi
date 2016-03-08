@@ -25,9 +25,6 @@
 
 // variables 
 
-extern int gp_horizontal_ok; 
-extern int gp_vertical_ok;
-
 //functions
 extern void guidance_pack_init( void );
 extern void guidance_pack_event( void );

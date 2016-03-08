@@ -24,9 +24,9 @@ void px4flow_i2c_init( void )
   px4flow.i2c_p = &PX4FLOW_I2C_DEV;
   /* slave address */
   px4flow.i2c_trans.slave_addr = PX4FLOW_I2C_ADDR;
-  /* set inital status: Success or Done */
+  /* set initial status: Success or Done */
   px4flow.i2c_trans.status = I2CTransDone;
-  // initial data not avilable. 
+  // initial data not available.
   px4flow.data_available = FALSE;
 }
 

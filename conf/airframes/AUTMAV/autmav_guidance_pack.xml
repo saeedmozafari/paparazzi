@@ -29,15 +29,16 @@
       <define name="IMU_DROTEK_2_ORIENTATION_IC_UP" value="1" /> 
       <define name="DROTEK_2_MPU_I2C_ADDR" value="MPU60X0_ADDR"/>
     </subsystem> 
-    <subsystem name="gps"           type="ublox">
+    <subsystem name="gps" type="ublox">
 	  <configure name="GPS_PORT" value="UART4"/>
     </subsystem>
-	    
-	<subsystem name="gps" type="piksi">
+    <define name="USE_PIKSI_EXT_ANTENNA" value="TRUE"/>    
+    <subsystem name="gps" type="piksi">
       <configure name="PIKSI_GPS_PORT" value="UART5"/>
       <configure name="SECONDARY_GPS" value="piksi"/>
     </subsystem>
-	<subsystem name="stabilization" type="passthrough"/>
+
+    <subsystem name="stabilization" type="passthrough"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="extended"/>
     <subsystem name="actuators" type="pwm"/>
@@ -204,10 +205,10 @@
     <define name="MAX_BANK" value="20" unit="deg"/>
     <define name="USE_SPEED_REF" value="TRUE"/>
     <define name="REF_MAX_SPEED" value="2" unit="m/s"/>
-    <define name="PGAIN" value="40"/>
-    <define name="DGAIN" value="100"/>
-    <define name="AGAIN" value="70"/>
-    <define name="IGAIN" value="20"/>
+    <define name="PGAIN" value="10"/>
+    <define name="DGAIN" value="0"/>
+    <define name="AGAIN" value="0"/>
+    <define name="IGAIN" value="0"/>
   </section>
 
   <section name="SIMULATOR" prefix="NPS_">

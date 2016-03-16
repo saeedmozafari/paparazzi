@@ -3,14 +3,22 @@
 <airframe name="ardrone2">
 
   <firmware name="rotorcraft">
-    <target name="ap" board="ardrone2"/>
+    <target name="ap" board="ardrone2">
+      <define name="LINK_HOST" value="\\\"192.168.1.0\\\""/>
+      <configure name="HOST" value="192.168.1.$(AC_ID)"/>
+      <configure name="ARDRONE2_START_PAPARAZZI" value="1"/>
+      <configure name="ARDRONE2_WIFI_MODE" value="2"/>
+      <configure name="ARDRONE2_SSID" value="ardrone2_autmav_$(AC_ID)"/>
+      <configure name="ARDRONE2_IP_ADDRESS_BASE" value="192.168.1."/>
+      <configure name="ARDRONE2_IP_ADDRESS_PROBE" value="$(AC_ID)"/>
+    </target>
 
     <target name="nps" board="pc">
       <subsystem name="fdm" type="jsbsim"/>
     </target>
 
     <define name="USE_SONAR" value="TRUE"/>
-    <define name="GUIDANCE_H_REF_MAX_SPEED" value="1.5"/>
+
 	<!-- Subsystem section -->
     <subsystem name="telemetry" type="transparent_udp"/>
     <subsystem name="radio_control" type="datalink"/>
@@ -19,7 +27,7 @@
     <subsystem name="imu" type="ardrone2"/>
     <!-- gps: "ublox" or change to "sirf" for usage with parrot flight recorder -->
     <subsystem name="gps" type="ublox"/>
-    <subsystem name="stabilization" type="int_quat"/>
+    <subsystem name="stabilization" type="int_quat_consensus"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="extended"/>
   </firmware>
@@ -29,9 +37,14 @@
     <!-- remove the gps_ubx_ucenter module if you use the sirf gps (flight recorder) -->
     <load name="gps_ubx_ucenter.xml"/>
     <load name="send_imu_mag_current.xml"/>
-    <load name="air_data.xml"/>
+    <!--load name="air_data.xml"/-->
     <load name="geo_mag.xml"/>
     <!--load name="logger_file.xml"/-->
+    <!--
+    <load name="video_thread.xml">
+        <define name="VIDEO_THREAD_CAMERA" value="front_camera"/>
+    </load>
+    -->
     <!--load name="video_rtp_stream.xml"/-->
   </modules>
 
@@ -109,30 +122,6 @@
     <define name="SONAR_UPDATE_ON_AGL" value="TRUE"/>
   </section>
 
-  <section name="STABILIZATION_RATE" prefix="STABILIZATION_RATE_">
-    <!-- setpoints -->
-    <define name="SP_MAX_P" value="10000"/>
-    <define name="SP_MAX_Q" value="10000"/>
-    <define name="SP_MAX_R" value="10000"/>
-    <define name="DEADBAND_P" value="20"/>
-    <define name="DEADBAND_Q" value="20"/>
-    <define name="DEADBAND_R" value="200"/>
-    <define name="REF_TAU" value="4"/>
-
-    <!-- feedback -->
-    <define name="GAIN_P" value="400"/>
-    <define name="GAIN_Q" value="400"/>
-    <define name="GAIN_R" value="350"/>
-
-    <define name="IGAIN_P" value="75"/>
-    <define name="IGAIN_Q" value="75"/>
-    <define name="IGAIN_R" value="50"/>
-
-    <!-- feedforward -->
-    <define name="DDGAIN_P" value="300"/>
-    <define name="DDGAIN_Q" value="300"/>
-    <define name="DDGAIN_R" value="300"/>
-  </section>
 
   <section name="STABILIZATION_ATTITUDE" prefix="STABILIZATION_ATTITUDE_">
     <!-- setpoints -->

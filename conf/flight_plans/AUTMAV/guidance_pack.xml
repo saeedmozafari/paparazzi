@@ -17,7 +17,7 @@
     </block>
     <block name="Geo init">
       <while cond="LessThan(NavBlockTime(),5)"/>
-      <!--call fun="NavSetGroundReferenceHere()"/-->
+      <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
       <call fun="NavSetWaypointHere(WP_CLIMB)"/>
       <call fun="nav_set_heading_current()"/>

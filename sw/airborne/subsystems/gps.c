@@ -194,7 +194,7 @@ static uint8_t gps_multi_switch(struct GpsState *gps_s) {
   } else{
     if (gps_s->fix > gps.fix){
       return gps_s->comp_id;
-    } else if (gps.fix > gps_s->fix){
+    } else if (gps.fix >= gps_s->fix){
       return gps.comp_id;
     } else{
       if (get_sys_time_msec() - time_since_last_gps_switch > TIME_TO_SWITCH) {

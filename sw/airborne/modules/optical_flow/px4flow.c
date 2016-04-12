@@ -32,7 +32,7 @@
 #include "subsystems/datalink/telemetry.h"
  
 struct mavlink_optical_flow optical_flow;
-bool_t optical_flow_available;
+bool optical_flow_available;
 
 // message ID in Mavlink (v1.0)
 #define MAVLINK_OPTICAL_FLOW_MSG_ID 100
@@ -50,7 +50,7 @@ struct mavlink_msg_req req;
 // callback function on message reception
 static void decode_optical_flow_msg(struct mavlink_message *msg __attribute__((unused)))
 {
-  optical_flow_available = TRUE;
+  optical_flow_available = true;
 
   // Y negated to get to the body of the drone
   AbiSendMsgVELOCITY_ESTIMATE(PX4FLOW_VELOCITY_ID, 0,
@@ -74,7 +74,7 @@ static void send_px4flow(struct transport_tx *trans, struct link_device *dev)
  */
 void px4flow_init(void)
 {
-  optical_flow_available = FALSE;
+  optical_flow_available = false;
 
   // register a mavlink message
   req.msg_id = MAVLINK_OPTICAL_FLOW_MSG_ID;

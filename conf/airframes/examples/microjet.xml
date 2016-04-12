@@ -24,8 +24,8 @@
 
   <rc_commands>
     <set command="THROTTLE" value="@THROTTLE"/>
-    <set command="ROLL" value="@ROLL"/>
-    <set command="PITCH" value="@PITCH"/>
+    <set command="ROLL"     value="@ROLL"/>
+    <set command="PITCH"    value="@PITCH"/>
   </rc_commands>
 
   <section name="MIXER">
@@ -34,7 +34,7 @@
   </section>
 
   <command_laws>
-    <let var="aileron" value="@ROLL  * AILEVON_AILERON_RATE"/>
+    <let var="aileron"  value="@ROLL  * AILEVON_AILERON_RATE"/>
     <let var="elevator" value="@PITCH * AILEVON_ELEVATOR_RATE"/>
     <set servo="MOTOR" value="@THROTTLE"/>
     <set servo="AILEVON_LEFT" value="$elevator - $aileron"/>
@@ -69,7 +69,7 @@
   </section>
 
   <section name="IMU" prefix="IMU_">
-    <define name="GYRO_P_SIGN" value="1"/>
+    <define name="GYRO_P_SIGN"  value="1"/>
     <define name="GYRO_P_NEUTRAL" value="500"/>
     <!--define name="ADXRS300_RESISTOR_BRIDGE" value="(3.3/(3.3+1.8))"/-->
     <!--define name="ADXRS300_SENSITIVITY" value="5" unit="mV/(deg/s)"/-->
@@ -146,7 +146,7 @@
     <define name="DESCENT_PITCH" value="-0.25"/><!-- Pitch for Aggressive Decent -->
     <define name="CLIMB_NAV_RATIO" value="0.8"/><!-- Percent Navigation for Altitude Error Equal to Start Altitude -->
     <define name="DESCENT_NAV_RATIO" value="1.0"/>
-  </section>
+    </section>
 
   <section name="FAILSAFE" prefix="FAILSAFE_">
     <define name="DELAY_WITHOUT_GPS" value="2" unit="s"/>
@@ -157,30 +157,30 @@
 
 
   <firmware name="fixedwing">
-    <target name="sim" board="pc"/>
-    <target name="ap" board="tiny_1.1">
+    <target name="sim" 			board="pc" />
+    <target name="ap" 			board="tiny_1.1">
       <module name="tune_airspeed"/>
       <module name="digital_cam" type="servo">
-        <define name="DC_SHUTTER_SERVO" value="COMMAND_SHUTTER"/>
+        <define name="DC_SHUTTER_SERVO" value="COMMAND_SHUTTER" />
       </module>
       <module name="openlog"/>
     </target>
 
-    <define name="AGR_CLIMB"/>
-    <define name="LOITER_TRIM"/>
+    <define name="AGR_CLIMB" />
+    <define name="LOITER_TRIM" />
 
     <module name="radio_control" type="ppm"/>
 
     <!-- Communication -->
-    <module name="telemetry" type="xbee_api">
-      <configure name="MODEM_BAUD" value="B9600"/>
+    <module name="telemetry" 	type="xbee_api">
+      <configure name="MODEM_BAUD" 		value="B9600"/>
     </module>
 
     <!-- Sensors -->
-    <module name="imu" type="analog">
+    <module name="imu"       type="analog">
       <configure name="GYRO_P" value="ADC_3"/>
     </module>
-    <module name="gps" type="ublox_utm"/>
+    <module name="gps"       type="ublox"/>
     <module name="infrared_adc"/>
     <module name="ahrs" type="infrared"/>
     <module name="ins" type="alt_float"/>
@@ -204,8 +204,8 @@
   </section>
 
   <firmware name="setup">
-    <target name="tunnel" board="tiny_1.1"/>
-    <target name="usb_tunnel" board="tiny_1.1">
+    <target name="tunnel"           board="tiny_1.1" />
+    <target name="usb_tunnel"       board="tiny_1.1">
       <configure name="TUNNEL_PORT" value="UART0"/>
     </target>
   </firmware>

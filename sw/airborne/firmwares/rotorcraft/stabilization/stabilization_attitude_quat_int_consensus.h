@@ -32,6 +32,7 @@ extern struct Int32Eulers stab_att_sp_euler; ///< with #INT32_ANGLE_FRAC
 
 extern struct AttRefQuatInt att_ref_quat_i;
 extern float stabilization_cmd_yaw;
+extern int consensus_active;
 
 /* settings handlers for ref model params */
 #define stabilization_attitude_quat_int_SetOmegaP(_val) {   \

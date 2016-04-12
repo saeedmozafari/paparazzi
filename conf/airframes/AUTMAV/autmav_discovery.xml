@@ -25,8 +25,10 @@
       <define name="DROTEK_2_MPU_I2C_ADDR" value="MPU60X0_ADDR"/>
     </subsystem> 
     <subsystem name="ahrs" type="float_dcm"/>
-    <subsystem name="gps" type="ublox"/>
-    <subsystem name="navigation"/>
+    <subsystem name="gps" type="ublox">
+         <define name="GPS_PORT" value="UART6" /> 
+    </subsystem>
+  <subsystem name="navigation"/>
     <subsystem name="ins" type="alt_float">
       <define name="USE_BAROMETER" value="TRUE"/>
     </subsystem>

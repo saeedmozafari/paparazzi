@@ -8,7 +8,7 @@
     <waypoint name="HOME" x="0.0" y="0.0"/>
     <waypoint name="CLIMB" x="0.0" y="5.0"/>
     <waypoint name="STDBY" x="-10.0" y="10.0"/>
-    <waypoint name="p1" x="3.6" y="-13.9"/>
+    
     <waypoint name="TD" x="5.6" y="-10.9"/>
   </waypoints>
   <blocks>
@@ -23,6 +23,10 @@
       <call fun="NavSetWaypointHere(WP_CLIMB)"/>
       <call fun="nav_set_heading_current()"/>
     </block>
+    <!--block name="Holding point">
+      <call fun="NavKillThrottle()"/>
+      <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
+    </block-->
     <block name="Start Engine">
       <call fun="NavResurrect()"/>
       <deroute block="Takeoff"/>
@@ -34,9 +38,6 @@
     </block>
     <block name="Standby" strip_button="Standby" strip_icon="home.png">
       <stay wp="STDBY"/>
-    </block>
-    <block name="consensus">
-      <stay wp="p1"/>
     </block>
     <block name="land here" strip_button="Land Here" strip_icon="land-right.png">
       <call fun="NavSetWaypointHere(WP_TD)"/>
@@ -51,6 +52,9 @@
     </block>
     <block name="landed">
       <attitude pitch="0" roll="0" throttle="0" vmode="throttle" until="FALSE"/>
+    </block>
+    <block name="emgland">
+      <attitude pitch="0" roll="0" throttle="0.65" vmode="throttle" until="FALSE"/>
     </block>
   </blocks>
 </flight_plan>

@@ -60,6 +60,7 @@ struct Int32Quat stabilization_att_sum_err_quat;
 int32_t stabilization_att_fb_cmd[COMMANDS_NB];
 int32_t stabilization_att_ff_cmd[COMMANDS_NB];
 float stabilization_cmd_yaw;
+int consensus_active;
 
 struct Int32Quat   stab_att_sp_quat;
 struct Int32Eulers stab_att_sp_euler;
@@ -135,11 +136,12 @@ static void send_ahrs_ref_quat(struct transport_tx *trans, struct link_device *d
 #endif
 
 void stabilization_attitude_init(void)
-{
+{	
 
   attitude_ref_quat_int_init(&att_ref_quat_i);
 
   int32_quat_identity(&stabilization_att_sum_err_quat);
+  consensus_active = 0;
 
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_STAB_ATTITUDE_INT, send_att);
@@ -284,9 +286,13 @@ void stabilization_attitude_run(bool_t enable_integrator)
   /* sum feedforward and feedback */
   stabilization_cmd[COMMAND_ROLL] = stabilization_att_fb_cmd[COMMAND_ROLL] + stabilization_att_ff_cmd[COMMAND_ROLL];
   stabilization_cmd[COMMAND_PITCH] = stabilization_att_fb_cmd[COMMAND_PITCH] + stabilization_att_ff_cmd[COMMAND_PITCH];
-  //stabilization_cmd[COMMAND_YAW] = stabilization_att_fb_cmd[COMMAND_YAW] + stabilization_att_ff_cmd[COMMAND_YAW];
-  stabilization_cmd[COMMAND_YAW] = stabilization_cmd_yaw * MAX_PPRZ;
-  /* bound the result */
+  if(consensus_active == 0) {
+	stabilization_cmd[COMMAND_YAW] = stabilization_att_fb_cmd[COMMAND_YAW] + stabilization_att_ff_cmd[COMMAND_YAW];
+  }
+  else {
+  	stabilization_cmd[COMMAND_YAW] = stabilization_cmd_yaw * MAX_PPRZ;
+  }	
+  	/* bound the result */
   BoundAbs(stabilization_cmd[COMMAND_ROLL], MAX_PPRZ);
   BoundAbs(stabilization_cmd[COMMAND_PITCH], MAX_PPRZ);
   BoundAbs(stabilization_cmd[COMMAND_YAW], MAX_PPRZ);

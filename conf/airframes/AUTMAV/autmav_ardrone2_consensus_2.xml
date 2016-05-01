@@ -17,7 +17,7 @@
       <subsystem name="fdm" type="jsbsim"/>
     </target>
 
-    <define name="USE_SONAR" value="TRUE"/>
+    <define name="USE_SONAR" value="FALSE"/>
 
 	<!-- Subsystem section -->
     <subsystem name="telemetry" type="transparent_udp"/>

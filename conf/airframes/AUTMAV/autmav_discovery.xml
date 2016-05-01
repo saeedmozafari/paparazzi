@@ -17,7 +17,9 @@
 	<define name="USE_I2C1"/>
 	   
     <subsystem name="radio_control" type="ppm"/>
-    <subsystem name="telemetry" type="transparent"/>
+    <subsystem name="telemetry" type="transparent">
+   	 <define name="MODEM_PORT" value="UART6" />    
+    </subsystem>
     <subsystem name="control" type="adaptive"/>
     <subsystem name="imu" type="drotek_10dof_v2">    
       <configure name="DROTEK_2_I2C_DEV" value="i2c2"/>    
@@ -26,7 +28,7 @@
     </subsystem> 
     <subsystem name="ahrs" type="float_dcm"/>
     <subsystem name="gps" type="ublox">
-         <define name="GPS_PORT" value="UART6" /> 
+         <define name="GPS_PORT" value="UART3" /> 
     </subsystem>
   <subsystem name="navigation"/>
     <subsystem name="ins" type="alt_float">
@@ -38,6 +40,7 @@
   	<load name="baro_ms5611_i2c.xml">
 		<configure name="MS5611_I2C_DEV" value="i2c2"/>
 	</load>
+ 	<load name="gps_ubx_ucenter.xml"/>
   </modules>
 
   <!-- commands section -->

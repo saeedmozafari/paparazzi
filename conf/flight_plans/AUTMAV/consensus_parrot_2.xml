@@ -1,6 +1,6 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="152" ground_alt="147" lat0="43 33 50.83" lon0="1 28 52.61" max_dist_from_home="150" name="Rotorcraft Basic (Enac)" security_height="2">
+<flight_plan alt="152" ground_alt="147" lat0="35.435071" lon0="51.639084" max_dist_from_home="150" name="Rotorcraft Basic (Enac)" security_height="2">
   <header>
 #include "autopilot.h"
 </header>
@@ -16,7 +16,7 @@
       <while cond="!GpsFixValid()"/>
     </block>
     <block name="Geo init">
-      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <while cond="LessThan(NavBlockTime(), 2)"/>
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
       <call fun="NavSetWaypointHere(WP_CLIMB)"/>

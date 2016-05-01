@@ -202,8 +202,8 @@ bool nav_select_touch_down(uint8_t _td)
   return false;
 }
 
-bool_t nav_catapult_disarm(void)
+bool nav_catapult_disarm(void)
 {
   nav_catapult_armed = 0;
-  return FALSE;
+  return false;
 }

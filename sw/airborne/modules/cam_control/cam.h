@@ -54,7 +54,7 @@
 #endif
 
 extern uint8_t cam_mode;
-extern uint8_t cam_lock;
+extern bool cam_lock;
 
 extern float cam_phi_c, cam_theta_c;
 

@@ -17,7 +17,7 @@
       <subsystem name="fdm" type="jsbsim"/>
     </target>
 
-    <define name="USE_SONAR" value="TRUE"/>
+    <define name="USE_SONAR" value="FALSE"/>
 
 	<!-- Subsystem section -->
     <subsystem name="telemetry" type="transparent_udp"/>
@@ -145,7 +145,7 @@
 
     <define name="REF_OMEGA_R" value="200" unit="deg/s"/>
     <define name="REF_ZETA_R" value="0.9"/>
-    <define name="REF_MAX_R" value="300." unit="deg/s"/>
+    <define name="REF_MAX_R" value="600." unit="deg/s"/>
     <define name="REF_MAX_RDOT" value="RadOfDeg(4000.)"/>
 
     <!-- feedback -->

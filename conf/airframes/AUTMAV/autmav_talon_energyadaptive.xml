@@ -39,7 +39,7 @@
       <configure name="USE_MAGNETOMETER" value="FALSE"/>
       <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>
     </subsystem>
-    <subsystem name="gps" type="ublox"/>
+    <module name="gps" type="ublox"/>
     <subsystem name="navigation"/>
     <subsystem name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
@@ -62,12 +62,9 @@
     <load name="air_data.xml"/>
     <load name="nav_catapult.xml"/>
     <load name="digital_cam.xml">
-      <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO12"/>
+      <define name="DC_SHUTTER_GPIO" value="GPIOB,GPIO15"/>
+      <define name="DC_PUSH" value="gpio_clear"/>
     </load>
-    <load name="cam_point.xml">
-      <define name="POINT_CAM_PITCH_ROLL" value="1"/>
-      <define name="SHOW_CAM_COORDINATES" value="1"/>
-    </load> 
   </modules>
 
   <!-- commands section -->

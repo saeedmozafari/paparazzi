@@ -3,7 +3,7 @@
 <airframe name="Skua">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0">
+    <target name="ap" board="apogee_1.0_chibios">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
@@ -31,7 +31,10 @@
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    
+    <module name="sdlog"/>
+    <module name="flight_recorder.xml">
+      <configure name="FLIGHTRECORDER_SDLOG" value="TRUE" />
+    </module>
     <subsystem name="telemetry" type="transparent"/>
     <subsystem name="control" type="energyadaptive_new"/>
     <subsystem name="imu" type="apogee"/>
@@ -62,8 +65,9 @@
     <load name="air_data.xml"/>
     <load name="nav_catapult.xml"/>
     <load name="digital_cam.xml">
-      <define name="DC_SHUTTER_GPIO" value="GPIOB,GPIO15"/>
-      <define name="DC_PUSH" value="gpio_clear"/>
+      <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
+      <define name="DC_PUSH" value="gpio_set"/>
+      <define name="DC_RELEASE" value="gpio_clear"/>
     </load>
   </modules>
 

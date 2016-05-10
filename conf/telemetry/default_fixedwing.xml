@@ -92,4 +92,9 @@
       <message name="ACTUATORS"           period="5"/> <!-- For trimming -->
     </mode>
   </process>
+ <process name="FlightRecorder">
+    <mode name="default">
+      <message name="DC_SHOT"     period="0.5"/>
+    </mode>
+  </process>
 </telemetry>

@@ -64,7 +64,7 @@
     <load name="baro_sim.xml"/>
     <load name="air_data.xml"/>
     <load name="nav_catapult.xml"/>
-    <load name="digital_cam.xml">
+    <load name="autmav/digital_cam.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>

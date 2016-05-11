@@ -5,6 +5,13 @@
   <firmware name="rotorcraft">
     <target name="ap" board="ardrone2">
       <define name="AUTOPILOT_DISABLE_AHRS_KILL"/>
+      <define name="LINK_HOST" value="\\\"192.168.1.0\\\""/>
+      <configure name="HOST" value="192.168.1.11"/>
+      <configure name="ARDRONE2_START_PAPARAZZI" value="1"/>
+      <configure name="ARDRONE2_WIFI_MODE" value="2"/>
+      <configure name="ARDRONE2_SSID" value="ardrone2_autmav_11"/>
+      <configure name="ARDRONE2_IP_ADDRESS_BASE" value="192.168.1."/>
+      <configure name="ARDRONE2_IP_ADDRESS_PROBE" value="11"/>
     </target>
 
     <target name="nps" board="pc">
@@ -102,7 +109,7 @@
 
   <section name="INS" prefix="INS_">
     <define name="SONAR_MAX_RANGE" value="2.2"/>
-    <define name="SONAR_UPDATE_ON_AGL" value="TRUE"/>
+    <define name="SONAR_UPDATE_ON_AGL" value="FALSE"/>
   </section>
 
 
@@ -139,7 +146,7 @@
     <define name="G1_P" value="0.032"/>
     <define name="G1_Q" value="0.025"/>
     <define name="G1_R" value="0.0032"/>
-    <define name="G2_R" value="0.16"/>
+    <define name="G2_R" value="0.0"/>
 
     <!-- reference acceleration for attitude control -->
     <define name="REF_ERR_P" value="380.0"/>
@@ -206,4 +213,4 @@
     <define name="LOW_BAT_LEVEL" value="9.7" unit="V"/>
     <define name="MAX_BAT_LEVEL" value="12.4" unit="V"/>
   </section>
-</airframe
+</airframe>

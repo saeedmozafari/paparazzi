@@ -42,6 +42,7 @@
 #endif
 
 #include "mcu_periph/sys_time.h"
+#include "subsystems/datalink/telemetry.h"
 
 /** default time interval for periodic mode: 1sec */
 #ifndef DC_AUTOSHOOT_PERIOD
@@ -93,23 +94,31 @@ uint16_t dc_photo_nr = 0;
 #include "state.h"
 #include "subsystems/gps.h"
 
+int16_t phi;
+int16_t theta;
+int16_t psi;
+
+int16_t course;
+uint16_t speed;
+int16_t photo_nr;
+
 void dc_send_shot_position(void)
 {
   // angles in decideg
-  int16_t phi = DegOfRad(stateGetNedToBodyEulers_f()->phi * 10.0f);
-  int16_t theta = DegOfRad(stateGetNedToBodyEulers_f()->theta * 10.0f);
-  int16_t psi = DegOfRad(stateGetNedToBodyEulers_f()->psi * 10.0f);
+  phi = DegOfRad(stateGetNedToBodyEulers_f()->phi * 10.0f);
+  theta = DegOfRad(stateGetNedToBodyEulers_f()->theta * 10.0f);
+  psi = DegOfRad(stateGetNedToBodyEulers_f()->psi * 10.0f);
   // course in decideg
-  int16_t course = DegOfRad(stateGetHorizontalSpeedDir_f()) * 10;
+  course = DegOfRad(stateGetHorizontalSpeedDir_f()) * 10;
   // ground speed in cm/s
-  uint16_t speed = stateGetHorizontalSpeedNorm_f() * 10;
-  int16_t photo_nr = -1;
+  speed = stateGetHorizontalSpeedNorm_f() * 10;
+  photo_nr = -1;
 
   if (dc_photo_nr < DC_IMAGE_BUFFER) {
     dc_photo_nr++;
     photo_nr = dc_photo_nr;
   }
-
+  
   DOWNLINK_SEND_DC_SHOT(DefaultChannel, DefaultDevice,
                         &photo_nr,
                         &stateGetPositionLla_i()->lat,
@@ -122,6 +131,7 @@ void dc_send_shot_position(void)
                         &course,
                         &speed,
                         &gps.tow);
+  
 }
 #else
 void dc_send_shot_position(void)
@@ -129,11 +139,28 @@ void dc_send_shot_position(void)
 }
 #endif /* DC_SHOT_SYNC_SEND */
 
+static void send_dc_shot(struct transport_tx *trans, struct link_device *dev)
+{   
+   pprz_msg_send_DC_SHOT(trans, dev, AC_ID,
+                        &photo_nr,
+                        &stateGetPositionLla_i()->lat,
+                        &stateGetPositionLla_i()->lon,
+                        &stateGetPositionLla_i()->alt,
+                        &gps.hmsl,
+                        &phi,
+                        &theta,
+                        &psi,
+                        &course,
+                        &speed,
+                        &gps.tow);
+}
+
 void dc_init(void)
 {
   dc_autoshoot = DC_AUTOSHOOT_STOP;
   dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
   dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
 }
 
 uint8_t dc_info(void)

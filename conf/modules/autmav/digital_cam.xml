@@ -1,6 +1,6 @@
-<!DOCTYPE module SYSTEM "./module.dtd">
+<!DOCTYPE module SYSTEM "../module.dtd">
 
-<module name="digital_cam">
+<module name="digital_cam" dir="autmav">
   <doc>
     <description>
       Digital Photo Camera Triggering (using a GPIO pin)

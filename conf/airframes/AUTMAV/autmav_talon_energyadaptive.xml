@@ -61,6 +61,7 @@
       <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
     </load>
     <load name="tune_airspeed.xml"/>
+    <load name="nav_survey_polygon.xml"/>
     <load name="baro_sim.xml"/>
     <load name="air_data.xml"/>
     <load name="nav_catapult.xml"/>
@@ -216,7 +217,7 @@
     <define name="YAW_DGAIN" value="5000"/>
     <define name="YAW_TRIM_NY" value="TRUE"/>
     <define name="YAW_NY_IGAIN" value="5000"/> 
- </section>
+  </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">
     <define name="MOTOR_DELAY" value="0.1" unit="seconds"/>
@@ -233,14 +234,19 @@
   
   <section name="Photogrammetry" prefix="PHOTOGRAMMETRY_">
     <!-- Camera Parameters -->
-    <define name="FOCAL_LENGTH" value="35" unit="mm"/>
-    <define name="SENSOR_WIDTH" value="24" unit="mm"/>    <!-- In direction of the plane's wings -->
-    <define name="SENSOR_HEIGHT" value="13.5" unit="mm"/> <!-- In direction of the plane's nose -->
-    <define name="PIXELS_WIDTH" value="1024" unit=""/>
+    <define name="FOCAL_LENGTH" value="35.2" unit="mm"/>
+    <define name="SENSOR_WIDTH" value="22.3" unit="mm"/>    <!-- In direction of the plane's wings -->
+    <define name="SENSOR_HEIGHT" value="14.9" unit="mm"/> 	<!-- In direction of the plane's nose -->
+    <define name="PIXELS_WIDTH" value="5184" unit=""/>
     <!-- Flight Safety Parameters -->
     <define name="HEIGHT_MIN" value="35" unit="m"/>
     <define name="HEIGHT_MAX" value="500" unit="m"/>
-    <define name="RADIUS_MIN" value="70" unit="m"/>
+    <define name="RADIUS_MIN" value="100" unit="m"/>
+    <!-- Fligh plan parameters -->
+    <define name="SWEEP_ANGLE" value="0" unit="deg"/> 
+	<define name="OVERLAP" value="50"/> 	<!-- unit = percent-->
+	<define name="SIDELAP" value="50"/>		<!-- unit = percent-->
+	<define name="RESOLUTION" value="50"/>	<!-- unit = mm per pixel percent-->
   </section>
 
   <section name="CAM" prefix="CAM_">

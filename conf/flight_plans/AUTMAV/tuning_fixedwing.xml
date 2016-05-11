@@ -3,8 +3,9 @@
 <flight_plan alt="1160" ground_alt="1035" lat0="35.286504" lon0="52.012179" max_dist_from_home="7000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
-    #include "modules/nav/nav_catapult.h"
+    #include "modules/cartography/photogrammetry_calculator.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
+    #include "modules/nav/nav_catapult.h"
 </header>
   <waypoints>
     <waypoint name="CAM" x="-60.0" y="-14.0"/>
@@ -12,16 +13,20 @@
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
     <waypoint name="STDBY" x="-70.0" y="20.6"/>
-    <waypoint name="STDBY2" x="-91.4" y="3.4" height="250"/>
-    <waypoint name="STDBY3" x="-111.7" y="23.9" height="400"/>
-    <waypoint name="R1" x="-886.9" y="-4907.6" height="400"/>
+    <waypoint height="250" name="STDBY2" x="-91.4" y="3.4"/>
+    <waypoint height="400" name="STDBY3" x="-111.7" y="23.9"/>
+    <waypoint height="400" name="R1" x="-886.9" y="-4907.6"/>
     <waypoint name="AF" x="-348.9" y="50.0"/>
     <waypoint height="200" name="TD" x="243.2" y="-58.8"/>
     <waypoint name="S1" x="-348.8" y="115.2"/>
     <waypoint name="S2" x="69.0" y="-288.0"/>
+    <waypoint name="1" x="-500.0" y="500.0"/>
+    <waypoint name="2" x="-500.0" y="-500.0"/>
+    <waypoint name="3" x="500.0" y="-500.0"/>
+    <waypoint name="4" x="500.0" y="500.0"/>
   </waypoints>
   <exceptions>
-    <exception cond="datalink_time > 1500" deroute="Standby3"/> 
+    <exception cond="datalink_time > 1500" deroute="Standby3"/>
   </exceptions>
   <blocks>
     <block name="Wait GPS">
@@ -39,7 +44,10 @@
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
-    
+    <block name="Airspeed calibration" strip_button="Calibration">
+      <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
+      <deroute block="Holding point"/>
+    </block> 
     <block name="Arm Catapult" strip_button="Takeoff">
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>
@@ -70,10 +78,10 @@
       <go from="TD" hmode="route" wp="AF"/>
       <deroute block="go_1"/>
     </block>
-    <block name="survey">
-      <survey_rectangle grid="60" orientation="NS" wp1="S1" wp2="S2"/>
+    <block name="Initialize ADV Poly 1234 Survey" strip_button="Survey" strip_icon="survey.png">
+      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 4)"/>
+      <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>
   </blocks>
 </flight_plan>
-

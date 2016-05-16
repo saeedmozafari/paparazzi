@@ -26,7 +26,7 @@
     <subsystem name="actuators" type="ardrone2"/>
     <subsystem name="imu" type="ardrone2"/>
     <!-- gps: "ublox" or change to "sirf" for usage with parrot flight recorder -->
-    <subsystem name="gps" type="ublox"/>
+    <module name="gps" type="ublox"/>
     <subsystem name="stabilization" type="int_quat_consensus"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="extended"/>

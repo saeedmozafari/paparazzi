@@ -23,10 +23,10 @@
       <call fun="NavSetWaypointHere(WP_CLIMB)"/>
       <call fun="nav_set_heading_current()"/>
     </block>
-    <!--block name="Holding point">
+    <block name="Holding point">
       <call fun="NavKillThrottle()"/>
       <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
-    </block-->
+    </block>
     <block name="Start Engine">
       <call fun="NavResurrect()"/>
       <deroute block="Takeoff"/>

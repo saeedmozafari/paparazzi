@@ -44,10 +44,10 @@
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--<block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block> 
+    </block--> 
     <block name="Arm Catapult" strip_button="Takeoff">
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>

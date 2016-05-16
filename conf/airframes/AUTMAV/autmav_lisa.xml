@@ -17,7 +17,7 @@
     <subsystem name="actuators" type="pwm"/>
     <subsystem name="telemetry" type="transparent"/>
     <subsystem name="imu" type="aspirin_v2.1"/>
-    <subsystem name="gps" type="ublox"/>
+    <module name="gps" type="ublox"/>
     <subsystem name="stabilization" type="indi"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="hff"/>
@@ -132,9 +132,9 @@
 
   <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
     <!-- control effectiveness -->
-    <define name="G1_P" value="0.25"/>
-    <define name="G1_Q" value="0.25"/>
-    <define name="G1_R" value="0.25"/>
+    <define name="G1_P" value="0.025"/>
+    <define name="G1_Q" value="0.025"/>
+    <define name="G1_R" value="0.0025"/>
     <define name="G2_R" value="0.2"/>
 
     <!-- reference acceleration for attitude control -->

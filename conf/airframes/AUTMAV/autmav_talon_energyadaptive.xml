@@ -61,7 +61,7 @@
       <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
     </load>
     <load name="tune_airspeed.xml"/>
-    <load name="nav_survey_polygon.xml"/>
+    <load name="autmav/survey_polygon.xml"/>
     <load name="baro_sim.xml"/>
     <load name="air_data.xml"/>
     <load name="nav_catapult.xml"/>

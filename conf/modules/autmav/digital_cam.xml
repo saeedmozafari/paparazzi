@@ -23,12 +23,14 @@
     <define name="DC_AUTOSHOOT_DISTANCE_INTERVAL" value="50" description="distance interval for DC_AUTOSHOOT_DISTANCE in meters"/>
     <define name="DC_AUTOSHOOT_SURVEY_INTERVAL" value="50" description="distance interval for DC_AUTOSHOOT_SURVEY in meters"/>
     <define name="DC_SHOT_SYNC_SEND" value="TRUE|FALSE" description="send DC_SHOT message when photo was taken (default: TRUE)"/>
+    <define name="DC_STABILIZED_SHOT" value="TRUE|FALSE" description="stabilized shot activation (default: TRUE)"/>
+    <define name="DC_STABILIZED_SHOT_CARROT" value="2.0" description="stabilized shot carrot time (default: 1.5)"/>
   </doc>
   <settings>
     <dl_settings name="control">
       <dl_settings name="dc">
 
-        <dl_setting max="255" min="0" step="1" module="digital_cam/dc" var="0" handler="send_command" shortname="Shutter">
+        <dl_setting max="255" min="0" step="1" module="autmav/dc" var="0" handler="send_command" shortname="Shutter">
           <strip_button name="Photo" icon="digital-camera.png" value="32" group="maindc"/>
           <strip_button name="Power" icon="off.png" value="111" group="maindc"/>
           <strip_button name="ZoomIn" icon="zoom.png" value="116" group="dczoom"/>
@@ -43,9 +45,11 @@
         <dl_setting max="60" min="0.1" step="0.5" var="dc_autoshoot_period" shortname="Periodic" param="DC_AUTOSHOOT_PERIOD" unit="sec"/>
         <dl_setting max="255" min="0" step="1" var="dc_distance_interval" shortname="dist" param="DC_AUTOSHOOT_DISTANCE_INTERVAL" unit="meter"/>
 
-        <dl_setting max="250" min="0" step="5" module="digital_cam/dc" var="dc_survey_interval" handler="Survey" shortname="Survey-Interval"/>
-        <dl_setting max="90" min="5" step="5" module="digital_cam/dc" var="dc_circle_interval" handler="Circle" shortname="Circle-Interval"/>
+        <dl_setting max="250" min="0" step="5" module="autmav/dc" var="dc_survey_interval" handler="Survey" shortname="Survey-Interval"/>
+        <dl_setting max="90" min="5" step="5" module="autmav/dc" var="dc_circle_interval" handler="Circle" shortname="Circle-Interval"/>
         <dl_setting max="1" min="0" step="1" var="dc_cam_tracing" shortname="Cam-Tracing"/>
+        <dl_setting var="dc_stabilized_shot" min="0" step="1" max="1" module="autmav/dc" shortname="stb_shot" type="bool" values="OFF|ON" param="DC_STABILIZED_SHOT"/> 
+        <dl_setting var="dc_stabilized_shot_carrot" min="0" step="0.1" max="10" module="autmav/dc" shortname="stb_carrot" type="float" param="DC_STABILIZED_SHOT_CARROT"/>     
       </dl_settings>
     </dl_settings>
   </settings>

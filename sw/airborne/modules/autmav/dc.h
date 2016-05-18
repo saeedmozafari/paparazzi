@@ -48,7 +48,8 @@ extern uint16_t dc_photo_nr;
 /** number of images taken since the last change of dc_mode */
 extern uint16_t dc_gps_count;
 
-
+extern bool dc_stabilized_shot;
+extern float dc_stabilized_shot_carrot;
 /*
  * Variables for PERIODIC mode.
  */

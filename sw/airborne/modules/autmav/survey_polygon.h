@@ -86,4 +86,5 @@ extern bool nav_survey_polygon_setup(uint8_t first_wp, uint8_t size, float angle
                                        float min_rad, float altitude);
 extern bool nav_survey_polygon_run(void);
 
+extern struct SurveyPolyAdv survey;
 #endif

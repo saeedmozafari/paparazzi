@@ -33,6 +33,9 @@
  */
 
 #include "dc.h"
+#include "firmwares/fixedwing/autopilot.h"
+#include "firmwares/fixedwing/nav.h"
+#include "firmwares/fixedwing/stabilization/stabilization_attitude.h"
 
 // for waypoints, include correct header until we have unified API
 #ifdef AP
@@ -59,6 +62,15 @@
 #define DC_AUTOSHOOT_SURVEY_INTERVAL 50
 #endif
 
+/** default stabilized shot parameters */
+#ifndef DC_STABILIZED_SHOT
+#define DC_STABILIZED_SHOT true
+#endif
+
+#ifndef DC_STABILIZED_SHOT_CARROT
+#define DC_STABILIZED_SHOT_CARROT 1.5 //units in secondes
+#endif
+
 // Variables with boot defaults
 dc_autoshoot_type dc_autoshoot = DC_AUTOSHOOT_STOP;
 uint16_t dc_gps_count = 0;
@@ -74,6 +86,12 @@ float dc_survey_interval = DC_AUTOSHOOT_SURVEY_INTERVAL;
 float dc_gps_next_dist = 0;
 float dc_gps_x = 0;
 float dc_gps_y = 0;
+/* parameters for stabilization during shot */ 
+bool dc_stabilized_shot = DC_STABILIZED_SHOT;
+float dc_stabilized_shot_carrot = DC_STABILIZED_SHOT_CARROT;
+float dc_time_to_next_shot = 0;
+float dc_last_shot_time = 0;
+float dc_time_after_last_shot = 0;
 
 static struct FloatVect2 last_shot_pos = {0.0, 0.0};
 float dc_distance_interval;
@@ -160,6 +178,7 @@ void dc_init(void)
   dc_autoshoot = DC_AUTOSHOOT_STOP;
   dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
   dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
+  dc_last_shot_time = get_sys_time_float();
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
 }
 
@@ -317,6 +336,22 @@ void dc_periodic(void)
         dc_gps_next_dist += dc_survey_interval;
         dc_gps_count++;
         dc_send_command(DC_SHOOT);
+        dc_last_shot_time = get_sys_time_float();
+      }
+      if (dc_stabilized_shot) {
+      	dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
+      	dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
+      	if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
+      		
+      		NavAttitude(0.0);
+      		v_ctl_pitch_setpoint = 0.0;
+    		NavVerticalThrottleMode(v_ctl_throttle_setpoint);
+      	}
+       	else {
+       		NavVerticalAutoThrottleMode(0.0);
+  			NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
+       	}
+
       }
     }
     break;

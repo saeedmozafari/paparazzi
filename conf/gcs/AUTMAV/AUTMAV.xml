@@ -15,45 +15,10 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="1058" y="319">
-          <property name="scale" value="57.3"/>
-          <property name="field" value="DESIRED:pitch"/>
-          <property name="format" value="Desired_pitch:%.2f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
-        <papget type="message_field" display="text" x="30" y="415">
-          <property name="scale" value="1."/>
-          <property name="field" value="AIR_DATA:diff_p"/>
-          <property name="format" value="Pressure_diff:%.2f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
-        <papget type="message_field" display="text" x="1084" y="510">
-          <property name="scale" value="1."/>
-          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
-          <property name="format" value="I_PART:%.5f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
         <papget type="message_field" display="text" x="1106" y="463">
           <property name="scale" value="1."/>
           <property name="field" value="ENERGYADAPTIVE_NEW:throttle_p_part"/>
           <property name="format" value="P_PART:%.2f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
-        <papget type="message_field" display="text" x="52" y="365">
-          <property name="scale" value="1."/>
-          <property name="field" value="NAVIGATION:dist_home"/>
-          <property name="format" value="Distance:%.2f"/>
-          <property name="size" value="25."/>
-          <property name="color" value="red"/>
-        </papget>
-        <papget type="message_field" display="text" x="1116" y="370">
-          <property name="scale" value="0.01"/>
-          <property name="field" value="BAT:amps"/>
-          <property name="format" value="Amps:%.2f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
@@ -64,10 +29,10 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
-        <papget type="message_field" display="text" x="1053" y="273">
+        <papget type="message_field" display="text" x="52" y="365">
           <property name="scale" value="1."/>
-          <property name="field" value="DESIRED:climb"/>
-          <property name="format" value="Desired_climb:%.2f"/>
+          <property name="field" value="NAVIGATION:dist_home"/>
+          <property name="format" value="Distance:%.2f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
@@ -78,10 +43,52 @@
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>
+        <papget type="message_field" display="text" x="30" y="415">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIR_DATA:diff_p"/>
+          <property name="format" value="Pressure_diff:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="1062" y="229">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:roll"/>
+          <property name="format" value="Desired_roll:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="1053" y="273">
+          <property name="scale" value="1."/>
+          <property name="field" value="DESIRED:climb"/>
+          <property name="format" value="Desired_climb:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
         <papget type="message_field" display="text" x="100" y="322">
           <property name="scale" value="1."/>
           <property name="field" value="AIR_DATA:tas"/>
           <property name="format" value="TAS:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="1058" y="319">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:pitch"/>
+          <property name="format" value="Desired_pitch:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="1116" y="370">
+          <property name="scale" value="0.01"/>
+          <property name="field" value="BAT:amps"/>
+          <property name="format" value="Amps:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="1084" y="510">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
+          <property name="format" value="I_PART:%.5f"/>
           <property name="size" value="25."/>
           <property name="color" value="red"/>
         </papget>

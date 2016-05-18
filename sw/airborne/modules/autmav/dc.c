@@ -312,7 +312,7 @@ void dc_periodic(void)
     case DC_AUTOSHOOT_SURVEY: {
       float dist_x = dc_gps_x - stateGetPositionEnu_f()->x;
       float dist_y = dc_gps_y - stateGetPositionEnu_f()->y;
-
+	  dc_info();
       if (dist_x * dist_x + dist_y * dist_y >= dc_gps_next_dist * dc_gps_next_dist) {
         dc_gps_next_dist += dc_survey_interval;
         dc_gps_count++;

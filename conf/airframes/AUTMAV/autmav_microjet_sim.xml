@@ -187,7 +187,7 @@
 
     <module name="control"/>
     <module name="navigation"/>
-    <module name="nav" type="survey_polygon"/>
+    <module name="autmav/survey_polygon.xml"/>
     <module name="nav" type="line_border"/>
     <module name="nav" type="line"/>
     <module name="nav" type="smooth"/>

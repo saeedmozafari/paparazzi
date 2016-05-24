@@ -15,9 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with paparazzi; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * along with paparazzi; see the file COPYING.  If not, see
+ * <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -144,7 +143,8 @@ bool nav_catapult_setup(void)
 
 bool nav_catapult_run(uint8_t _to, uint8_t _climb)
 {
-  
+  float alt = WaypointAlt(_climb);
+
   nav_catapult_armed = 1;
 
   // No Roll, Climb Pitch, No motor Phase
@@ -171,8 +171,8 @@ bool nav_catapult_run(uint8_t _to, uint8_t _climb)
   }
   // Normal Climb: Heading Locked by Waypoint Target
   else if (nav_catapult_launch == 0xffff) {
-    NavVerticalAutoThrottleMode(nav_catapult_initial_pitch);   // thro
-    NavVerticalThrottleMode(9600 * (nav_catapult_initial_throttle));
+    NavVerticalAltitudeMode(alt, 0);  // vertical mode (folow glideslope)
+    NavVerticalAutoThrottleMode(0);   // throttle mode
     NavGotoWaypoint(_climb);        // horizontal mode (stay on localiser)
   } else {
     // Store Heading, move Climb
@@ -183,8 +183,8 @@ bool nav_catapult_run(uint8_t _to, uint8_t _climb)
 
     float dir_L = sqrt(dir_x * dir_x + dir_y * dir_y);
 
-    WaypointX(_climb) = nav_catapult_x + (dir_x / dir_L) * 450;
-    WaypointY(_climb) = nav_catapult_y + (dir_y / dir_L) * 450;
+    WaypointX(_climb) = nav_catapult_x + (dir_x / dir_L) * 300;
+    WaypointY(_climb) = nav_catapult_y + (dir_y / dir_L) * 300;
 
     DownlinkSendWp(&(DefaultChannel).trans_tx, &(DefaultDevice).device, _climb);
   }
@@ -202,8 +202,3 @@ bool nav_select_touch_down(uint8_t _td)
   return false;
 }
 
-bool nav_catapult_disarm(void)
-{
-  nav_catapult_armed = 0;
-  return false;
-}

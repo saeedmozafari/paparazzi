@@ -73,4 +73,3 @@ extern void nav_catapult_highrate_module(void);
 extern bool nav_catapult_run(uint8_t _climb);
 
 #endif
-

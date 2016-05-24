@@ -25,15 +25,15 @@
       <message name="OPTIC_FLOW_EST"         period="0.25"/>
       <message name="IMU_GYRO_SCALED"        period="0.25"/>
       <message name="VECTORNAV_INFO"      period="0.5"/>
-      <message name="STAB_ATTITUDE_INDI"     period=".05"/>
-      <message name="GUIDANCE_H_INT"    period="0.05"/>
-	  <message name="H_CTL_A"    period="0.05"/>
-	  <message name="HOVER_LOOP"    period="0.05"/>
-	  <message name="AHRS_QUAT_INT"    period="0.05"/>
+      <message name="STAB_ATTITUDE_INDI"     period=".5"/>
+      <message name="GUIDANCE_H_INT"    period="0.5"/>
+	  <message name="H_CTL_A"    period="0.5"/>
+	  <message name="HOVER_LOOP"    period="0.5"/>
+	  <message name="AHRS_QUAT_INT"    period="0.5"/>
 	  <message name="STAB_ATTITUDE_INT"     period=".05"/>
-      <message name="STAB_ATTITUDE_REF_INT" period=".05"/>
-      <message name="STAB_ATTITUDE_FLOAT"     period=".05"/>
-      <message name="STAB_ATTITUDE_REF_FLOAT" period=".05"/>
+      <message name="STAB_ATTITUDE_REF_INT" period=".5"/>
+      <message name="STAB_ATTITUDE_FLOAT"     period=".5"/>
+      <message name="STAB_ATTITUDE_REF_FLOAT" period=".5"/>
       
 	  
     </mode>

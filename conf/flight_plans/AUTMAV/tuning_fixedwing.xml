@@ -5,7 +5,7 @@
     #include "subsystems/datalink/datalink.h"
     #include "modules/cartography/photogrammetry_calculator.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
-    #include "modules/nav/nav_catapult.h"
+    #include "modules/autmav/catapult.h"
 </header>
   <waypoints>
     <waypoint name="CAM" x="-60.0" y="-14.0"/>
@@ -43,15 +43,19 @@
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
+    </block-->
+    <block name="Arm Catapult" strip_button="Takeoff">
+      <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
+      <set value="0" var="kill_throttle"/>
+      <call fun="nav_catapult_setup()"/>
+      <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
     </block>
-    <block name="Catapult Take-Off" strip_button="Takeoff">
-   	<exception cond="GetPosAlt() > GetAltRef()+25" deroute="Standby"/>
-  	<set value="0" var="kill_throttle"/>
-  	<set value="0" var="autopilot_flight_time"/>
-  	<call fun="nav_catapult_run(WP_CLIMB)"/>
+    <block name="Disarm Catapult">
+      <call fun="nav_catapult_disarm()"/>
+      <deroute block="Standby"/>
     </block>
     <block name="Standby">
       <circle radius="nav_radius" wp="STDBY"/>

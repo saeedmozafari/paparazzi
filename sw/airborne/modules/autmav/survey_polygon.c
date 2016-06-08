@@ -20,9 +20,9 @@
  */
 
 /**
- * @file modules/nav/nav_survey_polygon.c
+ * @file modules/autmav/survey_polygon.c
  *
- * Advanced polygon survey for fixedwings from Uni Stuttgart.
+ * Modified polygon survey for fixedwings from AUTMAV team.
  *
  */
 
@@ -122,6 +122,20 @@ static bool get_two_intersects(struct FloatVect2 *x, struct FloatVect2 *y, struc
   return true;
 }
 
+bool nav_vicinity_xy(float x, float y, float approaching_distance)
+{
+  /** distance to waypoint in x */
+  float pw_x = x - stateGetPositionEnu_f()->x;
+  /** distance to waypoint in y */
+  float pw_y = y - stateGetPositionEnu_f()->y;
+
+  if (pw_x * pw_x + pw_y * pw_y <= approaching_distance * approaching_distance){
+  	return true;
+  } 
+  else {
+  	return false;
+  }
+}
 /**
  *  initializes the variables needed for the survey to start
  *  @param first_wp      the first Waypoint of the polygon
@@ -243,7 +257,7 @@ bool nav_survey_polygon_run(void)
     if (NavCourseCloseTo(survey.segment_angle)
         && nav_approaching_xy(survey.seg_start.x, survey.seg_start.y, last_x, last_y, CARROT)
         && fabs(stateGetPositionUtm_f()->alt - survey.psa_altitude) <= 20) {
-      survey.stage = SEG;
+      survey.stage = SEG1;
       nav_init_stage();
 #ifdef DIGITAL_CAM
       dc_survey(survey.psa_shot_dist, survey.seg_start.x - survey.dir_vec.x * survey.psa_shot_dist * 0.5,
@@ -252,62 +266,108 @@ bool nav_survey_polygon_run(void)
     }
   }
   //fly the segment until seg_end is reached
-  if (survey.stage == SEG) {
+  if (survey.stage == SEG1) {
     nav_points(survey.seg_start, survey.seg_end);
     //calculate all needed points for the next flyover
     if (nav_approaching_xy(survey.seg_end.x, survey.seg_end.y, survey.seg_start.x, survey.seg_start.y, 0)) {
 #ifdef DIGITAL_CAM
       dc_stop();
 #endif
-      VECT2_DIFF(survey.seg_center1, survey.seg_end, survey.rad_vec);
-      survey.ret_start.x = survey.seg_end.x - 2 * survey.rad_vec.x;
-      survey.ret_start.y = survey.seg_end.y - 2 * survey.rad_vec.y;
-
+      
       //if we get no intersection the survey is finished
       static struct FloatVect2 sum_start_sweep;
       static struct FloatVect2 sum_end_sweep;
       VECT2_SUM(sum_start_sweep, survey.seg_start, survey.sweep_vec);
       VECT2_SUM(sum_end_sweep, survey.seg_end, survey.sweep_vec);
+      //save leg start point
+      VECT2_COPY(survey.seg_leg_start, survey.seg_end);
+      //calculate start point and end point
       if (!get_two_intersects(&survey.seg_start, &survey.seg_end, sum_start_sweep, sum_end_sweep)) {
         return false;
       }
-
-      survey.ret_end.x = survey.seg_start.x - survey.sweep_vec.x - 2 * survey.rad_vec.x;
-      survey.ret_end.y = survey.seg_start.y - survey.sweep_vec.y - 2 * survey.rad_vec.y;
-
-      survey.seg_center2.x = survey.seg_start.x - 0.5 * (2.0 * survey.rad_vec.x + survey.sweep_vec.x);
-      survey.seg_center2.y = survey.seg_start.y - 0.5 * (2.0 * survey.rad_vec.y + survey.sweep_vec.y);
-
+      //exchange start point and end point
+      static struct FloatVect2 dummy;
+      VECT2_COPY(dummy, survey.seg_start);
+      VECT2_COPY(survey.seg_start, survey.seg_end);
+      VECT2_COPY(survey.seg_end, dummy);
+      //calculate turn circle center
+      VECT2_DIFF(survey.seg_center, survey.seg_start, survey.rad_vec);
+      //calculate leg end point
+      survey.seg_leg_end.x = survey.seg_start.x - 2 * survey.rad_vec.x +  survey.dir_vec.x * survey.psa_min_rad * 1.0;
+      survey.seg_leg_end.y = survey.seg_start.y - 2 * survey.rad_vec.y +  survey.dir_vec.y * survey.psa_min_rad * 1.0;
+      
       survey.stage = TURN1;
       nav_init_stage();
     }
-  }
-  //turn from stage to return
-  else if (survey.stage == TURN1) {
-    nav_circle_XY(survey.seg_center1.x, survey.seg_center1.y, -survey.psa_min_rad);
-    if (NavCourseCloseTo(survey.return_angle)) {
-      survey.stage = RET;
+  } else if (survey.stage == TURN1) {
+    nav_circle_XY(survey.seg_center.x, survey.seg_center.y, survey.psa_min_rad);
+    if (NavCourseCloseTo(survey.return_angle) && nav_vicinity_xy(survey.seg_start.x, survey.seg_start.y, survey.psa_sweep_width / 4.0)) {
+      survey.stage = SETUP1;
       nav_init_stage();
+#ifdef DIGITAL_CAM
+      dc_survey(survey.psa_shot_dist, survey.seg_start.x + survey.dir_vec.x * survey.psa_shot_dist * 0.5,
+                survey.seg_start.y + survey.dir_vec.y * survey.psa_shot_dist * 0.5);
+#endif
     }
-    //return
-  } else if (survey.stage == RET) {
-    nav_points(survey.ret_start, survey.ret_end);
-    if (nav_approaching_xy(survey.ret_end.x, survey.ret_end.y, survey.ret_start.x, survey.ret_start.y, 0)) {
+
+    //return setup
+  } else if (survey.stage == SETUP1) {
+    survey.return_angle += 180.0;
+    if (survey.return_angle < 0.0) { survey.return_angle += 360.0; }
+    if (survey.return_angle >= 360.0) { survey.return_angle -= 360.0; }
+    survey.psa_min_rad = -1.0 * survey.psa_min_rad;
+    survey.stage = SEG2;
+    nav_init_stage();
+  } else if (survey.stage == SEG2) {
+    nav_points(survey.seg_start, survey.seg_end);
+    //calculate all needed points for the next flyover
+    if (nav_approaching_xy(survey.seg_end.x, survey.seg_end.y, survey.seg_start.x, survey.seg_start.y, 0)) {
+#ifdef DIGITAL_CAM
+      dc_stop();
+#endif
+      
+      //if we get no intersection the survey is finished
+      static struct FloatVect2 sum_start_sweep;
+      static struct FloatVect2 sum_end_sweep;
+      VECT2_SUM(sum_start_sweep, survey.seg_start, survey.sweep_vec);
+      VECT2_SUM(sum_end_sweep, survey.seg_end, survey.sweep_vec);
+      //save leg start point
+      VECT2_COPY(survey.seg_leg_start, survey.seg_end);
+      //calculate start point and end point
+      if (!get_two_intersects(&survey.seg_start, &survey.seg_end, sum_start_sweep, sum_end_sweep)) {
+        return false;
+      }
+      //calculate turn circle center
+      VECT2_DIFF(survey.seg_center, survey.seg_start, survey.rad_vec);
+      //calculate leg end point
+      survey.seg_leg_end.x = survey.seg_start.x - 2 * survey.rad_vec.x +  survey.dir_vec.x * survey.psa_min_rad * 1.0;
+      survey.seg_leg_end.y = survey.seg_start.y - 2 * survey.rad_vec.y +  survey.dir_vec.y * survey.psa_min_rad * 1.0;
+      
       survey.stage = TURN2;
       nav_init_stage();
     }
-    //turn from return to stage
   } else if (survey.stage == TURN2) {
-    nav_circle_XY(survey.seg_center2.x, survey.seg_center2.y, -(2 * survey.psa_min_rad + survey.psa_sweep_width) * 0.5);
-    if (NavCourseCloseTo(survey.segment_angle)) {
-      survey.stage = SEG;
+    nav_circle_XY(survey.seg_center.x, survey.seg_center.y, survey.psa_min_rad);
+    if (NavCourseCloseTo(survey.return_angle) && nav_vicinity_xy(survey.seg_start.x, survey.seg_start.y, survey.psa_sweep_width / 4.0)) {
+      survey.stage = SETUP2;
       nav_init_stage();
 #ifdef DIGITAL_CAM
       dc_survey(survey.psa_shot_dist, survey.seg_start.x - survey.dir_vec.x * survey.psa_shot_dist * 0.5,
                 survey.seg_start.y - survey.dir_vec.y * survey.psa_shot_dist * 0.5);
 #endif
     }
+
+    //return setup
+  } else if (survey.stage == SETUP2) {
+    survey.return_angle += 180.0;
+    if (survey.return_angle < 0.0) { survey.return_angle += 360.0; }
+    if (survey.return_angle >= 360.0) { survey.return_angle -= 360.0; }
+    survey.psa_min_rad = -1.0 * survey.psa_min_rad;
+    survey.stage = SEG1;
+    nav_init_stage();
   }
+  
+  
 
   return true;
 }

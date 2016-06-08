@@ -37,12 +37,11 @@
   states until to polygon is completely covered
   ENTRY : getting in the right position and height for the first flyover
   SEG   : fly from seg_start to seg_end and take pictures,
-  then calculate navigation points of next flyover
-  TURN1 : do a 180° turn around seg_center1
-  RET   : fly from ret_start to ret_end
-  TURN2 : do a 180° turn around seg_center2
+  then calculate the first correction leg
+  LEG : course correction for a 180° turn
+  TURN : do a 180° turn around seg_center and return to segment
 */
-enum SurveyStage {ERR, ENTRY, SEG, TURN1, RET, TURN2};
+enum SurveyStage {ERR, ENTRY, SEG1, SETUP1, TURN1, SEG2, SETUP2, TURN2};
 
 struct SurveyPolyAdv {
   /*
@@ -75,11 +74,11 @@ struct SurveyPolyAdv {
   // points for navigation
   struct FloatVect2 seg_start;
   struct FloatVect2 seg_end;
-  struct FloatVect2 seg_center1;
-  struct FloatVect2 seg_center2;
+  struct FloatVect2 seg_center;
   struct FloatVect2 entry_center;
-  struct FloatVect2 ret_start;
-  struct FloatVect2 ret_end;
+  struct FloatVect2 seg_leg_start;
+  struct FloatVect2 seg_leg_end;
+
 };
 
 extern bool nav_survey_polygon_setup(uint8_t first_wp, uint8_t size, float angle, float sweep_width, float shot_dist,

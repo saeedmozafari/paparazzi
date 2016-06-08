@@ -25,6 +25,7 @@
     <define name="DC_SHOT_SYNC_SEND" value="TRUE|FALSE" description="send DC_SHOT message when photo was taken (default: TRUE)"/>
     <define name="DC_STABILIZED_SHOT" value="TRUE|FALSE" description="stabilized shot activation (default: TRUE)"/>
     <define name="DC_STABILIZED_SHOT_CARROT" value="2.0" description="stabilized shot carrot time (default: 1.5)"/>
+    <define name="DC_CAMERA_SHOT_DELAY" value="3.0" description="minimum delay after last shot to let the camera get ready (default: 3.0)"/>
   </doc>
   <settings>
     <dl_settings name="control">
@@ -49,7 +50,8 @@
         <dl_setting max="90" min="5" step="5" module="autmav/dc" var="dc_circle_interval" handler="Circle" shortname="Circle-Interval"/>
         <dl_setting max="1" min="0" step="1" var="dc_cam_tracing" shortname="Cam-Tracing"/>
         <dl_setting var="dc_stabilized_shot" min="0" step="1" max="1" module="autmav/dc" shortname="stb_shot" type="bool" values="OFF|ON" param="DC_STABILIZED_SHOT"/> 
-        <dl_setting var="dc_stabilized_shot_carrot" min="0" step="0.1" max="10" module="autmav/dc" shortname="stb_carrot" type="float" param="DC_STABILIZED_SHOT_CARROT"/>     
+        <dl_setting var="dc_stabilized_shot_carrot" min="0" step="0.1" max="10" module="autmav/dc" shortname="stb_carrot" type="float" param="DC_STABILIZED_SHOT_CARROT"/>    
+        <dl_setting var="dc_camera_shot_delay" min="0" step="0.1" max="5" module="autmav/dc" shortname="cam_delay" type="float" param="DC_CAMERA_SHOT_DELAY"/> 
       </dl_settings>
     </dl_settings>
   </settings>

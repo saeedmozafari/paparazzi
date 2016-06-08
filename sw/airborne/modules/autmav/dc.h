@@ -50,6 +50,7 @@ extern uint16_t dc_gps_count;
 
 extern bool dc_stabilized_shot;
 extern float dc_stabilized_shot_carrot;
+extern float dc_camera_shot_delay;
 /*
  * Variables for PERIODIC mode.
  */

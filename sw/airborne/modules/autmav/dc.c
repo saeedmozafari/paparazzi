@@ -71,6 +71,10 @@
 #define DC_STABILIZED_SHOT_CARROT 1.5 //units in secondes
 #endif
 
+#ifndef DC_CAMERA_SHOT_DELAY
+#define DC_CAMERA_SHOT_DELAY 3.0 //units in secondes
+#endif
+
 // Variables with boot defaults
 dc_autoshoot_type dc_autoshoot = DC_AUTOSHOOT_STOP;
 uint16_t dc_gps_count = 0;
@@ -86,6 +90,7 @@ float dc_survey_interval = DC_AUTOSHOOT_SURVEY_INTERVAL;
 float dc_gps_next_dist = 0;
 float dc_gps_x = 0;
 float dc_gps_y = 0;
+float dc_camera_shot_delay = DC_CAMERA_SHOT_DELAY;
 /* parameters for stabilization during shot */ 
 bool dc_stabilized_shot = DC_STABILIZED_SHOT;
 float dc_stabilized_shot_carrot = DC_STABILIZED_SHOT_CARROT;
@@ -331,16 +336,21 @@ void dc_periodic(void)
     case DC_AUTOSHOOT_SURVEY: {
       float dist_x = dc_gps_x - stateGetPositionEnu_f()->x;
       float dist_y = dc_gps_y - stateGetPositionEnu_f()->y;
-	  dc_info();
+	    dc_info();
+      
       if (dist_x * dist_x + dist_y * dist_y >= dc_gps_next_dist * dc_gps_next_dist) {
         dc_gps_next_dist += dc_survey_interval;
         dc_gps_count++;
-        dc_send_command(DC_SHOOT);
-        dc_last_shot_time = get_sys_time_float();
+        if (dc_time_after_last_shot >= dc_camera_shot_delay) {
+          dc_send_command(DC_SHOOT);
+          dc_last_shot_time = get_sys_time_float();
+        }
       }
+
+      dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
+      dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
+
       if (dc_stabilized_shot) {
-      	dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
-      	dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
       	if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
       		
       		NavAttitude(0.0);

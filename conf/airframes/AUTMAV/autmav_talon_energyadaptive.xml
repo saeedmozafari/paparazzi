@@ -70,7 +70,7 @@
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>
     </load>
-    <load name="photogrammetry_calculator.xml"/>  
+    <load name="autmav/photogrammetry_calculator.xml"/>  
     
   </modules>
 
@@ -196,7 +196,7 @@
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
     <define name="COURSE_PGAIN" value="0.8"/>
     <define name="COURSE_DGAIN" value="1.4"/>
-    <define name="ROLL_MAX_SETPOINT" value="35" unit="deg"/>
+    <define name="ROLL_MAX_SETPOINT" value="40" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>
     <define name="PITCH_MIN_SETPOINT" value="-30" unit="deg"/>
     <define name="PITCH_PGAIN" value="20000"/>

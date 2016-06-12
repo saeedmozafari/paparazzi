@@ -76,7 +76,7 @@
       <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-(nav_radius/fabs(nav_radius))*10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
     </block>
     <block name="final">
-      <exception cond="GetAltRef() + 10 > GetPosAlt()" deroute="flare"/>
+      <exception cond="GetAltRef() + 5 > GetPosAlt()" deroute="flare"/>
       <go from="AF" hmode="route" vmode="glide" wp="TD"/>
     </block>
     <block name="flare">

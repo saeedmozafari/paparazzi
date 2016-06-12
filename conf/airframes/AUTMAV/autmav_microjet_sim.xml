@@ -199,7 +199,7 @@
   		<define name="DC_PUSH" value="gpio_set"/>
   		<define name="DC_RELEASE" value="gpio_clear"/>
     </module>
-    <module name="photogrammetry_calculator.xml" />  
+    <module name="autmav/photogrammetry_calculator.xml" />  
     <module name="autmav/catapult.xml"/>  
 </firmware>
 

@@ -182,8 +182,10 @@
     </module>
     <module name="gps"       type="ublox"/>
     <module name="infrared_adc"/>
-    <module name="ahrs" type="infrared"/>
-    <module name="ins" type="alt_float"/>
+    <module name="ahrs" type="int_cmpl_quat">
+      <configure name="USE_MAGNETOMETER" value="TRUE"/>
+      <define name="AHRS_USE_GPS_HEADING" value="FALSE"/>
+    </module><module name="ins" type="alt_float"/>
 
     <module name="control"/>
     <module name="navigation"/>

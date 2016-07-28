@@ -26,7 +26,10 @@
     <subsystem name="actuators" type="ardrone2"/>
     <subsystem name="imu" type="ardrone2"/>
     <!-- gps: "ublox" or change to "sirf" for usage with parrot flight recorder -->
-    <module name="gps" type="ublox"/>
+    <module name="gps" type="ublox">
+      <configure name="GPS_BAUD" value="B115200"/>
+      <define name="GPS_UBX_UCENTER_RATE" value="200"/>
+    </module>
     <subsystem name="stabilization" type="int_quat_consensus"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
     <subsystem name="ins" type="extended"/>
@@ -178,6 +181,7 @@
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
     <!-- Good weather -->
     <define name="MAX_BANK" value="20" unit="deg"/>
+    <define name="REF_MAX_SPEED" value="1.5"/>
     <!-- Bad weather -->
     <!-- define name="MAX_BANK" value="32" unit="deg"/ -->
     <define name="PGAIN" value="79"/>

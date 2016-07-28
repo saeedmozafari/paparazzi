@@ -133,17 +133,17 @@
   <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
     <!-- control effectiveness -->
     <define name="G1_P" value="0.025"/>
-    <define name="G1_Q" value="0.025"/>
-    <define name="G1_R" value="0.0025"/>
-    <define name="G2_R" value="0.2"/>
+    <define name="G1_Q" value="0.0"/>
+    <define name="G1_R" value="0.0"/>
+    <define name="G2_R" value="0.0"/>
 
     <!-- reference acceleration for attitude control -->
     <define name="REF_ERR_P" value="400.0"/>
-    <define name="REF_ERR_Q" value="400.0"/>
-    <define name="REF_ERR_R" value="300.0"/>
-    <define name="REF_RATE_P" value="28."/>
-    <define name="REF_RATE_Q" value="33.0"/>
-    <define name="REF_RATE_R" value="28.0"/>
+    <define name="REF_ERR_Q" value="0.0"/>
+    <define name="REF_ERR_R" value="0.0"/>
+    <define name="REF_RATE_P" value="28.0"/>
+    <define name="REF_RATE_Q" value="0.0"/>
+    <define name="REF_RATE_R" value="0.0"/>
 
     <!-- second order filter parameters -->
     <define name="FILT_OMEGA" value="50.0"/>

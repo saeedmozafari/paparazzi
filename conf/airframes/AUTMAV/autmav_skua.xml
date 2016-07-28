@@ -4,7 +4,6 @@
 
   <firmware name="fixedwing">
     <target name="ap" 			board="apogee_1.0">
-          <configure name="PERIODIC_FREQUENCY" value="120"/>
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>

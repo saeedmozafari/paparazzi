@@ -1,12 +1,13 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1115" ground_alt="1035" lat0="35.435071" lon0="51.639084" max_dist_from_home="400" name="Basic" security_height="25">
+<flight_plan alt="1115" ground_alt="1035" lat0="35.435071" lon0="51.639084" max_dist_from_home="1500" name="Basic" security_height="25">
   <header>
     #include "subsystems/datalink/datalink.h"
 </header>
   <waypoints>
     <waypoint name="HOME" x="0" y="0"/>
-    <waypoint name="STDBY" x="-3.8" y="10.4"/>
+    <waypoint name="STDBY" x="-3.8" y="10.4" height="100.0"/>
+    <waypoint name="STDBY2" x="0.0" y="5.4" height="180.0"/>    
     <waypoint name="1" x="9.8" y="-12.3"/>
     <waypoint name="2" x="81.3" y="22.3"/>
     <waypoint name="AF" x="-42.0" y="69.7" height="35.0"/>
@@ -25,11 +26,14 @@
       <while cond="LessThan(NavBlockTime(), 10)"/>
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
-	  <set value="80" var="nav_radius"/>	
+      <set value="100" var="nav_radius"/>	
     </block>
     <block name="Standby">
       <set value="0" var="kill_throttle"/>
       <circle radius="nav_radius" wp="STDBY"/>
+    </block>
+    <block name="Standby2">
+      <circle radius="nav_radius" wp="STDBY2"/>
     </block>
     <block name="Figure 8 around wp 1">
       <eight center="1" radius="nav_radius" turn_around="2"/>

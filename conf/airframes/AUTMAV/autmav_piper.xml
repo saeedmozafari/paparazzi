@@ -3,16 +3,13 @@
 <airframe name="Wingman">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0_chibios">
+    <target name="ap" board="apogee_1.0">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
-	  <subsystem name="radio_control" type="sbus">
-      	  	<configure name="SBUS_PORT" value="UART2"/>
-          </subsystem>
 	  <define name="USE_KFF_UPDATE_ROLL"/>
           <define name="USE_KFF_UPDATE_PITCH"/>
   	 
@@ -20,7 +17,7 @@
     </target>
 
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <subsystem name="radio_control" type="sbus"/>
+    <subsystem name="radio_control" type="ppm"/>
     <subsystem name="telemetry" type="transparent"/>
     <subsystem name="control" type="adaptive"/>
     <subsystem name="imu" type="apogee"/>
@@ -51,7 +48,7 @@
     <servo name="THROTTLE"      no="0" min="1050" neutral="1050" max="1950"/>
     <servo name="ELEVATOR"      no="1" min="2010" neutral="1500" max="988"/>
     <servo name="AILERON"       no="2" min="1950" neutral="1500" max="1050"/>
-	<servo name="RUDDER"        no="3" min="1050"  neutral="1500" max="1950"/>    
+    <servo name="RUDDER"        no="3" min="1050"  neutral="1500" max="1950"/>    
   </servos>
 
   <commands>

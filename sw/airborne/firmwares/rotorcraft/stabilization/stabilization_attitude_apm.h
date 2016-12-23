@@ -20,34 +20,25 @@
  */
 
 /**
- * @file stabilization_attitude_common_float.h
+ * @file stabilization_attitude_euler_float.h
  *
- * Common data structures shared by euler and quaternion float implementations.
+ * Rotorcraft attitude stabilization in euler float version.
  */
 
+//#ifndef STABILIZATION_ATTITUDE_EULER_FLOAT_H
+//#define STABILIZATION_ATTITUDE_EULER_FLOAT_H
 
-#ifndef STABILIZATION_ATTITUDE_COMMON_FLOAT_H
-#define STABILIZATION_ATTITUDE_COMMON_FLOAT_H
+#ifndef STABILIZATION_ATTITUDE_APM_H
+#define STABILIZATION_ATTITUDE_APM_H
 
 #include "math/pprz_algebra_float.h"
+#include "firmwares/rotorcraft/stabilization/stabilization_attitude_common_float.h"
+#include "firmwares/rotorcraft/stabilization/stabilization_attitude_ref_euler_float.h"
 
-#include "generated/airframe.h"
+extern struct FloatAttitudeGains stabilization_gains;
+extern struct FloatEulers stabilization_att_sum_err;
 
+extern struct FloatEulers stab_att_sp_euler;
+extern struct AttRefEulerFloat att_ref_euler_f;
 
-struct FloatAttitudeGains {
-  struct FloatVect3  p;
-  struct FloatVect3  d;
-  struct FloatVect3  dd;
-  struct FloatVect3  rates_p;
-  struct FloatVect3  rates_d;
-  struct FloatVect3  i;
-  struct FloatVect3  surface_p;
-  struct FloatVect3  surface_d;
-  struct FloatVect3  surface_dd;
-  struct FloatVect3  surface_i;
-};
-
-extern float stabilization_att_fb_cmd[COMMANDS_NB];
-extern float stabilization_att_ff_cmd[COMMANDS_NB];
-
-#endif /* STABILIZATION_ATTITUDE_COMMON_FLOAT_H */
+#endif /* STABILIZATION_ATTITUDE_EULER_FLOAT_H */

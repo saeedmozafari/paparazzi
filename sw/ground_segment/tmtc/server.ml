@@ -27,6 +27,7 @@ let gps_mode_3D = 3
 let no_md5_check = ref false
 let replay_old_log = ref false
 
+
 open Printf
 open Latlong
 open Server_globals
@@ -51,12 +52,6 @@ let srtm_path = Env.paparazzi_home // "data" // "srtm"
 let get_indexed_value = fun t i ->
   if i >= 0 then t.(i) else "UNK"
 
-let modes_of_type = fun vt ->
-  match vt with
-      FixedWing -> fixedwing_ap_modes
-    | Rotorcraft -> rotorcraft_ap_modes
-    | UnknownVehicleType -> [| |]
-
 (** The aircrafts store *)
 let aircrafts = Hashtbl.create 3
 
@@ -66,7 +61,7 @@ let wind_msg_period = 5000 (* ms *)
 let aircraft_alerts_period = 1000 (* ms *)
 let send_aircrafts_msg = fun _asker _values ->
   assert(_values = []);
-  let names = String.concat "," (Hashtbl.fold (fun k _v r -> k::r) aircrafts []) ^ "," in
+  let names = Compat.bytes_concat "," (Hashtbl.fold (fun k _v r -> k::r) aircrafts []) ^ "," in
   ["ac_list", PprzLink.String names]
 
 
@@ -364,16 +359,29 @@ let send_aircraft_msg = fun ac ->
       begin
         let cm_of_m_32 = fun f -> PprzLink.Int32 (Int32.of_int (truncate (100. *. f))) in
         let cm_of_m = fun f -> PprzLink.Int (truncate (100. *. f)) in
-        let pos = LL.utm_of WGS84 a.pos in
-        let ac_info = ["ac_id", PprzLink.String ac;
-                       "utm_east", cm_of_m_32 pos.utm_x;
-                       "utm_north", cm_of_m_32 pos.utm_y;
-                       "course", PprzLink.Int (truncate (10. *. (Geometry_2d.rad2deg a.course)));
-                       "alt", cm_of_m_32 a.alt;
-                       "speed", cm_of_m a.gspeed;
-                       "climb", cm_of_m a.climb;
-                       "itow", PprzLink.Int64 a.itow] in
-        Dl_Pprz.message_send dl_id "ACINFO" ac_info;
+        if a.vehicle_type = FixedWing then
+          let pos = LL.utm_of WGS84 a.pos in
+          let ac_info = ["ac_id", PprzLink.String ac;
+                         "utm_east", cm_of_m_32 pos.utm_x;
+                         "utm_north", cm_of_m_32 pos.utm_y;
+                         "utm_zone", PprzLink.Int pos.utm_zone;
+                         "course", PprzLink.Int (truncate (10. *. (Geometry_2d.rad2deg a.course)));
+                         "alt", cm_of_m_32 a.alt;
+                         "speed", cm_of_m a.gspeed;
+                         "climb", cm_of_m a.climb;
+                         "itow", PprzLink.Int64 a.itow] in
+          Dl_Pprz.message_send dl_id "ACINFO" ac_info;
+        else
+          let deg7_of_rad = fun f -> PprzLink.Int32 (Int32.of_float (Geometry_2d.rad2deg (f *. 1e7))) in
+          let ac_info_lla = ["ac_id", PprzLink.String ac;
+                             "lat", deg7_of_rad a.pos.posn_lat;
+                             "lon", deg7_of_rad a.pos.posn_long;
+                             "course", PprzLink.Int (truncate (10. *. (Geometry_2d.rad2deg a.course)));
+                             "alt", cm_of_m_32 a.alt;
+                             "speed", cm_of_m a.gspeed;
+                             "climb", cm_of_m a.climb;
+                             "itow", PprzLink.Int64 a.itow] in
+          Dl_Pprz.message_send dl_id "ACINFO_LLA" ac_info_lla;
       end;
 
     if !Kml.enabled then
@@ -408,7 +416,7 @@ let send_aircraft_msg = fun ac ->
                   "energy", PprzLink.Int a.energy] in
     Ground_Pprz.message_send my_id "ENGINE_STATUS" values;
 
-    let ap_mode = get_indexed_value (modes_of_type a.vehicle_type) a.ap_mode in
+    let ap_mode = get_indexed_value (modes_of_aircraft a) a.ap_mode in
     let gaz_mode = get_indexed_value gaz_modes a.gaz_mode in
     let lat_mode = get_indexed_value lat_modes a.lateral_mode in
     let horiz_mode = get_indexed_value horiz_modes a.horizontal_mode in
@@ -449,9 +457,9 @@ let send_aircraft_msg = fun ac ->
 
 (** Check if it is a replayed A/C (c.f. sw/logalizer/play.ml) *)
 let replayed = fun ac_id ->
-  let n = String.length ac_id in
-  if n > 6 && String.sub ac_id 0 6 = "replay" then
-    (true, String.sub ac_id 6 (n - 6), "/var/replay/", ExtXml.parse_file (Env.paparazzi_home // "var/replay/conf/conf.xml"))
+  let n = Compat.bytes_length ac_id in
+  if n > 6 && Compat.bytes_sub ac_id 0 6 = "replay" then
+    (true, Compat.bytes_sub ac_id 6 (n - 6), "/var/replay/", ExtXml.parse_file (Env.paparazzi_home // "var/replay/conf/conf.xml"))
   else
     (false, ac_id, "", conf_xml)
 
@@ -479,7 +487,7 @@ let check_md5sum = fun ac_name alive_md5sum aircraft_conf_dir ->
     match alive_md5sum with
         PprzLink.Array array ->
           let n = Array.length array in
-          assert(n = String.length md5sum / 2);
+          assert(n = Compat.bytes_length md5sum / 2);
           for i = 0 to n - 1 do
             let x = int_of_string (sprintf "0x%c%c" md5sum.[2*i] md5sum.[2*i+1]) in
             assert (x = PprzLink.int_of_value array.(i))
@@ -490,7 +498,7 @@ let check_md5sum = fun ac_name alive_md5sum aircraft_conf_dir ->
       match alive_md5sum with
           PprzLink.Array array ->
             let n = Array.length array in
-            assert(n = String.length md5sum / 2);
+            assert(n = Compat.bytes_length md5sum / 2);
             for i = 0 to n - 1 do
               let x = 0 in
               assert (x = PprzLink.int_of_value array.(i))
@@ -530,6 +538,11 @@ let new_aircraft = fun get_alive_md5sum real_id ->
     for i = 0 to Array.length ac.svinfo - 1 do
       ac.svinfo.(i).age <-  ac.svinfo.(i).age + 1;
     done in
+
+  ignore (ac.ap_modes <- try
+    let (ap_file, _) = Gen_common.get_autopilot_of_airframe airframe_xml in
+    Some (modes_from_autopilot (ExtXml.parse_file ap_file))
+  with _ -> None);
 
   ignore (Glib.Timeout.add 1000 (fun _ -> update (); true));
 
@@ -750,6 +763,14 @@ let move_wp = fun logging _sender vs ->
   Dl_Pprz.message_send dl_id "MOVE_WP" vs;
   log logging ac_id "MOVE_WP" vs
 
+(** Got a DL_EMERGENCY_CMD, and send an EMERGENCY_CMD *)
+let emergency_cmd = fun logging _sender vs ->
+  let ac_id = PprzLink.string_assoc "ac_id" vs in
+  let vs = [ "ac_id", PprzLink.String ac_id;
+             "cmd", List.assoc "cmd" vs] in
+  Dl_Pprz.message_send dl_id "EMERGENCY_CMD" vs;
+  log logging ac_id "EMERGENCY_CMD" vs
+
 (** Got a DL_SETTING, and send an SETTING *)
 let setting = fun logging _sender vs ->
   let ac_id = PprzLink.string_assoc "ac_id" vs in
@@ -788,8 +809,8 @@ let jump_block = fun logging _sender vs ->
 let raw_datalink = fun logging _sender vs ->
   let ac_id = PprzLink.string_assoc "ac_id" vs
   and m = PprzLink.string_assoc "message" vs in
-  for i = 0 to String.length m - 1 do
-    if m.[i] = ';' then m.[i] <- ' '
+  for i = 0 to Compat.bytes_length m - 1 do
+    if m.[i] = ';' then Compat.bytes_set m i ' '
   done;
   let msg_id, vs = Dl_Pprz.values_of_string m in
   let msg = Dl_Pprz.message_of_id msg_id in
@@ -820,6 +841,7 @@ let ground_to_uplink = fun logging ->
   let bind_log_and_send = fun name handler ->
     ignore (Ground_Pprz.message_bind name (handler logging)) in
   bind_log_and_send "MOVE_WAYPOINT" move_wp;
+  bind_log_and_send "DL_EMERGENCY_CMD" emergency_cmd;
   bind_log_and_send "DL_SETTING" setting;
   bind_log_and_send "GET_DL_SETTING" get_setting;
   bind_log_and_send "JUMP_TO_BLOCK" jump_block;

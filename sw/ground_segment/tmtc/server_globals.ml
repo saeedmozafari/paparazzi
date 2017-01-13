@@ -1,5 +1,6 @@
 exception Telemetry_error of string * string
 
+
 (* options for serving xml config files and kml via http *)
 let hostname = ref "localhost"
 let port = ref 8889
@@ -18,4 +19,15 @@ let horiz_modes = [|"WAYPOINT";"ROUTE";"CIRCLE";"ATTITUDE";"MANUAL"|]
 let if_modes = [|"OFF";"DOWN";"UP"|]
 
 let string_of_values = fun values ->
-  String.concat " " (List.map (fun (_, v) -> PprzLink.string_of_value v) values)
+  Compat.bytes_concat " " (List.map (fun (_, v) -> PprzLink.string_of_value v) values)
+
+(** get modes from autopilot xml file *)
+let modes_from_autopilot = fun ap_xml ->
+  let ap = ExtXml.child ap_xml
+    ~select:(fun x -> String.uppercase (ExtXml.attrib_or_default x "gcs_mode" "") = "TRUE")
+    "state_machine"
+  in
+  let modes = List.filter (fun x -> Xml.tag x = "mode") (Xml.children ap) in
+  let l = List.map (fun x -> try Xml.attrib x "shortname" with _ -> ExtXml.attrib x "name") modes in
+  Array.of_list l
+

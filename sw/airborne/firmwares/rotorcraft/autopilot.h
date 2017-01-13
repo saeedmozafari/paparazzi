@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008-2009 Antoine Drouin <poinix@gmail.com>
+ * Copyright (C) 2016 Gautier Hattenberger <gautier.hattenberger@enac.fr>
  *
  * This file is part of paparazzi.
  *
@@ -22,7 +23,8 @@
 /**
  * @file firmwares/rotorcraft/autopilot.h
  *
- * Autopilot modes.
+ * Core autopilot file.
+ * Using either static or generated autopilot logic.
  *
  */
 
@@ -32,27 +34,19 @@
 #include "std.h"
 #include "generated/airframe.h"
 #include "state.h"
+#include "firmwares/rotorcraft/autopilot_utils.h"
 
-#define AP_MODE_KILL              0
-#define AP_MODE_FAILSAFE          1
-#define AP_MODE_HOME              2
-#define AP_MODE_RATE_DIRECT       3
-#define AP_MODE_ATTITUDE_DIRECT   4
-#define AP_MODE_RATE_RC_CLIMB     5
-#define AP_MODE_ATTITUDE_RC_CLIMB 6
-#define AP_MODE_ATTITUDE_CLIMB    7
-#define AP_MODE_RATE_Z_HOLD       8
-#define AP_MODE_ATTITUDE_Z_HOLD   9
-#define AP_MODE_HOVER_DIRECT      10
-#define AP_MODE_HOVER_CLIMB       11
-#define AP_MODE_HOVER_Z_HOLD      12
-#define AP_MODE_NAV               13
-#define AP_MODE_RC_DIRECT         14  // Safety Pilot Direct Commands for helicopter direct control
-#define AP_MODE_CARE_FREE_DIRECT  15
-#define AP_MODE_FORWARD           16
-#define AP_MODE_MODULE            17
-#define AP_MODE_FLIP              18
-#define AP_MODE_GUIDED            19
+// include static or generated autopilot
+// static version by default
+#ifndef USE_GENERATED_AUTOPILOT
+#define USE_GENERATED_AUTOPILOT FALSE
+#endif
+
+#if USE_GENERATED_AUTOPILOT
+#include "firmwares/rotorcraft/autopilot_generated.h"
+#else
+#include "firmwares/rotorcraft/autopilot_static.h"
+#endif
 
 extern uint8_t autopilot_mode;
 extern uint8_t autopilot_mode_auto2;
@@ -60,6 +54,7 @@ extern bool autopilot_motors_on;
 extern bool autopilot_in_flight;
 extern bool kill_throttle;
 extern bool autopilot_rc;
+extern uint32_t autopilot_in_flight_counter;
 
 extern bool autopilot_power_switch;
 
@@ -67,6 +62,7 @@ extern void autopilot_init(void);
 extern void autopilot_periodic(void);
 extern void autopilot_on_rc_frame(void);
 extern void autopilot_set_mode(uint8_t new_autopilot_mode);
+extern void autopilot_SetModeHandler(float new_autopilot_mode); // handler for dl_setting
 extern void autopilot_set_motors_on(bool motors_on);
 extern void autopilot_check_in_flight(bool motors_on);
 
@@ -75,24 +71,11 @@ extern bool autopilot_detect_ground_once;
 
 extern uint16_t autopilot_flight_time;
 
-/** Default RC mode.
- */
-#ifndef MODE_MANUAL
-#define MODE_MANUAL AP_MODE_ATTITUDE_DIRECT
-#endif
-#ifndef MODE_AUTO1
-#define MODE_AUTO1 AP_MODE_HOVER_Z_HOLD
-#endif
-#ifndef MODE_AUTO2
-#define MODE_AUTO2 AP_MODE_NAV
-#endif
-
-
 #define autopilot_KillThrottle(_kill) { \
     if (_kill)                          \
-      autopilot_set_motors_on(FALSE);   \
+      autopilot_set_motors_on(false);   \
     else                                \
-      autopilot_set_motors_on(TRUE);    \
+      autopilot_set_motors_on(true);    \
   }
 
 #ifdef POWER_SWITCH_GPIO
@@ -108,39 +91,6 @@ extern uint16_t autopilot_flight_time;
   }
 #endif
 
-/** Set Rotorcraft commands.
- *  Limit thrust and/or yaw depending of the in_flight
- *  and motors_on flag status
- */
-#ifdef ROTORCRAFT_IS_HELI
-#define SetRotorcraftCommands(_cmd, _in_flight,  _motor_on) { \
-    commands[COMMAND_ROLL] = _cmd[COMMAND_ROLL];                \
-    commands[COMMAND_PITCH] = _cmd[COMMAND_PITCH];              \
-    commands[COMMAND_YAW] = _cmd[COMMAND_YAW];                  \
-    commands[COMMAND_THRUST] = _cmd[COMMAND_THRUST];            \
-  }
-#else
-
-#ifndef ROTORCRAFT_COMMANDS_YAW_ALWAYS_ENABLED
-#define SetRotorcraftCommands(_cmd, _in_flight,  _motor_on) { \
-    if (!(_in_flight)) { _cmd[COMMAND_YAW] = 0; }               \
-    if (!(_motor_on)) { _cmd[COMMAND_THRUST] = 0; }             \
-    commands[COMMAND_ROLL] = _cmd[COMMAND_ROLL];                \
-    commands[COMMAND_PITCH] = _cmd[COMMAND_PITCH];              \
-    commands[COMMAND_YAW] = _cmd[COMMAND_YAW];                  \
-    commands[COMMAND_THRUST] = _cmd[COMMAND_THRUST];            \
-  }
-#else
-#define SetRotorcraftCommands(_cmd, _in_flight,  _motor_on) { \
-    if (!(_motor_on)) { _cmd[COMMAND_THRUST] = 0; }             \
-    commands[COMMAND_ROLL] = _cmd[COMMAND_ROLL];                \
-    commands[COMMAND_PITCH] = _cmd[COMMAND_PITCH];              \
-    commands[COMMAND_YAW] = _cmd[COMMAND_YAW];                  \
-    commands[COMMAND_THRUST] = _cmd[COMMAND_THRUST];            \
-  }
-#endif
-#endif
-
 /** Z-acceleration threshold to detect ground in m/s^2 */
 #ifndef THRESHOLD_GROUND_DETECT
 #define THRESHOLD_GROUND_DETECT 25.0
@@ -149,7 +99,11 @@ extern uint16_t autopilot_flight_time;
  */
 static inline void DetectGroundEvent(void)
 {
-  if (autopilot_mode == AP_MODE_FAILSAFE || autopilot_detect_ground_once) {
+  if (autopilot_detect_ground_once
+#ifdef AP_MODE_FAILSAFE
+      || autopilot_mode == AP_MODE_FAILSAFE
+#endif
+     ) {
     struct NedCoor_f *accel = stateGetAccelNed_f();
     if (accel->z < -THRESHOLD_GROUND_DETECT ||
         accel->z > THRESHOLD_GROUND_DETECT) {
@@ -182,41 +136,5 @@ static inline void autopilot_ClearSettings(float clear)
 #include "pprzlink/pprzlink_transport.h"
 extern void send_autopilot_version(struct transport_tx *trans, struct link_device *dev);
 #endif
-
-/** Set position and heading setpoints in GUIDED mode.
- * @param x North position (local NED frame) in meters.
- * @param y East position (local NED frame) in meters.
- * @param z Down position (local NED frame) in meters.
- * @param heading Setpoint in radians.
- * @return TRUE if setpoint was set (currently in AP_MODE_GUIDED)
- */
-extern bool autopilot_guided_goto_ned(float x, float y, float z, float heading);
-
-/** Set position and heading setpoints wrt. current position in GUIDED mode.
- * @param dx Offset relative to current north position (local NED frame) in meters.
- * @param dy Offset relative to current east position (local NED frame) in meters.
- * @param dz Offset relative to current down position (local NED frame) in meters.
- * @param dyaw Offset relative to current heading setpoint in radians.
- * @return TRUE if setpoint was set (currently in AP_MODE_GUIDED)
- */
-extern bool autopilot_guided_goto_ned_relative(float dx, float dy, float dz, float dyaw);
-
-/** Set position and heading setpoints wrt. current position AND heading in GUIDED mode.
- * @param dx relative position (body frame, forward) in meters.
- * @param dy relative position (body frame, right) in meters.
- * @param dz relative position (body frame, down) in meters.
- * @param dyaw Offset relative to current heading setpoint in radians.
- * @return TRUE if setpoint was set (currently in AP_MODE_GUIDED)
- */
-extern bool autopilot_guided_goto_body_relative(float dx, float dy, float dz, float dyaw);
-
-/** Set velocity and heading setpoints in GUIDED mode.
- * @param vx North velocity (local NED frame) in meters/sec.
- * @param vy East velocity (local NED frame) in meters/sec.
- * @param vz Down velocity (local NED frame) in meters/sec.
- * @param heading Setpoint in radians.
- * @return TRUE if setpoint was set (currently in AP_MODE_GUIDED)
- */
-extern bool autopilot_guided_move_ned(float vx, float vy, float vz, float heading);
 
 #endif /* AUTOPILOT_H */

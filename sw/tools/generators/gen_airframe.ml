@@ -24,6 +24,7 @@
 
 let max_pprz = 9600. (* !!!! MAX_PPRZ From paparazzi.h !!!! *)
 
+
 open Printf
 open Xml2h
 
@@ -104,7 +105,7 @@ let rec string_from_type = fun name v t ->
   let sprint_array = fun v t ->
     let vs = Str.split array_sep v in
     let sl = List.map (fun vl -> string_from_type name vl t) vs in
-    "{ "^(String.concat " , " sl)^" }"
+    "{ "^(Compat.bytes_concat " , " sl)^" }"
   in
   let rm_leading_trailing_spaces = fun s ->
     let s = Str.global_replace (Str.regexp "^ *") "" s in
@@ -154,6 +155,26 @@ let parse_element = fun prefix s ->
     | _ -> xml_error "define|linear"
 
 
+let print_reverse_servo_table = fun driver servos ->
+  let d = match driver with "Default" -> "" | _ -> "_"^(String.uppercase driver) in
+  printf "static inline int get_servo_min%s(int _idx) {\n" d;
+  printf "  switch (_idx) {\n";
+  List.iter (fun c ->
+    let name = ExtXml.attrib c "name" in
+    printf "    case SERVO_%s: return SERVO_%s_MIN;\n" name name;
+  ) servos;
+  printf "    default: return 0;\n";
+  printf "  };\n";
+  printf "}\n\n";
+  printf "static inline int get_servo_max%s(int _idx) {\n" d;
+  printf "  switch (_idx) {\n";
+  List.iter (fun c ->
+    let name = ExtXml.attrib c "name" in
+    printf "    case SERVO_%s: return SERVO_%s_MAX;\n" name name;
+  ) servos;
+  printf "    default: return 0;\n";
+  printf "  };\n";
+  printf "}\n\n"
 
 let parse_servo = fun driver c ->
   let shortname = ExtXml.attrib c "name" in
@@ -222,7 +243,7 @@ let parse_command_laws = fun command ->
       let var = a "var"
       and value = a "value" in
       let v = preprocess_value value "values" "COMMAND" in
-      printf "  int16_t _var_%s = %s; \\\n" var v
+      printf "  int32_t _var_%s = %s; \\\n" var v
     | "call" ->
       let f = a "fun" in
       printf "  %s; \\\n\\\n" f
@@ -232,7 +253,7 @@ let parse_command_laws = fun command ->
       and rate_min = a "rate_min"
       and rate_max = a "rate_max" in
       let v = preprocess_value value "values" "COMMAND" in
-      printf "  static int16_t _var_%s = 0; _var_%s += Chop((%s) - (_var_%s), (%s), (%s)); \\\n" var var v var rate_min rate_max
+      printf "  static int32_t _var_%s = 0; _var_%s += Chop((%s) - (_var_%s), (%s), (%s)); \\\n" var var v var rate_min rate_max
     | "define" ->
       parse_element "" command
     | _ -> xml_error "set|let"
@@ -291,10 +312,11 @@ let rec parse_section = fun ac_id s ->
       let servos = Xml.children s in
       let nb_servos = List.fold_right (fun s m -> Pervasives.max (int_of_string (ExtXml.attrib s "no")) m) servos min_int + 1 in
 
-      define (sprintf "SERVOS_%s_NB" (String.uppercase driver)) (string_of_int nb_servos);
-      printf "#include \"subsystems/actuators/actuators_%s.h\"\n" (String.lowercase driver);
+      define (sprintf "SERVOS_%s_NB" (Compat.bytes_uppercase driver)) (string_of_int nb_servos);
+      printf "#include \"subsystems/actuators/actuators_%s.h\"\n" (Compat.bytes_lowercase driver);
       nl ();
       List.iter (parse_servo driver) servos;
+      print_reverse_servo_table driver servos;
       nl ()
     | "commands" ->
       let commands = Array.of_list (Xml.children s) in
@@ -357,14 +379,14 @@ let rec parse_section = fun ac_id s ->
 let h_name = "AIRFRAME_H"
 
 let hex_to_bin = fun s ->
-  let n = String.length s in
+  let n = Compat.bytes_length s in
   assert(n mod 2 = 0);
-  let b = String.make (2*n) 'x' in
+  let b = Compat.bytes_make (2*n) 'x' in
   for i = 0 to n/2 - 1 do
-    b.[4*i] <- '\\';
-    Scanf.sscanf (String.sub s (2*i) 2) "%2x"
+    Compat.bytes_set b (4*i) '\\';
+    Scanf.sscanf (Compat.bytes_sub s (2*i) 2) "%2x"
       (fun x ->
-        String.blit (sprintf "%03o" x) 0 b (4*i+1) 3)
+        Compat.bytes_blit (sprintf "%03o" x) 0 b (4*i+1) 3)
   done;
   b
 

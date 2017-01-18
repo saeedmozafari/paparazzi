@@ -71,7 +71,6 @@ PRINT_CONFIG_MSG_VALUE("USE_BARO_BOARD is TRUE, reading onboard baro: ", BARO_BO
 #if USE_AHRS_ALIGNER
 #include "subsystems/ahrs/ahrs_aligner.h"
 #endif
-#include "subsystems/ins.h"
 
 #include "state.h"
 
@@ -83,6 +82,10 @@ PRINT_CONFIG_MSG_VALUE("USE_BARO_BOARD is TRUE, reading onboard baro: ", BARO_BO
 
 #include "generated/modules.h"
 #include "subsystems/abi.h"
+
+// needed for stop-gap measure waypoints_localize_all()
+#include "subsystems/navigation/waypoints.h"
+
 
 /* if PRINT_CONFIG is defined, print some config options */
 PRINT_CONFIG_VAR(PERIODIC_FREQUENCY)
@@ -185,9 +188,7 @@ STATIC_INLINE void main_init(void)
 #if USE_BARO_BOARD
   baro_init();
 #endif
-#if USE_IMU
-  imu_init();
-#endif
+
 #if USE_AHRS_ALIGNER
   ahrs_aligner_init();
 #endif
@@ -196,15 +197,16 @@ STATIC_INLINE void main_init(void)
   ahrs_init();
 #endif
 
-  ins_init();
-
-#if USE_GPS
-  gps_init();
-#endif
-
   autopilot_init();
 
   modules_init();
+
+  /* temporary hack:
+   * Since INS is now a module, LTP_DEF is not yet initialized when autopilot_init is called
+   * This led to the problem that global waypoints were not "localized",
+   * so as a stop-gap measure we localize them all (again) here..
+   */
+  waypoints_localize_all();
 
   settings_init();
 
@@ -220,7 +222,9 @@ STATIC_INLINE void main_init(void)
 
   // register the timers for the periodic functions
   main_periodic_tid = sys_time_register_timer((1. / PERIODIC_FREQUENCY), NULL);
+#if PERIODIC_FREQUENCY != MODULES_FREQUENCY
   modules_tid = sys_time_register_timer(1. / MODULES_FREQUENCY, NULL);
+#endif
   radio_control_tid = sys_time_register_timer((1. / 60.), NULL);
   failsafe_tid = sys_time_register_timer(0.05, NULL);
   electrical_tid = sys_time_register_timer(0.1, NULL);
@@ -242,9 +246,17 @@ STATIC_INLINE void handle_periodic_tasks(void)
 {
   if (sys_time_check_and_ack_timer(main_periodic_tid)) {
     main_periodic();
+#if PERIODIC_FREQUENCY == MODULES_FREQUENCY
+    /* Use the main periodc freq timer for modules if the freqs are the same
+     * This is mainly useful for logging each step.
+     */
+    modules_periodic_task();
+#else
   }
+  /* separate timer for modules, since it has a different freq than main */
   if (sys_time_check_and_ack_timer(modules_tid)) {
     modules_periodic_task();
+#endif
   }
   if (sys_time_check_and_ack_timer(radio_control_tid)) {
     radio_control_periodic_task();
@@ -267,14 +279,9 @@ STATIC_INLINE void handle_periodic_tasks(void)
 
 STATIC_INLINE void main_periodic(void)
 {
-
-#if USE_IMU
-  imu_periodic();
-#endif
-
-  //FIXME: temporary hack, remove me
-#ifdef InsPeriodic
-  InsPeriodic();
+#if INTER_MCU_AP
+  /* Inter-MCU watchdog */
+  intermcu_periodic();
 #endif
 
   /* run control loops */
@@ -324,11 +331,15 @@ STATIC_INLINE void telemetry_periodic(void)
 
 STATIC_INLINE void failsafe_check(void)
 {
+#if !USE_GENERATED_AUTOPILOT
   if (radio_control.status == RC_REALLY_LOST &&
       autopilot_mode != AP_MODE_KILL &&
       autopilot_mode != AP_MODE_HOME &&
       autopilot_mode != AP_MODE_FAILSAFE &&
-      autopilot_mode != AP_MODE_NAV) {
+      autopilot_mode != AP_MODE_NAV &&
+      autopilot_mode != AP_MODE_MODULE &&
+      autopilot_mode != AP_MODE_FLIP &&
+      autopilot_mode != AP_MODE_GUIDED) {
     autopilot_set_mode(RC_LOST_MODE);
   }
 
@@ -340,7 +351,6 @@ STATIC_INLINE void failsafe_check(void)
 #endif
 
 #if USE_GPS
-  gps_periodic_check();
   if (autopilot_mode == AP_MODE_NAV &&
       autopilot_motors_on &&
 #if NO_GPS_LOST_WITH_RC_VALID
@@ -356,6 +366,8 @@ STATIC_INLINE void failsafe_check(void)
   }
 #endif
 
+#endif // !USE_GENERATED_AUTOPILOT
+
   autopilot_check_in_flight(autopilot_motors_on);
 }
 
@@ -364,27 +376,12 @@ STATIC_INLINE void main_event(void)
   /* event functions for mcu peripherals: i2c, usb_serial.. */
   mcu_event();
 
-  DatalinkEvent();
-
   if (autopilot_rc) {
     RadioControlEvent(autopilot_on_rc_frame);
   }
 
-#if USE_IMU
-  ImuEvent();
-#endif
-
-#ifdef InsEvent
-  TODO("calling InsEvent, remove me..")
-  InsEvent();
-#endif
-
 #if USE_BARO_BOARD
   BaroEvent();
-#endif
-
-#if USE_GPS
-  GpsEvent();
 #endif
 
 #if FAILSAFE_GROUND_DETECT || KILL_ON_GROUND_DETECT

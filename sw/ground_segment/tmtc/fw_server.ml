@@ -22,6 +22,7 @@
  *
  *)
 
+
 open Printf
 open Server_globals
 open Aircraft
@@ -57,10 +58,10 @@ let ivalue = fun x ->
     | _ -> failwith "Receive.log_and_parse: int expected"
 
 let format_string_field = fun s ->
-  let s = String.copy s in
-  for i = 0 to String.length s - 1 do
+  let s = Compat.bytes_copy s in
+  for i = 0 to Compat.bytes_length s - 1 do
     match s.[i] with
-        ' ' -> s.[i] <- '_'
+        ' ' ->  Compat.bytes_set s i '_'
       | _ -> ()
   done;
   s
@@ -104,7 +105,7 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
   match msg.PprzLink.name with
       "GPS" ->
         a.gps_mode <- check_index (ivalue "mode") gps_modes "GPS_MODE";
-        if a.gps_mode = _3D then begin
+        if a.gps_mode >= _3D then begin
           let p = { LL.utm_x = fvalue "utm_east" /. 100.;
                     utm_y = fvalue "utm_north" /. 100.;
                     utm_zone = ivalue "utm_zone" } in
@@ -245,7 +246,7 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
       if a.fbw.rc_mode = "FAILSAFE" then
         a.ap_mode <- 5 (* Override and set FAIL(Safe) Mode *)
       else
-        a.ap_mode <- check_index (ivalue "ap_mode") fixedwing_ap_modes "AP_MODE"
+        a.ap_mode <- check_index (ivalue "ap_mode") (modes_of_aircraft a) "AP_MODE"
     | "CAM" ->
       a.cam.phi <- (Deg>>Rad) (fvalue  "phi");
       a.cam.theta <- (Deg>>Rad) (fvalue  "theta");
@@ -336,7 +337,7 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
         a.bat <- fvalue "vsupply" /. 10.;
         a.energy <- ivalue "energy" * 100;
         a.throttle <- fvalue "throttle";
-        a.ap_mode <- check_index (ivalue "ap_mode") fixedwing_ap_modes "AP_MODE";
+        a.ap_mode <- check_index (ivalue "ap_mode") (modes_of_aircraft a) "AP_MODE";
         a.cur_block <- ivalue "nav_block";
       end
     | "FORMATION_SLOT_TM" ->
@@ -356,4 +357,3 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
       a.datalink_status.downlink_rate <- ivalue "downlink_rate";
       a.datalink_status.downlink_msgs <- ivalue "downlink_nb_msgs"
     | _ -> ()
-

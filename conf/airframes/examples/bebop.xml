@@ -10,6 +10,17 @@
       <module name="udp"/>
     </target>
 
+    <define name="MT9F002_OUTPUT_HEIGHT" value="640" />
+    <define name="MT9F002_OUTPUT_WIDTH" value="640" />
+    <define name="MT9F002_TARGET_EXPOSURE" value="30" />
+    <define name="MT9F002_GAIN_GREEN1" value="4"/>
+    <define name="MT9F002_GAIN_GREEN2" value="4"/>
+    <define name="MT9F002_GAIN_RED" value="5"/>
+    <define name="MT9F002_GAIN_BLUE" value="5"/>
+    <define name="MT9F002_OUTPUT_SCALER" value="0.25"/>
+    <define name="MT9F002_X_ODD_INC_VAL" value="1"/>
+    <define name="MT9F002_Y_ODD_INC_VAL" value="1"/>
+
     <!--define name="USE_SONAR" value="TRUE"/-->
 
 	<!-- Subsystem section -->
@@ -32,12 +43,16 @@
       <define name="FILE_LOGGER_PATH" value="/data/ftp/internal_000"/>
     </module-->
 
-    <module name="video_thread">
-    </module>
-<!--
+    <module name="video_thread"/>
+
     <module name="video_rtp_stream">
-        <define name="VIEWVIDEO_CAMERA" value="VIDEO1"/>
-    </module>-->
+      <define name="VIEWVIDEO_CAMERA" value="bottom_camera"/>
+      <define name="VIEWVIDEO_CAMERA2" value="front_camera"/>
+      <define name="VIEWVIDEO_DOWNSIZE_FACTOR" value="2"/>
+      <define name="VIEWVIDEO_QUALITY_FACTOR" value="40"/>
+    </module>
+
+    <module name="bebop_ae_awb"/>
 
   </modules>
 
@@ -49,10 +64,10 @@
   </commands>
 
   <servos driver="Default">
-    <servo name="TOP_RIGHT" no="0" min="3000" neutral="3000" max="12000"/>
-    <servo name="TOP_LEFT" no="1" min="3000" neutral="3000" max="12000"/>
-    <servo name="BOTTOM_LEFT" no="2" min="3000" neutral="3000" max="12000"/>
-    <servo name="BOTTOM_RIGHT" no="3" min="3000" neutral="3000" max="12000"/>
+    <servo name="TOP_LEFT" no="0" min="3000" neutral="3000" max="12000"/>
+    <servo name="TOP_RIGHT" no="1" min="3000" neutral="3000" max="12000"/>
+    <servo name="BOTTOM_RIGHT" no="2" min="3000" neutral="3000" max="12000"/>
+    <servo name="BOTTOM_LEFT" no="3" min="3000" neutral="3000" max="12000"/>
   </servos>
 
   <section name="MIXING" prefix="MOTOR_MIXING_">

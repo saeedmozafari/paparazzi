@@ -100,11 +100,12 @@
       <message name="ROTORCRAFT_STATUS" period="1.2"/>
       <message name="DL_VALUE"          period="0.5"/>
       <message name="ALIVE"             period="0.9"/>
-      <message name="STAB_ATTITUDE_INT"     period=".03"/>
-      <message name="STAB_ATTITUDE_REF_INT" period=".03"/>
+      <message name="STAB_ATTITUDE_INT"       period=".03"/>
+      <message name="STAB_ATTITUDE_REF_INT"   period=".03"/>
       <message name="STAB_ATTITUDE_FLOAT"     period=".03"/>
       <message name="STAB_ATTITUDE_REF_FLOAT" period=".03"/>
-      <message name="STAB_ATTITUDE_INDI"     period=".25"/>
+      <message name="STAB_ATTITUDE_INDI"      period=".25"/>
+      <message name="INDI_G"            period="2.0"/>
     </mode>
 
     <mode name="vert_loop" key_press="v">
@@ -121,6 +122,7 @@
 
     <mode name="vel_guidance" key_press="q">
       <message name="ALIVE" period="0.9"/>
+      <message name="HYBRID_GUIDANCE" period="0.062"/>
       <!--<message name="STAB_ATTITUDE_REF" period="0.4"/>-->
       <message name="ROTORCRAFT_FP" period="0.8"/>
       <message name="ROTORCRAFT_STATUS" period="1.2"/>
@@ -168,3 +170,4 @@
   </process>
 
 </telemetry>
+

@@ -1,68 +1,99 @@
 <!DOCTYPE airframe SYSTEM "../airframe.dtd">
 
-<airframe name="Talon">
+<airframe name="ASA_Hawk">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0">
-          <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <configure name="BARO_LED" value="4"/>
-	  <configure name="RADIO_CONTROL_LED" value="3"/>
-	  <configure name="AHRS_ALIGNER_LED" value="2"/>
-	  <configure name="GPS_LED" value="none"/>
-	  <configure name="SYS_TIME_LED" value="1"/>
-	  <subsystem name="radio_control" type="sbus">
-      	  	<configure name="SBUS_PORT" value="UART2"/>
-          </subsystem>
-	  <define name="USE_KFF_UPDATE_ROLL"/>
-          <define name="USE_KFF_UPDATE_PITCH"/>
-  	  <define name="USE_ADC"/>
-   	  <define name="USE_ADC_3"/>
-	  <define name="USE_ADC_1"/> 
-	  <define name="ADC_CHANNEL_VSUPPLY" value="ADC_1"/>   <!-- Battery voltage-->
-	  <define name="BAT_CHECKER_DELAY" value="30"/>
-          <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
-    </target>
+    <define name="RADIO_CONTROL"/>
+    <define name="RADIO_CONTROL_NB_CHANNEL" value="8"/>
+    <subsystem name="navigation"/>
+    <target name="ap" board="px4fmu_2.4"/>
+    <configure name="USE_BARO_BOARD" value="TRUE"/>		
+    <define name="USE_KFF_UPDATE_ROLL"/>
+    <define name="USE_KFF_UPDATE_PITCH"/>
+    <define name="USE_ADC"/>
+    <define name="USE_ADC_3"/>
+    <define name="BAT_CHECKER_DELAY" value="60"/>
+    <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
+    
     
     <target name="sim" board="pc">
     	<subsystem name="radio_control" type="ppm"/>
- 	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
+ 	    <define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <module name="sdlog"/>
+    <!--module name="sdlog"/>
     <module name="flight_recorder.xml">
-      <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
-    </module>
+        <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
+    </module-->
     <subsystem name="telemetry" type="transparent"/>
     <subsystem name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <subsystem name="imu" type="apogee"/>
+    <subsystem name="imu" type="px4fmu_v2.4"/>
     <module name="ahrs" type="int_cmpl_quat">
-      <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>	
-      <!--define name="AHRS_ICQ_MAG_ID" value="MAG_HMC58XX_SENDER_ID"/>
-      <configure name="USE_MAGNETOMETER" value="TRUE"/>
-      <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
+        <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>
+        <define name="AHRS_ICQ_IMU_ID" value="IMU_PX4_ID" />	
+        <!--define name="AHRS_ICQ_MAG_ID" value="MAG_HMC58XX_SENDER_ID"/>
+        <configure name="USE_MAGNETOMETER" value="TRUE"/>
+        <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
     </module>
     <module name="gps" type="ublox">
-      <configure name="GPS_BAUD" value="B115200"/>
-      <define name="GPS_UBX_UCENTER_RATE" value="100"/>
-      <define name="USE_GPS_UBX_RXM_RAW"/>
-      <define name="USE_GPS_UBX_RXM_SFRB"/>
+        <configure name="GPS_BAUD" value="B115200"/>
+        <define name="GPS_UBX_UCENTER_RATE" value="100"/>
+        <define name="USE_GPS_UBX_RXM_RAW"/>
+        <define name="USE_GPS_UBX_RXM_SFRB"/>
       <!--define name="LOG_RAW_GPS"/-->
     </module>
-    <subsystem name="navigation"/>
+    <subsystem name="radio_control" type="sbus">
+            <!--configure name="SBUS_PORT" value="UART2"/-->
+    </subsystem>
+    <module name="intermcu" type="uart">
+        <configure name="SEPARATE_FBW" value="1"/>
+        <configure name="INTERMCU_PORT" value="UART6" />
+        <configure name="INTERMCU_BAUD" value="B1500000" /> 
+    </module>
     <subsystem name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
     </subsystem>
     <define name="USE_I2C2"/>
   </firmware>
-
+   
+     <firmware name="fixedwing">
+        <target name="fbw" board="px4io_2.4" />
+        <subsystem name="radio_control" type="sbus">
+            <!--configure name="SBUS_PORT" value="UART2"/-->
+        </subsystem>
+        
+        <define name="FBW_MODE_AUTO_ONLY" value="true"/>
+        <!--  <module name="radio_control" type="spektrum">-->
+        <!--    <define name="RADIO_CONTROL_SPEKTRUM_NO_SIGN" value="1"/>-->
+        <!--    <define name="USE_KILL_SWITCH_FOR_MOTOR_ARMING" value="1"/>-->
+        <!--    <define name="RADIO_FBW_MODE" value="RADIO_AUX2"/>-->
+        <!--    <define name="RADIO_MODE" value="RADIO_GEAR"/>-->
+        <!--    <define name="SPEKTRUM_HAS_SOFT_BIND_PIN" value="1"/>-->
+        <!--  </module>-->
+        <module name="actuators" type="pwm"/>
+        <define name="RC_LOST_FBW_MODE" value="FBW_MODE_FAILSAFE" />
+        <!-- Switch to Failsafe or to Autopilot on RC loss? -->
+        <define name="RC_LOST_IN_AUTO_FBW_MODE" value="FBW_MODE_AUTO" />
+        <define name="AP_LOST_FBW_MODE" value="FBW_MODE_FAILSAFE" />
+        <!-- Switch to Failsafe or to Manual on AP loss? -->
+        <define name="INTERMCU_LOST_CNT" value="100" />
+        <module name="intermcu" type="uart">
+          <configure name="SEPARATE_FBW" value="1"/>
+          <configure name="INTERMCU_PORT" value="UART2" />
+          <configure name="INTERMCU_BAUD" value="B1500000" />
+        </module>
+  </firmware>
   <modules>
     <!--load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
     </load--> 
+    <module name="px4_flash">
+      <configure name="PX4IO_UART" value="uart6"/>
+    </module>
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
       <load name="airspeed_ms45xx_i2c.xml">
@@ -173,7 +204,6 @@
     <define name="ADC_CHANNEL_CURRENT" value="ADC_3"/>
     <define name="CURRENT_ADC_A" value="14.6"/>
     <define name="CURRENT_ADC_B" value="-0.13625"/>
-    <define name="MilliAmpereOfAdc(adc)" value="Max(0,(CURRENT_ADC_A * adc + CURRENT_ADC_B))"/>
     <define name="VOLTAGE_ADC_A" value="0.008080808"/>
     <define name="VOLTAGE_ADC_B" value="0.177777778"/>
     <define name="VoltageOfAdc(adc)" value="(VOLTAGE_ADC_A * adc + VOLTAGE_ADC_B)"/>
@@ -184,6 +214,7 @@
   </section>
 
   <section name="MISC">
+    <!--define name="MilliAmpereOfAdc(adc)" value="Max(0,(CURRENT_ADC_A * adc + CURRENT_ADC_B))"/-->
     <define name="NOMINAL_AIRSPEED" value="11.5" unit="m/s"/>
     <define name="RACE_AIRSPEED" value="15.0" unit="m/s"/>
     <define name="STALL_AIRSPEED" value="5.0" unit="m/s"/>

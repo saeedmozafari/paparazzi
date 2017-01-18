@@ -5,7 +5,7 @@
   <firmware name="fixedwing">
     <define name="RADIO_CONTROL"/>
     <define name="RADIO_CONTROL_NB_CHANNEL" value="8"/>
-    <subsystem name="navigation"/>
+    <module name="navigation"/>
     <target name="ap" board="px4fmu_2.4"/>
     <configure name="USE_BARO_BOARD" value="TRUE"/>		
     <define name="USE_KFF_UPDATE_ROLL"/>
@@ -27,10 +27,10 @@
     <module name="flight_recorder.xml">
         <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module-->
-    <subsystem name="telemetry" type="transparent"/>
+    <module name="telemetry" type="transparent"/>
     <subsystem name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <subsystem name="imu" type="px4fmu_v2.4"/>
+    <module name="imu" type="px4fmu_v2.4"/>
     <module name="ahrs" type="int_cmpl_quat">
         <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>
         <define name="AHRS_ICQ_IMU_ID" value="IMU_PX4_ID" />	
@@ -53,9 +53,9 @@
         <configure name="INTERMCU_PORT" value="UART6" />
         <configure name="INTERMCU_BAUD" value="B1500000" /> 
     </module>
-    <subsystem name="ins" type="alt_float">
+    <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
-    </subsystem>
+    </module>
     <define name="USE_I2C2"/>
   </firmware>
    

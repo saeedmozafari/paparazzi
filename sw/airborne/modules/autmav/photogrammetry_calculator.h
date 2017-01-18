@@ -79,7 +79,7 @@ Add to flightplan
 #include "paparazzi.h"
 
 #include "modules/nav/nav_survey_poly_osam.h"
-#include "modules/nav/nav_survey_polygon.h"
+#include "modules/autmav/survey_polygon.h"
 
 
 // Flightplan Variables

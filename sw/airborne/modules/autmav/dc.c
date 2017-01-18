@@ -191,7 +191,7 @@ void dc_init(void)
 uint8_t dc_info(void)
 {
 #ifdef DOWNLINK_SEND_DC_INFO
-  float course = DegOfRad(stateGetNedToBodyEulers_f()->psi);
+  float uav_course = DegOfRad(stateGetNedToBodyEulers_f()->psi);
   int16_t mode = dc_autoshoot;
   uint8_t shutter = dc_autoshoot_period * 10;
   DOWNLINK_SEND_DC_INFO(DefaultChannel, DefaultDevice,
@@ -199,7 +199,7 @@ uint8_t dc_info(void)
                         &stateGetPositionLla_i()->lat,
                         &stateGetPositionLla_i()->lon,
                         &stateGetPositionLla_i()->alt,
-                        &course,
+                        &uav_course,
                         &dc_photo_nr,
                         &dc_survey_interval,
                         &dc_gps_next_dist,
@@ -320,11 +320,11 @@ void dc_periodic(void)
     break;
 
     case DC_AUTOSHOOT_CIRCLE: {
-      float course = DegOfRad(stateGetNedToBodyEulers_f()->psi) - dc_circle_start_angle;
-      if (course < 0.) {
-        course += 360.;
+      float uav_course = DegOfRad(stateGetNedToBodyEulers_f()->psi) - dc_circle_start_angle;
+      if (uav_course < 0.) {
+        uav_course += 360.;
       }
-      float current_block = floorf(course / dc_circle_interval);
+      float current_block = floorf(uav_course / dc_circle_interval);
 
       if (dim_mod(current_block, dc_circle_last_block, dc_circle_max_blocks) == 1) {
         dc_gps_count++;

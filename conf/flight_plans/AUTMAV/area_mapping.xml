@@ -3,7 +3,7 @@
 <flight_plan alt="1160" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="3000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
-    #include "modules/cartography/photogrammetry_calculator.h"
+    #include "modules/autmav/photogrammetry_calculator.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
     #include "modules/autmav/catapult.h"
 </header>
@@ -71,11 +71,7 @@
       <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>
-    <block name="Survey 2" strip_button="Survey2" strip_icon="survey.png">
-      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_5, 4)"/>
-      <call fun="nav_survey_polygon_run()"/>
-      <deroute block="Standby"/>
-    </block>
+    
     <block group="land" name="Land Right AF-TD" strip_button="Land right (wp AF-TD)" strip_icon="land-right.png">
       <set value="DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
       <deroute block="land"/>
@@ -85,7 +81,7 @@
       <deroute block="land"/>
     </block>
     <block name="land">
-      <call fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
+      <call_once fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
       <circle radius="nav_radius" until="NavCircleCount() > 0.5" wp="_BASELEG"/>
       <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
     </block>

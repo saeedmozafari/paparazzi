@@ -33,6 +33,7 @@
  */
 
 #include "dc.h"
+#include "survey_polygon.h"
 #include "firmwares/fixedwing/autopilot.h"
 #include "firmwares/fixedwing/nav.h"
 #include "firmwares/fixedwing/stabilization/stabilization_attitude.h"

@@ -42,8 +42,6 @@
 #define MT9F002_MAX_WIDTH 4608
 #define MT9F002_MAX_HEIGHT 3288
 
-extern struct libisp_config isp_config;
-
 /* Camera structure */
 struct video_config_t front_camera = {
   .output_size = {

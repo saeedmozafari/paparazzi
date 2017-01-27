@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="pixhawk_power_module" dir="autmav">
+  <doc>
+    <description>
+      This module reads voltage and current from ADC 2 and 3 in AP process and apply them to system variables for monitoring
+    </description>
+    <configure name="VOLTAGE_ADC_CHANNEL" value="ADCX" description="choose which ADC is used for voltage sensor"/>
+    <configure name="CURRENT_ADC_CHANNEL" value="ADCX" description="choose which ADC is used for current sensor"/>
+  </doc>
+  <header>
+    <file name="pixhawk_power_module.h"/>
+  </header>
+  <init fun="power_module_init()"/>
+  <periodic fun="power_module_periodic()" freq="5"/>
+  <makefile target="ap">
+    <file name="pixhawk_power_module.c"/>
+    <define name="USE_${VOLTAGE_ADC_CHANNEL}" cond="ifneq ($(VOLTAGE_ADC_CHANNEL),)"/>
+    <define name="USE_${CURRENT_ADC_CHANNEL}" cond="ifneq ($(CURRENT_ADC_CHANNEL),)"/>
+  </makefile>
+</module>

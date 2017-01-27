@@ -1,0 +1,24 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="RTK_receive" dir="autmav">
+  <doc>
+    <description>
+      This module receives RTCM3 messages sent from base and ground station and relays them to onboard rover
+    </description>
+    <define name="RTK_RTCM3_UART_DEV" value="uart4" description="the port on autopilot which is connected to rtk module RTCM3 input"/>
+    <define name="RTK_RTCM3_UART_BAUD" value="B57600" description="baudrate of the RTCM3 port"/>
+  </doc>
+  
+  <header>
+    <file name="RTK_receive.h"/>
+  </header>
+  
+  <init fun="RTK_receive_init()"/>
+
+  <datalink message="RTCM_INJECT" fun="parse_DL_RTCM_INJECT()"/>
+
+  <makefile target="ap">
+    <file name="RTK_receive.c"/>
+  </makefile>
+
+</module>

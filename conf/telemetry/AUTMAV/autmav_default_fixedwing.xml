@@ -35,9 +35,12 @@
       <message name="VECTORNAV_INFO"      period="0.5"/>
       <message name="VERTICAL_ENERGY"     period="0.5"/>
       <message name="ENERGYADAPTIVE_NEW"  period="0.5"/>
-      <message name="I2C_ERRORS"  	  period="2.5"/>
-      <message name="UART_ERRORS"  	  period="2.5"/>
-      <message name="PPM"		  period="1.0"/>
+      <message name="I2C_ERRORS"  	      period="2.5"/>
+      <message name="UART_ERRORS"  	      period="2.5"/>
+      <message name="PPM"		          period="1.0"/>
+      <message name="ADC_GENERIC"		  period="0.5"/>
+      <message name="LIDAR"		          period="0.25"/>
+        
     </mode>
 
     <mode name="raw_sensors">

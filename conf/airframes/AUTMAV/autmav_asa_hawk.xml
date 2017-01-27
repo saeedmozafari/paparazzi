@@ -3,21 +3,25 @@
 <airframe name="ASA_Hawk">
 
   <firmware name="fixedwing">
-    <define name="RADIO_CONTROL"/>
-    <define name="RADIO_CONTROL_NB_CHANNEL" value="8"/>
+    
     <module name="navigation"/>
-    <target name="ap" board="px4fmu_2.4"/>
+    <target name="ap" board="px4fmu_2.4">
+        <define name="RADIO_CONTROL"/>
+        <define name="RADIO_CONTROL_NB_CHANNEL" value="8"/>
+    </target>
     <configure name="USE_BARO_BOARD" value="TRUE"/>		
-    <define name="USE_KFF_UPDATE_ROLL"/>
-    <define name="USE_KFF_UPDATE_PITCH"/>
+    <!--define name="USE_KFF_UPDATE_ROLL"/>
+    <define name="USE_KFF_UPDATE_PITCH"/-->
     <define name="USE_ADC"/>
+    <define name="USE_ADC_2"/>
     <define name="USE_ADC_3"/>
+    <define name="USE_ADC2"/>
+    <define name="USE_ADC3"/>
+    <define name="ADC_CHANNEL_VSUPPLY" value="ADC_2"/>
     <define name="BAT_CHECKER_DELAY" value="60"/>
     <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
-    
-    
     <target name="sim" board="pc">
-    	<subsystem name="radio_control" type="ppm"/>
+    	<module name="radio_control" type="ppm"/>
  	    <define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
@@ -28,12 +32,15 @@
         <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module-->
     <module name="telemetry" type="transparent"/>
-    <subsystem name="control" type="energyadaptive_new"/>
+    <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <module name="imu" type="px4fmu_v2.4"/>
+    <module name="imu" type="mpu6000">
+        <configure name="IMU_MPU_SPI_DEV" value="spi1"/>
+        <configure name="IMU_MPU_SPI_SLAVE_IDX" value="SPI_SLAVE2"/>    
+    </module>
     <module name="ahrs" type="int_cmpl_quat">
         <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>
-        <define name="AHRS_ICQ_IMU_ID" value="IMU_PX4_ID" />	
+        <!--define name="AHRS_ICQ_IMU_ID" value="IMU_MPU6000_ID"/-->	
         <!--define name="AHRS_ICQ_MAG_ID" value="MAG_HMC58XX_SENDER_ID"/>
         <configure name="USE_MAGNETOMETER" value="TRUE"/>
         <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
@@ -45,9 +52,10 @@
         <define name="USE_GPS_UBX_RXM_SFRB"/>
       <!--define name="LOG_RAW_GPS"/-->
     </module>
-    <subsystem name="radio_control" type="sbus">
+    <module name="gps_ubx_ucenter.xml"/>
+    <module name="radio_control" type="sbus">
             <!--configure name="SBUS_PORT" value="UART2"/-->
-    </subsystem>
+    </module>
     <module name="intermcu" type="uart">
         <configure name="SEPARATE_FBW" value="1"/>
         <configure name="INTERMCU_PORT" value="UART6" />
@@ -56,24 +64,34 @@
     <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
     </module>
-    <define name="USE_I2C2"/>
+    <define name="USE_I2C1"/>
+    <!--module name="airspeed_ms45xx_i2c.xml">
+      <define name="MS45XX_I2C_DEV" value="i2c1"/>
+      <define name="USE_AIRSPEED_MS45XX" value="TRUE"/>
+    </module-->
+    <module name="autmav/RTK_receive">
+        <define name="RTK_RTCM3_UART_DEV" value="uart4"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B57600"/>            
+    </module>
+    <module name="autmav/pixhawk_power_module.xml">
+        <define name="VOLTAGE_ADC_CHANNEL" value="ADC_2"/>
+        <define name="CURRENT_ADC_CHANNEL" value="ADC_3"/>   
+    </module>  
+    <module name="lidar_sf11">
+        <define name="LIDAR_SF11_I2C_DEV" value="i2c1"/>
+        <configure name="LIDAR_SF11_I2C_ADDR" value="0x50"/>
+    </module> 
   </firmware>
    
      <firmware name="fixedwing">
+        <define name="RADIO_CONTROL"/>
+        <define name="RADIO_CONTROL_NB_CHANNEL" value="8"/>
+        <module name="actuators" type="pwm"/>        
         <target name="fbw" board="px4io_2.4" />
-        <subsystem name="radio_control" type="sbus">
-            <!--configure name="SBUS_PORT" value="UART2"/-->
-        </subsystem>
-        
+        <module name="radio_control" type="sbus">
+            <configure name="SBUS_PORT" value="UART1"/>
+        </module>
         <define name="FBW_MODE_AUTO_ONLY" value="true"/>
-        <!--  <module name="radio_control" type="spektrum">-->
-        <!--    <define name="RADIO_CONTROL_SPEKTRUM_NO_SIGN" value="1"/>-->
-        <!--    <define name="USE_KILL_SWITCH_FOR_MOTOR_ARMING" value="1"/>-->
-        <!--    <define name="RADIO_FBW_MODE" value="RADIO_AUX2"/>-->
-        <!--    <define name="RADIO_MODE" value="RADIO_GEAR"/>-->
-        <!--    <define name="SPEKTRUM_HAS_SOFT_BIND_PIN" value="1"/>-->
-        <!--  </module>-->
-        <module name="actuators" type="pwm"/>
         <define name="RC_LOST_FBW_MODE" value="FBW_MODE_FAILSAFE" />
         <!-- Switch to Failsafe or to Autopilot on RC loss? -->
         <define name="RC_LOST_IN_AUTO_FBW_MODE" value="FBW_MODE_AUTO" />
@@ -86,7 +104,7 @@
           <configure name="INTERMCU_BAUD" value="B1500000" />
         </module>
   </firmware>
-  <modules>
+  <modules main_freq="512">
     <!--load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
@@ -95,11 +113,6 @@
       <configure name="PX4IO_UART" value="uart6"/>
     </module>
     <load name="geo_mag.xml"/>
-    <load name="gps_ubx_ucenter.xml"/>
-      <load name="airspeed_ms45xx_i2c.xml">
-      <define name="MS45XX_I2C_DEV" value="i2c2"/>
-      <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
-    </load>
     <load name="tune_airspeed.xml"/>
     <load name="autmav/survey_polygon.xml"/>
     <load name="baro_sim.xml"/>
@@ -173,16 +186,16 @@
   </section>
 
   <section name="IMU" prefix="IMU_">
-    <define name="BODY_TO_IMU_PHI" value="180.0" unit="deg"/>
+    <define name="BODY_TO_IMU_PHI" value="0.0" unit="deg"/>
     <define name="BODY_TO_IMU_THETA" value="0." unit="deg"/>
-    <define name="BODY_TO_IMU_PSI" value="0." unit="deg"/>
-    <!-- Magneto calibration 
-    <define name="MAG_X_NEUTRAL" value="-73"/>
-    <define name="MAG_Y_NEUTRAL" value="-85"/>
-    <define name="MAG_Z_NEUTRAL" value="-218"/>
-    <define name="MAG_X_SENS" value="4.37279143081" integer="16"/>
-    <define name="MAG_Y_SENS" value="4.05366697585" integer="16"/>
-    <define name="MAG_Z_SENS" value="4.48061242164" integer="16"/>  -->
+    <define name="BODY_TO_IMU_PSI" value="270." unit="deg"/>
+    <define name="ACCEL_X_NEUTRAL" value="26"/>
+    <define name="ACCEL_Y_NEUTRAL" value="-23"/>
+    <define name="ACCEL_Z_NEUTRAL" value="-230"/>
+    <define name="ACCEL_X_SENS" value="4.91958433791" integer="16"/>
+    <define name="ACCEL_Y_SENS" value="4.87976414324" integer="16"/>
+    <define name="ACCEL_Z_SENS" value="4.81545268917" integer="16"/>
+
   </section>
   
   <section name="AHRS" prefix="AHRS_">
@@ -201,11 +214,11 @@
   </section>
 
   <section name="BAT">
-    <define name="ADC_CHANNEL_CURRENT" value="ADC_3"/>
+    <!--define name="ADC_CHANNEL_CURRENT" value="ADC_3"/-->
     <define name="CURRENT_ADC_A" value="14.6"/>
     <define name="CURRENT_ADC_B" value="-0.13625"/>
-    <define name="VOLTAGE_ADC_A" value="0.008080808"/>
-    <define name="VOLTAGE_ADC_B" value="0.177777778"/>
+    <define name="VOLTAGE_ADC_A" value="1.0"/>
+    <define name="VOLTAGE_ADC_B" value="0.0"/>
     <define name="VoltageOfAdc(adc)" value="(VOLTAGE_ADC_A * adc + VOLTAGE_ADC_B)"/>
     <define name="CATASTROPHIC_BAT_LEVEL" value="13.0" unit="V"/>
     <define name="CRITIC_BAT_LEVEL" value="14.0" unit="V"/>

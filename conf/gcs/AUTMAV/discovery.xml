@@ -1,0 +1,31 @@
+<!DOCTYPE layout SYSTEM "../layout.dtd">
+
+<layout width="1500" height="1000">
+  <columns>
+    <rows SIZE="400">
+      <widget NAME="strips" size="500"/>
+      <widget NAME="alarms" size="492"/>
+    </rows>
+    <rows>
+      <widget NAME="map2d" size="700">
+        <papget type="message_field" display="text" x="792" y="463">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:pitch"/>
+          <property name="ac_id" value="111"/>
+          <property name="format" value="Desired_Pitch:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="792" y="401">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:roll"/>
+          <property name="ac_id" value="111"/>
+          <property name="format" value="Desired_Roll:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+      </widget>
+      <widget NAME="aircraft" size="292"/>
+    </rows>
+  </columns>
+</layout>

@@ -20,10 +20,6 @@
     <waypoint name="2" x="-652.3" y="-647.2"/>
     <waypoint name="3" x="652.4" y="-390.8"/>
     <waypoint name="4" x="394.8" y="510.8"/>
-    <waypoint name="5" x="-500.0" y="500.0"/>
-    <waypoint name="6" x="-500.0" y="-500.0"/>
-    <waypoint name="7" x="500.0" y="-500.0"/>
-    <waypoint name="8" x="500.0" y="500.0"/>
     <waypoint name="_BASELEG" x="168.8" y="-13.8"/>
   </waypoints>
   <exceptions>

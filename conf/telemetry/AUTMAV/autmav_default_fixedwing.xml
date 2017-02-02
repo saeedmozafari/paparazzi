@@ -39,7 +39,7 @@
       <message name="UART_ERRORS"  	      period="2.5"/>
       <message name="PPM"		          period="1.0"/>
       <message name="ADC_GENERIC"		  period="0.5"/>
-      <message name="LIDAR"		          period="0.25"/>
+      <message name="LIDAR"		          period="1.0"/>
         
     </mode>
 

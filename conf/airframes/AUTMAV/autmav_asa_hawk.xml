@@ -79,7 +79,8 @@
     </module>  
     <module name="lidar_sf11">
         <define name="LIDAR_SF11_I2C_DEV" value="i2c1"/>
-        <configure name="LIDAR_SF11_I2C_ADDR" value="0x50"/>
+        <configure name="LIDAR_SF11_I2C_ADDR" value="0xCC"/>
+        <configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="0"/>
     </module> 
   </firmware>
    

@@ -147,13 +147,13 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 #endif
 
 
-static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
- {
-   pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
-                         &v_ctl_auto_throttle_nominal_cruise_throttle, 
-                         &v_ctl_throttle_ppart, 
-                         &v_ctl_throttle_ipart);
- }
+// static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
+//  {
+//    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
+//                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
+//                          &v_ctl_throttle_ppart, 
+//                          &v_ctl_throttle_ipart);
+//  }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
 
@@ -279,7 +279,7 @@ void v_ctl_init(void)
 
   AbiBindMsgIMU_ACCEL_INT32(V_CTL_ENERGY_IMU_ID, &accel_ev, accel_cb);
   AbiBindMsgBODY_TO_IMU_QUAT(V_CTL_ENERGY_IMU_ID, &body_to_imu_ev, body_to_imu_cb);
-  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_ENERGYADAPTIVE_NEW, send_energy_new);
+  //register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_ENERGYADAPTIVE_NEW, send_energy_new);
 }
 
 /**

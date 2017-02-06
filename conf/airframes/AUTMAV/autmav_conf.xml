@@ -11,6 +11,17 @@
    gui_color="blue"
   />
   <aircraft
+   name="ASA_Hawk_Apogee"
+   ac_id="7"
+   airframe="airframes/AUTMAV/autmav_asa_hawk_apogee.xml"
+   radio="radios/FrSkyX9D.xml"
+   telemetry="telemetry/AUTMAV/autmav_default_fixedwing.xml"
+   flight_plan="flight_plans/AUTMAV/area_mapping.xml"
+   settings="settings/fixedwing_basic.xml"
+   settings_modules="modules/autmav/photogrammetry_calculator.xml modules/autmav/digital_cam.xml modules/autmav/catapult.xml modules/air_data.xml modules/tune_airspeed.xml modules/airspeed_ms45xx_i2c.xml modules/gps_ubx_ucenter.xml modules/geo_mag.xml modules/nav_basic_fw.xml modules/gps.xml modules/ahrs_int_cmpl_quat.xml modules/imu_common.xml modules/stabilization_adaptive_fw.xml"
+   gui_color="blue"
+  />
+  <aircraft
    name="Ark_Quad"
    ac_id="41"
    airframe="airframes/AGGIEAIR/aggieair_ark_quad_lisa_mx.xml"

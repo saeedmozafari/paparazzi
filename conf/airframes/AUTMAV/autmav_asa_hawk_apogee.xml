@@ -10,9 +10,9 @@
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
-	  <subsystem name="radio_control" type="sbus">
+	  <module name="radio_control" type="sbus">
       	  	<configure name="SBUS_PORT" value="UART2"/>
-          </subsystem>
+          </module>
 	  <define name="USE_KFF_UPDATE_ROLL"/>
           <define name="USE_KFF_UPDATE_PITCH"/>
   	  <define name="USE_ADC"/>
@@ -24,20 +24,20 @@
     </target>
     
     <target name="sim" board="pc">
-    	<subsystem name="radio_control" type="ppm"/>
+    	<module name="radio_control" type="ppm"/>
  	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <module name="sdlog"/>
-    <module name="flight_recorder.xml">
+    <module name="pprzlog"/>
+    <!--module name="flight_recorder.xml">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
-    </module>
-    <subsystem name="telemetry" type="transparent"/>
-    <subsystem name="control" type="energyadaptive_new"/>
+    </module-->
+    <module name="telemetry" type="transparent"/>
+    <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
-    <subsystem name="imu" type="apogee"/>
+    <module name="imu" type="apogee"/>
     <module name="ahrs" type="int_cmpl_quat">
       <define name="AHRS_GRAVITY_UPDATE_COORDINATED_TURN"/>	
       <!--define name="AHRS_ICQ_MAG_ID" value="MAG_HMC58XX_SENDER_ID"/>
@@ -51,18 +51,18 @@
       <define name="USE_GPS_UBX_RXM_SFRB"/>
       <!--define name="LOG_RAW_GPS"/-->
     </module>
-    <subsystem name="navigation"/>
-    <subsystem name="ins" type="alt_float">
+    <module name="navigation"/>
+    <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
-    </subsystem>
+    </module>
     <define name="USE_I2C2"/>
   </firmware>
 
   <modules>
-    <!--load name="airspeed_ets.xml">
+    <load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
-    </load--> 
+    </load> 
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
       <load name="airspeed_ms45xx_i2c.xml">

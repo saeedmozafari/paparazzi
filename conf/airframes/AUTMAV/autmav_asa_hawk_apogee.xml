@@ -89,6 +89,12 @@
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>
     </load>
+    <load name="lidar_sf11.xml">
+		<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+		<configure name="LIDAR_SF11_I2C_ADDR" value="0xCC"/>
+		<configure name="USE_LIDAR_SF11_AGL" value="1"/>
+		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
+	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
     
   </modules>

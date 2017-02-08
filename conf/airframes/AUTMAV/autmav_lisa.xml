@@ -8,21 +8,21 @@
       <subsystem name="fdm" type="jsbsim"/>
     </target>
 
-    <subsystem name="radio_control" type="spektrum">
+    <module name="radio_control" type="spektrum">
       <define name="RADIO_KILL_SWITCH" value="RADIO_AUX2"/>
       <define name="RADIO_MODE" value="RADIO_GEAR"/>
-    </subsystem>
+    </module>
 
     <subsystem name="motor_mixing"/>
       <module name="actuators" type="pwm">
       	<define name="SERVO_HZ" value="400"/>
       </module>
-    <subsystem name="telemetry" type="transparent"/>
-    <subsystem name="imu" type="aspirin_v2.1"/>
+    <module name="telemetry" type="transparent"/>
+    <module name="imu" type="aspirin_v2.1"/>
     <module name="gps" type="ublox"/>
-    <subsystem name="stabilization" type="int_quat"/>
-    <subsystem name="ahrs" type="int_cmpl_quat"/>
-    <subsystem name="ins" type="extended"/>
+    <module name="stabilization" type="int_quat"/>
+    <module name="ahrs" type="int_cmpl_quat"/>
+    <module name="ins" type="extended"/>
   </firmware>
 
   <modules>

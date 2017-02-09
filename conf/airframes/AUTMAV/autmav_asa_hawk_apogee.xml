@@ -3,7 +3,7 @@
 <airframe name="Talon">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0">
+    <target name="ap" board="apogee_1.0_chibios">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
@@ -30,8 +30,10 @@
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <module name="pprzlog"/>
-    <!--module name="flight_recorder.xml">
+    <!--module name="pprzlog"/-->
+    <module name="tlsf"/>
+    <module name="logger" type="sd_chibios"/>
+    <!--module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module-->
     <module name="telemetry" type="transparent"/>
@@ -96,7 +98,10 @@
 		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
 	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
-    
+    <load name="autmav/RTK_receive.xml">
+        <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B57600"/>            
+    </load>
   </modules>
 
   <!-- commands section -->

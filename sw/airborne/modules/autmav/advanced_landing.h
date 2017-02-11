@@ -12,5 +12,6 @@ extern void advanced_landing_setup(void);
 // Flightplan Code
 
 extern void calc_turning_point(uint8_t, uint8_t, uint8_t, uint8_t);
+extern void set_turning_direction(int16_t);
 
 #endif

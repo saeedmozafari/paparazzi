@@ -1,13 +1,14 @@
 #include "advanced_landing.h"
 //#include "subsystems/navigation/waypoints.h"
 #include "firmwares/fixedwing/nav.h"
+#include "subsystems/gps.h"
 
 #ifndef NAV_ADVANCED_LANDING_APP_DIST
-#define NAV_ADVANCED_LANDING_APP_DIST 200
+#define NAV_ADVANCED_LANDING_APP_DIST 300
 #endif
 
 #ifndef NAV_ADVANCED_LANDING_DIRECTION
-#define NAV_ADVANCED_LANDING_DIRECTION 90
+#define NAV_ADVANCED_LANDING_DIRECTION 135
 #endif
 
 float nav_advanced_landing_app_dist;
@@ -39,4 +40,12 @@ void calc_turning_point(uint8_t home_WP, uint8_t approach_pos, uint8_t target_WP
 
 	WaypointX(center_WP) = rel_center_x + WaypointX(home_WP);
 	WaypointY(center_WP) = rel_center_y + WaypointY(home_WP);
+}
+
+void set_turning_direction(int16_t dir){
+	nav_advanced_landing_direction = dir * 3.1415 / 180.0;
+}
+
+void set_approach_distance(int16_t dist){
+	nav_advanced_landing_app_dist = dist;
 }

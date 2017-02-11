@@ -1,0 +1,24 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="advanced_landing" dir="autmav">
+  <doc>
+    <description>
+     	This module contains advanced navigation routines for landing procedure.
+    </description>
+    <define name="NAV_ADVANCED_LANDING_APP_DIST" value="200" description="initial approach distance"/>
+    <define name="NAV_ADVANCED_LANDING_DIRECTION" value="90" description="initial approach direction"/>
+  </doc>
+  <!--settings>
+    <dl_settings name="landing">
+       <dl_setting max="50" min="500" step="10" module="autmav/advanced_landing" var="nav_advanced_landing_app_dist" shortname="app dist" param="NAV_ADVANCED_LANDING_APP_DIST" unit="m"/>
+       <dl_setting max="0" min="359" step="1" module="autmav/advanced_landing" var="nav_advanced_landing_direction" shortname="land dir" param="NAV_ADVANCED_LANDING_DIRECTION" unit="deg"/>
+    </dl_settings>
+  </settings-->
+  <header>
+    <file name="advanced_landing.h"/>
+  </header>
+  <init fun="advanced_landing_setup()"/>
+  <makefile target="ap|sim|nps">
+    <file name="advanced_landing.c"/>
+  </makefile>
+</module>

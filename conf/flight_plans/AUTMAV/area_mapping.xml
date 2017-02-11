@@ -3,12 +3,14 @@
 <flight_plan alt="1160" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="3000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
-    #include "modules/autmav/photogrammetry_calculator.h"
+	#include "modules/autmav/photogrammetry_calculator.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
     #include "modules/autmav/catapult.h"
+	#include "modules/autmav/advanced_landing.h"
 </header>
   <waypoints>
-    <waypoint name="HOME" x="-18.7" y="16.4"/>
+    <waypoint name="HOME" x="-18.7" y="16.4" height="0"/>
+ 	<waypoint name="TEST" x="-18.7" y="166.4"/>
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
     <waypoint height="150.0" name="STDBY" x="-212.2" y="225.2"/>
@@ -57,7 +59,7 @@
       <circle radius="nav_radius" wp="STDBY"/>
     </block>
     <block name="Standby2">
-      <circle radius="nav_radius" wp="STDBY2"/>
+	  <circle radius="nav_radius" wp="STDBY2"/>
     </block>
     <block name="Standby3">
       <circle radius="nav_radius" wp="STDBY3"/>
@@ -67,8 +69,29 @@
       <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>
+
+		<block name="Flying above Home">
+			<go wp="HOME" vmode="alt" alt="GetPosAlt()"/>
+			<circle wp="HOME" radius="80" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
+
+		</block>
+
+		<block name="Prepare to land">
+			<heading course="90" vmode="alt" alt="75 + ground_alt" until="DistanceSquare(WaypointX(WP_HOME),WaypointY(WP_HOME),GetPosX(),GetPosY()) > 190*190"/>
+			<call fun="NavSetWaypointHere(WP_TEST)"/>
+		</block>
+
+		<block name="Landing">
+			<go from="TEST" pitch="-25" wp="HOME"/>
+			<exception cond="3 > GetPosAlt()" deroute="flare"/>
+		</block>
+
+		<block name="flare">
+      <go approaching_time="0" hmode="route" throttle="0.0" vmode="throttle" wp="HOME"/>
+      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+    </block>
     
-    <block group="land" name="Land Right AF-TD" strip_button="Land right (wp AF-TD)" strip_icon="land-right.png">
+    <!--><block group="land" name="Land Right AF-TD" strip_button="Land right (wp AF-TD)" strip_icon="land-right.png">
       <set value="DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
       <deroute block="land"/>
     </block>
@@ -88,6 +111,6 @@
     <block name="flare">
       <go approaching_time="0" from="AF" hmode="route" throttle="0.0" vmode="throttle" wp="TD"/>
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-    </block>
+    </block></-->
   </blocks>
 </flight_plan>

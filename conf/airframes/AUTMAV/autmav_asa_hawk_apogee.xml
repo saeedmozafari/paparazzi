@@ -3,7 +3,7 @@
 <airframe name="Talon">
 
   <firmware name="fixedwing">
-    <target name="ap" board="apogee_1.0">
+    <target name="ap" board="apogee_1.0_chibios">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
 	  <configure name="BARO_LED" value="4"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
@@ -30,8 +30,10 @@
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <module name="pprzlog"/>
-    <!--module name="flight_recorder.xml">
+    <!--module name="pprzlog"/-->
+    <!--module name="tlsf"/>
+    <module name="logger" type="sd_chibios"/-->
+    <!--module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module-->
     <module name="telemetry" type="transparent"/>
@@ -81,13 +83,23 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
+	<load name="autmav/advanced_landing.xml"/> 
     <load name="autmav/digital_cam.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>
     </load>
+    <load name="lidar_sf11.xml">
+		<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+		<configure name="LIDAR_SF11_I2C_ADDR" value="0xCC"/>
+		<configure name="USE_LIDAR_SF11_AGL" value="1"/>
+		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
+	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
-    
+    <load name="autmav/RTK_receive.xml">
+        <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B57600"/>            
+    </load>
   </modules>
 
   <!-- commands section -->
@@ -264,6 +276,11 @@
     <define name="ACCELERATION_THRESHOLD" value="0.2"/>
     <define name="INITIAL_PITCH" value="30.0" unit="deg"/>
     <define name="INITIAL_THROTTLE" value="1.0"/>
+  </section>
+
+  <section name="ADVANCED_LANDING" prefix="NAV_ADVANCED_LANDING_">
+    <define name="APP_DIST" value="200" unit="m"/>
+    <define name="DIRECTION" value="20" unit="deg"/>
   </section>
   
   <section name="DIGITAL_CAMERA" prefix="DC_">

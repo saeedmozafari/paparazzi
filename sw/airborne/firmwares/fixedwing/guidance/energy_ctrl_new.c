@@ -348,6 +348,7 @@ void v_ctl_climb_loop(void)
     v_ctl_auto_groundspeed_sum_err = v_ctl_auto_airspeed_controlled / (v_ctl_auto_groundspeed_pgain *
                                      v_ctl_auto_groundspeed_igain);
   }
+  BoundAbs(v_ctl_auto_airspeed_controlled, RACE_AIRSPEED);
 #else
   v_ctl_auto_airspeed_controlled = v_ctl_auto_airspeed_setpoint_slew;
 #endif
@@ -428,7 +429,7 @@ void v_ctl_climb_loop(void)
   Bound(v_ctl_pitch_setpoint, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT)
 
   ac_char_update(controlled_throttle, v_ctl_pitch_of_vz, v_ctl_climb_setpoint, v_ctl_desired_acceleration);
-
+  BoundAbs(controlled_throttle, V_CTL_MAX_THROTTLE);
   v_ctl_throttle_setpoint = TRIM_UPPRZ(controlled_throttle * MAX_PPRZ);
 }
 

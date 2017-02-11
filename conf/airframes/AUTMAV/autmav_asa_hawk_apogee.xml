@@ -31,8 +31,8 @@
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
     <!--module name="pprzlog"/-->
-    <module name="tlsf"/>
-    <module name="logger" type="sd_chibios"/>
+    <!--module name="tlsf"/>
+    <module name="logger" type="sd_chibios"/-->
     <!--module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module-->

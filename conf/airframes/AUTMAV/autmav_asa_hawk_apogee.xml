@@ -30,12 +30,12 @@
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <!--module name="pprzlog"/-->
-    <!--module name="tlsf"/>
-    <module name="logger" type="sd_chibios"/-->
-    <!--module name="flight_recorder">
+    <module name="tlsf"/>
+    <module name="logger" type="sd_chibios"/>
+    <module name="pprzlog"/>    
+    <module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
-    </module-->
+    </module>
     <module name="telemetry" type="transparent"/>
     <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
@@ -47,12 +47,20 @@
       <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
     </module>
     <module name="gps" type="ublox">
-      <configure name="GPS_BAUD" value="B115200"/>
-      <define name="GPS_UBX_UCENTER_RATE" value="100"/>
+      <configure name="UBX_GPS_BAUD" value="B115200"/>
+      <configure name="UBX_GPS_PORT" value="UART6"/>
+      <configure name="GPS_UBX_UCENTER_RATE" value="100"/>
       <define name="USE_GPS_UBX_RXM_RAW"/>
       <define name="USE_GPS_UBX_RXM_SFRB"/>
-      <!--define name="LOG_RAW_GPS"/-->
+      <define name="SECONDARY_GPS" value="nmea"/>
     </module>
+    
+    <module name="gps" type="nmea">
+      <configure name="NMEA_GPS_PORT" value="UART4"/>
+      <configure name="NMEA_GPS_BAUD" value="115200"/> 
+      <define name="SECONDARY_GPS" value="nmea"/>
+    </module>
+    
     <module name="navigation"/>
     <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
@@ -99,10 +107,10 @@
 		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
 	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
-    <load name="autmav/RTK_receive.xml">
+    <!--load name="autmav/RTK_receive.xml">
         <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
         <define name="RTK_RTCM3_UART_BAUD" value="B57600"/>            
-    </load>
+    </load-->
   </modules>
 
   <!-- commands section -->

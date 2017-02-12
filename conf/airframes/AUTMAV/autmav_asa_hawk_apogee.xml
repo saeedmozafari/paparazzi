@@ -218,7 +218,7 @@
     <!-- outer loop proportional gain -->
     <define name="ALTITUDE_PGAIN" value="0.5"/>
     <!-- outer loop saturation -->
-    <define name="ALTITUDE_MAX_CLIMB" value="2.5"/> <!--default 2-->
+    <define name="ALTITUDE_MAX_CLIMB" value="5.0"/> <!--default 2-->
     <!-- auto throttle inner loop -->
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.9"/>
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="RadOfDeg(30.0)"/>

@@ -1,0 +1,22 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="sony_a7r_handler" dir="autmav">
+  <doc>
+    <description>
+     	This module is used to handle sony a7r commands.
+    </description>
+    
+  </doc>
+  <!--<settings>
+    <dl_settings name="sony a7r">
+       
+    </dl_settings>
+  </settings>-->
+  <header>
+    <file name="sony_a7r_handler.h"/>
+  </header>
+  <init fun="sony_a7r_handler_setup()"/>
+  <makefile target="ap|sim|nps">
+    <file name="sony_a7r_handler.c"/>
+  </makefile>
+</module>

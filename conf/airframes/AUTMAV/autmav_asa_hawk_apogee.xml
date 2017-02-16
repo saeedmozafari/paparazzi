@@ -87,6 +87,11 @@
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
 	<load name="autmav/advanced_landing.xml"/> 
+	<load name="autmav/sony_a7r_handler.xml">
+		<define name="ESP_01_UART_PORT" value="uart4"/>
+		    <define name="ESP_01_BAUD" value="B115200"/>
+
+	</load>
     <load name="autmav/digital_cam.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>

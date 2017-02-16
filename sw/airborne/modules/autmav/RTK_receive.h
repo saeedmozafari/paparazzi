@@ -11,6 +11,7 @@
 
 extern void relay_msg(uint8_t length, uint8_t *relay_data);
 extern void RTK_receive_init(void);
+extern void tag_image_log(void);
 
 static inline void parse_DL_RTCM_INJECT(void)
 {

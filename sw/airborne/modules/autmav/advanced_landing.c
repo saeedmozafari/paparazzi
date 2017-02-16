@@ -2,6 +2,7 @@
 //#include "subsystems/navigation/waypoints.h"
 #include "firmwares/fixedwing/nav.h"
 #include "subsystems/gps.h"
+#include "modules/lidar/lidar_sf11.h"
 
 #ifndef NAV_ADVANCED_LANDING_APP_DIST
 #define NAV_ADVANCED_LANDING_APP_DIST 300
@@ -54,4 +55,13 @@ void set_turning_direction(int16_t dir){
 
 void set_approach_distance(int16_t dist){
 	nav_advanced_landing_app_dist = dist;
+}
+
+void set_sf11_agl_mode(bool state){
+	if(state == TRUE){
+		lidar_sf11.update_agl = 1;
+	}
+	else{
+	 	lidar_sf11.update_agl = 0;
+	}
 }

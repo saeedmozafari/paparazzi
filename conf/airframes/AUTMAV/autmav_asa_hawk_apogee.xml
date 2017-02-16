@@ -5,7 +5,8 @@
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
           <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <configure name="BARO_LED" value="4"/>
+	  <define name="RTK_GPS_LED" value="4"/>
+      <configure name="BARO_LED" value="none"/>
 	  <configure name="RADIO_CONTROL_LED" value="3"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
@@ -30,12 +31,12 @@
    
     <define name="USE_AIRSPEED"/>
     <define name="STRONG_WIND"/>
-    <!--module name="pprzlog"/-->
-    <!--module name="tlsf"/>
-    <module name="logger" type="sd_chibios"/-->
-    <!--module name="flight_recorder">
+    <module name="tlsf"/>
+    <module name="logger" type="sd_chibios"/>
+    <module name="pprzlog"/>    
+    <module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
-    </module-->
+    </module>
     <module name="telemetry" type="transparent"/>
     <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
@@ -47,12 +48,20 @@
       <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
     </module>
     <module name="gps" type="ublox">
-      <configure name="GPS_BAUD" value="B115200"/>
-      <define name="GPS_UBX_UCENTER_RATE" value="100"/>
-      <define name="USE_GPS_UBX_RXM_RAW"/>
-      <define name="USE_GPS_UBX_RXM_SFRB"/>
-      <!--define name="LOG_RAW_GPS"/-->
+      <configure name="UBX_GPS_BAUD" value="B115200"/>
+      <configure name="UBX_GPS_PORT" value="UART4"/>
+      <configure name="GPS_UBX_UCENTER_RATE" value="100"/>
+      <!--define name="USE_GPS_UBX_RXM_RAW"/>
+      <define name="USE_GPS_UBX_RXM_SFRB"/-->
+      <!--define name="SECONDARY_GPS" value="nmea"/-->
     </module>
+    
+    <!--module name="gps" type="nmea">
+      <configure name="NMEA_GPS_PORT" value="UART4"/>
+      <configure name="NMEA_GPS_BAUD" value="115200"/> 
+      <define name="SECONDARY_GPS" value="nmea"/>
+    </module-->
+    
     <module name="navigation"/>
     <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
@@ -61,13 +70,10 @@
   </firmware>
 
   <modules>
-    <load name="airspeed_ets.xml">
-      <define name="AIRSPEED_ETS_SYNC_SEND"/>
-      <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
-    </load> 
+    <!--load name="airspeed_amsys.xml"/-->
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
-      <load name="airspeed_ms45xx_i2c.xml">
+	<load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
       <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
     </load>
@@ -98,16 +104,17 @@
   	<define name="DC_RELEASE" value="gpio_clear"/>
     </load>
     <load name="lidar_sf11.xml">
-		<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+		<configure name="LIDAR_SF11_I2C_DEV" value="i2c1"/>
 		<configure name="LIDAR_SF11_I2C_ADDR" value="0xCC"/>
 		<configure name="USE_LIDAR_SF11_AGL" value="1"/>
 		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
 	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
-    <load name="autmav/RTK_receive.xml">
+    <!--load name="autmav/RTK_receive.xml">
         <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
-        <define name="RTK_RTCM3_UART_BAUD" value="B57600"/>            
-    </load>
+        <define name="UBX_RTK_GPS_LINK" value="uart6"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
+    </load-->
   </modules>
 
   <!-- commands section -->
@@ -202,8 +209,8 @@
 
   <section name="MISC">
     <define name="NOMINAL_AIRSPEED" value="11.5" unit="m/s"/>
-    <define name="RACE_AIRSPEED" value="15.0" unit="m/s"/>
-    <define name="STALL_AIRSPEED" value="5.0" unit="m/s"/>
+    <define name="RACE_AIRSPEED" value="18.0" unit="m/s"/>
+    <define name="STALL_AIRSPEED" value="7.0" unit="m/s"/>
     <define name="CARROT" value="5." unit="s"/>    
     <define name="KILL_MODE_DISTANCE" value="(2.0*MAX_DIST_FROM_HOME)"/>
     <define name="DEFAULT_CIRCLE_RADIUS" value="100."/>
@@ -216,6 +223,8 @@
     <!-- modified loop gains -->
     <define name="MAX_POWER" value="200.0"/>
     <define name="MASS" value="3.2"/>
+    <define name="MAX_THROTTLE" value="1.0"/>
+
     <define name="THROTTLE_PGAIN" value="0.25"/>
     <define name="THROTTLE_IGAIN" value="0.1"/>
 
@@ -243,6 +252,10 @@
     <define name="ENERGY_DIFF_IGAIN" value="0.1"/>
 
     <define name="THROTTLE_SLEW_LIMITER" value="1.0" unit="s"/>
+	
+    <define name="AUTO_GROUNDSPEED_SETPOINT" value="11.5"/>	
+    <define name="AUTO_GROUNDSPEED_PGAIN" value="1.0"/>
+    <define name="AUTO_GROUNDSPEED_IGAIN" value="0.2"/>
     
   </section>
   

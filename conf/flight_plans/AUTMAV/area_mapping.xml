@@ -1,6 +1,6 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1160" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="3000" name="Basic" security_height="10">
+<flight_plan alt="1160" ground_alt="0" lat0="35.286504" lon0="52.012179" max_dist_from_home="2000" name="Basic" security_height="10">
   <header>
   #include "subsystems/datalink/datalink.h"
 	#include "modules/autmav/photogrammetry_calculator.h"
@@ -9,22 +9,20 @@
 	#include "modules/autmav/advanced_landing.h"
 </header>
   <waypoints>
-    <waypoint name="HOME" x="-18.7" y="16.4" height="0"/>
- 	<waypoint name="AP" x="-18.7" y="16.4" height="75"/>
-	<waypoint name="TC" x="-18.7" y="16.4" height="75"/>
-	<waypoint name="TP" x="-18.7" y="16.4" height="75"/>
+    <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="AP" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TC" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TP" x="-18.7" y="16.4"/>
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
-    <waypoint height="150.0" name="STDBY" x="-212.2" y="225.2"/>
-    <waypoint height="250.0" name="STDBY2" x="-234.3" y="241.6"/>
-    <waypoint height="400.0" name="STDBY3" x="-243.0" y="222.7"/>
-    <waypoint height="30.0" name="AF" x="-383.8" y="57.8"/>
-    <waypoint height="0.0" name="TD" x="49.2" y="-24.8"/>
-    <waypoint name="1" x="-835.4" y="117.7"/>
-    <waypoint name="2" x="-652.3" y="-647.2"/>
-    <waypoint name="3" x="652.4" y="-390.8"/>
-    <waypoint name="4" x="394.8" y="510.8"/>
-    <waypoint name="_BASELEG" x="168.8" y="-13.8"/>
+    <waypoint height="150.0" name="STDBY" x="-338.9" y="-136.8"/>
+    <waypoint height="250.0" name="STDBY2" x="-342.7" y="-92.0"/>
+    <waypoint height="400.0" name="STDBY3" x="-286.2" y="-127.5"/>
+    <waypoint height="0.0" name="TD" x="-114.9" y="6.7"/>
+    <waypoint name="1" x="-355.5" y="107.2"/>
+    <waypoint name="2" x="7.4" y="-363.4"/>
+    <waypoint name="3" x="388.4" y="-166.3"/>
+    <waypoint name="4" x="135.3" y="297.5"/>
   </waypoints>
   <exceptions>
     <exception cond="datalink_time > 600" deroute="Standby2"/>
@@ -72,51 +70,25 @@
       <deroute block="Standby"/>
     </block>
 
-		<block name="Flying above Home">
-			<go wp="HOME" vmode="alt" alt="GetPosAlt()"/>
-			<circle wp="HOME" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
-			<call_once fun="set_turning_direction(90)" />
-			<call_once fun="calc_turning_point(WP_HOME, WP_AP, WP_TP, WP_TC)" />
+		<block name="Loiter">
+			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
+			<!--call_once fun="set_turning_direction(100)" /-->
+			<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
 		</block>
 
-		<block name="khkh">
-			<circle wp="HOME" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(DegOfRad(nav_advanced_landing_direction))" />
-		</block>
-
-		<block name="Prepare to land">
+		<block name="Approach">
 			<go wp="TP" vmode="alt"/>
 			<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
 		</block>
 
 		<block name="Landing">
-			<go from="AP" hmode="route" vmode="glide" wp="HOME"/>
+			<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
 		</block>
 
 		<block name="flare">
-      <go approaching_time="0" hmode="route" throttle="0.0" vmode="throttle" wp="HOME"/>
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-    </block>
-    
-    <!--<block group="land" name="Land Right AF-TD" strip_button="Land right (wp AF-TD)" strip_icon="land-right.png">
-      <set value="DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
-      <deroute block="land"/>
-    </block>
-    <block group="land" name="Land Left AF-TD" strip_button="Land left (wp AF-TD)" strip_icon="land-left.png">
-      <set value="-DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
-      <deroute block="land"/>
-    </block>
-    <block name="land">
-      <call_once fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
-      <circle radius="nav_radius" until="NavCircleCount() > 0.5" wp="_BASELEG"/>
-      <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
-    </block>
-    <block name="final">
-      <exception cond="GetAltRef() + 5 > GetPosAlt()" deroute="flare"/>
-      <go from="AF" hmode="route" vmode="glide" wp="TD"/>
-    </block>
-    <block name="flare">
-      <go approaching_time="0" from="AF" hmode="route" throttle="0.0" vmode="throttle" wp="TD"/>
-      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-    </block>-->
+		</block>
   </blocks>
 </flight_plan>

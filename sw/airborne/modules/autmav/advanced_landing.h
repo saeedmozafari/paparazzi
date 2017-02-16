@@ -6,6 +6,7 @@
 
 extern float nav_advanced_landing_app_dist;
 extern float nav_advanced_landing_direction;
+extern float nav_advanced_landing_flair_time_tresh;
 
 extern void advanced_landing_setup(void);
 

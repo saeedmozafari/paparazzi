@@ -3,8 +3,9 @@
 #include "RTK_receive.h"
 
 #include "subsystems/gps.h"
-
+#include "subsystems/datalink/downlink.h"
 #include "modules/loggers/sdlog_chibios.h"
+#include "state.h"
 
 /** Includes macros generated from ubx.xml */
 #include "ubx_protocol.h"
@@ -339,15 +340,29 @@ void rtk_gps_ubx_msg(void)
       rtk_gps_ubx.state.last_3dfix_ticks = sys_time.nb_sec_rem;
       rtk_gps_ubx.state.last_3dfix_time = sys_time.nb_sec;
     }
-    //sdLogWriteLog(pprzLogFile, "salam chetori?\n");
     //AbiSendMsgGPS(RTK_GPS_UBX_ID, now_ts, &rtk_gps_ubx.state);
+	if (pprzLogFile != -1){
+		//sdLogWriteLog(pprzLogFile, "khubi\n");
+		//LED_ON(3);
+	}
   }
   rtk_gps_ubx.msg_available = false;
 }
 
-void tag_image_log(uint16_t photo_number){
+void tag_image_log(void){
 
-	
+	static uint16_t image_number = 1;
 
+	if (pprzLogFile != -1){
+		//sdLogWriteLog(pprzLogFile, "salam\n");
+		int err = sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
+                    image_number, rtk_gps_ubx.state.lla_pos.lat,
+                    rtk_gps_ubx.state.lla_pos.lon, rtk_gps_ubx.state.lla_pos.alt,
+                    stateGetNedToBodyEulers_f()->phi, stateGetNedToBodyEulers_f()->theta,
+                    stateGetNedToBodyEulers_f()->psi, 0.0, 0.0, rtk_gps_ubx.state.fix);
+		DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
+		LED_ON(3);
+	}
+	image_number ++;
 
 }

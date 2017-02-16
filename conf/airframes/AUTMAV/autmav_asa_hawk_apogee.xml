@@ -70,13 +70,13 @@
   </firmware>
 
   <modules>
-    <load name="airspeed_amsys.xml"/>
+    <!--load name="airspeed_amsys.xml"/-->
     <load name="geo_mag.xml"/>
-    <!--load name="gps_ubx_ucenter.xml"/-->
-	<!--load name="airspeed_ms45xx_i2c.xml">
+    <!--load name="gps_ubx_ucenter.xml"/--> 
+	<load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
       <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
-    </load-->
+    </load>
     <load name="tune_airspeed.xml"/>
     <load name="autmav/survey_polygon.xml"/>
     <load name="baro_sim.xml"/>
@@ -110,11 +110,11 @@
 		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
 	</load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
-    <!--load name="autmav/RTK_receive.xml">
+    <load name="autmav/RTK_receive.xml">
         <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
         <define name="UBX_RTK_GPS_LINK" value="uart6"/>
         <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
-    </load-->
+    </load>
   </modules>
 
   <!-- commands section -->

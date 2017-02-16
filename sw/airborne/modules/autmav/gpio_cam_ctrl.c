@@ -42,6 +42,8 @@
 
 #include "mcu_periph/gpio.h"
 
+#include "RTK_receive.h"
+
 #ifndef DC_PUSH
 #define DC_PUSH gpio_set
 #endif
@@ -137,6 +139,7 @@ void dc_send_command(uint8_t cmd)
   switch (cmd) {
     case DC_SHOOT:
       DC_PUSH(DC_SHUTTER_GPIO);
+      tag_image_log();
 #ifndef DC_SHOOT_ON_BUTTON_RELEASE
       dc_send_shot_position();
 #endif

@@ -14,7 +14,10 @@
   </header>
   
   <init fun="RTK_receive_init()"/>
+  <init fun="rtk_gps_ubx_init()"/>
 
+  <event fun="rtk_gps_ubx_event()"/>
+  
   <datalink message="RTCM_INJECT" fun="parse_DL_RTCM_INJECT()"/>
 
   <makefile target="ap">

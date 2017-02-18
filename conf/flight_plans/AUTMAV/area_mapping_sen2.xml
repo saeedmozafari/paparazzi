@@ -73,20 +73,14 @@
 
 		<block name="Loiter" strip_button="Landing">
 			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
-			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
-			<!--call_once fun="set_turning_direction(100)" /-->
-			<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
-			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
-		</block>
-
-		<block name="Approach">
-			<go wp="TP" vmode="alt"/>
-			<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="60 > (GetPosAlt() - GetAltRef())"/>
 			<call_once fun="set_sf11_agl_mode(true)" />
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-1.0" until="20 > (GetPosAlt() - GetAltRef())"/>
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="20 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction + 85) || NavCourseCloseTo(nav_advanced_landing_direction - 85)" />
 		</block>
 
 		<block name="Landing">
-			<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
+			<go hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
 		</block>
 
 		<block name="flare">
@@ -94,3 +88,4 @@
 		</block>
   </blocks>
 </flight_plan>
+

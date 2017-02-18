@@ -6,6 +6,7 @@
 
 extern float nav_advanced_landing_app_dist;
 extern float nav_advanced_landing_direction;
+extern float nav_advanced_landing_flair_time_tresh;
 
 extern void advanced_landing_setup(void);
 
@@ -13,5 +14,6 @@ extern void advanced_landing_setup(void);
 
 extern void calc_turning_point(uint8_t, uint8_t, uint8_t, uint8_t);
 extern void set_turning_direction(int16_t);
+extern void set_sf11_agl_mode(bool);
 
 #endif

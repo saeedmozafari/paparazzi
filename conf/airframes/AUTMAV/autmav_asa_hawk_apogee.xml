@@ -92,7 +92,12 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-	<load name="autmav/advanced_landing.xml"/> 
+	<load name="autmav/advanced_landing.xml"/>
+	<!--load name="autmav/sony_a7r_handler.xml">
+		<define name="ESP_01_UART_PORT" value="uart4"/>
+		    <define name="ESP_01_BAUD" value="B115200"/>
+
+	</load-->
     <load name="autmav/digital_cam.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>
@@ -289,8 +294,8 @@
   </section>
 
   <section name="ADVANCED_LANDING" prefix="NAV_ADVANCED_LANDING_">
-    <define name="APP_DIST" value="200" unit="m"/>
-    <define name="DIRECTION" value="20" unit="deg"/>
+    <define name="APP_DIST" value="300" unit="m"/>
+    <define name="DIRECTION" value="100" unit="deg"/>
   </section>
   
   <section name="DIGITAL_CAMERA" prefix="DC_">

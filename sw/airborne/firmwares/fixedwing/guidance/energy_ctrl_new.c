@@ -31,6 +31,8 @@
 #include "firmwares/fixedwing/autopilot.h"
 #include "subsystems/abi.h"
 #include "subsystems/datalink/telemetry.h"
+#include "modules/autmav/advanced_landing.h"
+#include "modules/autmav/lidar_sf11.h"
 
 /////// DEFAULT GUIDANCE_V NECESSITIES //////
 
@@ -293,7 +295,10 @@ void v_ctl_altitude_loop(void)
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
 
   // Altitude Controller
-  v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+  if(!lidar_sf11.update_agl)
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+  else
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - sf11_alt;
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter

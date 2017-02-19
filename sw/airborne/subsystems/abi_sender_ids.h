@@ -103,6 +103,10 @@
 #define AGL_SONAR_NPS_ID 3
 #endif
 
+#ifndef AGL_LIDAR_SF11_ID
+#define AGL_LIDAR_SF11_ID 4
+#endif
+
 /*
  * IDs of magnetometer sensors (including IMUs with mag)
  */

@@ -59,19 +59,26 @@
   </firmware>
 
   <modules>
-    <!--load name="airspeed_ets.xml">
+    <load name="airspeed_ets.xml">
       <define name="AIRSPEED_ETS_SYNC_SEND"/>
       <configure name="AIRSPEED_ETS_I2C_DEV" value="i2c2"/>
-    </load--> 
+    </load> 
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
-      <load name="airspeed_ms45xx_i2c.xml">
+    <!--load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c2"/>
       <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
-    </load>
+    </load-->
     <load name="tune_airspeed.xml"/>
     <load name="autmav/survey_polygon.xml"/>
-    <load name="baro_sim.xml"/>
+	<load name="autmav/advanced_landing.xml"/>
+	<load name="autmav/lidar_sf11.xml">
+		<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+    	<configure name="LIDAR_SF11_I2C_ADDR" value="0xcc"/>
+    	<configure name="USE_LIDAR_SF11_AGL" value="1"/>
+    	<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
+	</load>
+    <!--load name="sim.xml"/-->
     <!--load name="mag_hmc58xx.xml">
       <configure name="MAG_HMC58XX_I2C_DEV" value="i2c1"/>
       <define name="MODULE_HMC58XX_UPDATE_AHRS" value="TRUE"/>

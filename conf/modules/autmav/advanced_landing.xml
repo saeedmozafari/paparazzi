@@ -1,0 +1,28 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="advanced_landing" dir="autmav">
+  <doc>
+    <description>
+     	This module contains advanced navigation routines for landing procedure.
+    </description>
+    <define name="NAV_ADVANCED_LANDING_APP_DIST" value="300" description="initial approach distance"/>
+    <define name="NAV_ADVANCED_LANDING_DIRECTION" value="100" description="initial approach direction"/>
+    <define name="NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH" value="0.5" description="initial time treshold before flair block"/>
+  </doc>
+  <settings>
+    <dl_settings name="control">
+      <dl_settings name="landing">
+        <dl_setting max="500" min="50" step="20" module="autmav/advanced_landing" var="nav_advanced_landing_app_dist" shortname="Approach_dist" param="NAV_ADVANCED_LANDING_APP_DIST" unit="m"/>
+        <dl_setting max="359" min="0" step="1" module="autmav/advanced_landing" var="nav_advanced_landing_direction" shortname="Approach_angle" param="NAV_ADVANCED_LANDING_DIRECTION" />
+        <dl_setting max="10" min="0" step="0.5" module="autmav/advanced_landing" var="nav_advanced_landing_flair_time_tresh" shortname="Time tresh" param="NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH" />
+      </dl_settings>
+    </dl_settings>
+  </settings>
+  <header>
+    <file name="advanced_landing.h"/>
+  </header>
+  <init fun="advanced_landing_setup()"/>
+  <makefile target="ap|sim|nps">
+    <file name="advanced_landing.c"/>
+  </makefile>
+</module>

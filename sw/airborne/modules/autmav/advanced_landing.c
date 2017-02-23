@@ -69,9 +69,9 @@ void set_approach_distance(int16_t dist){
 
 void set_sf11_agl_mode(bool state){
 	if(state == TRUE){
-		//lidar_sf11.update_agl = 1;
+		lidar_sf11.update_agl = 1;
 	}
 	else{
-	 	//lidar_sf11.update_agl = 0;
+	 	lidar_sf11.update_agl = 0;
 	}
 }

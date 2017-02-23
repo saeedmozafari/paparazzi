@@ -1,30 +1,28 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1160" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="3000" name="Basic" security_height="10">
+<flight_plan alt="1160" ground_alt="0" lat0="35.286504" lon0="52.012179" max_dist_from_home="2000" name="Basic" security_height="10">
   <header>
-    #include "subsystems/datalink/datalink.h"
-    #include "modules/cartography/photogrammetry_calculator.h"
-    #include "modules/sensors/airspeed_ms45xx_i2c.h"
-    #include "modules/autmav/catapult.h"
+  #include "subsystems/datalink/datalink.h"
+	#include "modules/autmav/photogrammetry_calculator.h"
+  #include "modules/sensors/airspeed_ms45xx_i2c.h"
+  #include "modules/autmav/catapult.h"
+	#include "modules/autmav/advanced_landing.h"
 </header>
   <waypoints>
-    <waypoint name="HOME" x="-18.7" y="16.4"/>
+    <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="AP" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TC" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TP" x="-18.7" y="16.4"/>
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
-    <waypoint height="150.0" name="STDBY" x="-212.2" y="225.2"/>
-    <waypoint height="250.0" name="STDBY2" x="-234.3" y="241.6"/>
-    <waypoint height="400.0" name="STDBY3" x="-243.0" y="222.7"/>
-    <waypoint height="30.0" name="AF" x="-383.8" y="57.8"/>
-    <waypoint height="0.0" name="TD" x="49.2" y="-24.8"/>
-    <waypoint name="1" x="-835.4" y="117.7"/>
-    <waypoint name="2" x="-652.3" y="-647.2"/>
-    <waypoint name="3" x="652.4" y="-390.8"/>
-    <waypoint name="4" x="394.8" y="510.8"/>
-    <waypoint name="5" x="-500.0" y="500.0"/>
-    <waypoint name="6" x="-500.0" y="-500.0"/>
-    <waypoint name="7" x="500.0" y="-500.0"/>
-    <waypoint name="8" x="500.0" y="500.0"/>
-    <waypoint name="_BASELEG" x="168.8" y="-13.8"/>
+    <waypoint height="150.0" name="STDBY" x="-338.9" y="-136.8"/>
+    <waypoint height="250.0" name="STDBY2" x="-342.7" y="-92.0"/>
+    <waypoint height="400.0" name="STDBY3" x="-286.2" y="-127.5"/>
+    <waypoint height="0.0" name="TD" x="-114.9" y="6.7"/>
+    <waypoint name="1" x="-355.5" y="107.2"/>
+    <waypoint name="2" x="7.4" y="-363.4"/>
+    <waypoint name="3" x="388.4" y="-166.3"/>
+    <waypoint name="4" x="135.3" y="297.5"/>
   </waypoints>
   <exceptions>
     <exception cond="datalink_time > 600" deroute="Standby2"/>
@@ -38,16 +36,17 @@
       <while cond="LessThan(NavBlockTime(), 10)"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <!--block name="Airspeed calibration" strip_button="Calibration">
+    <block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block-->    
+    </block>    
     <block name="Holding point">
       <set value="1" var="kill_throttle"/>
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
+			<call_once fun="set_sf11_agl_mode(false)" />
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
@@ -61,7 +60,7 @@
       <circle radius="nav_radius" wp="STDBY"/>
     </block>
     <block name="Standby2">
-      <circle radius="nav_radius" wp="STDBY2"/>
+	  <circle radius="nav_radius" wp="STDBY2"/>
     </block>
     <block name="Standby3">
       <circle radius="nav_radius" wp="STDBY3"/>
@@ -71,31 +70,27 @@
       <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>
-    <block name="Survey 2" strip_button="Survey2" strip_icon="survey.png">
-      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_5, 4)"/>
-      <call fun="nav_survey_polygon_run()"/>
-      <deroute block="Standby"/>
-    </block>
-    <block group="land" name="Land Right AF-TD" strip_button="Land right (wp AF-TD)" strip_icon="land-right.png">
-      <set value="DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
-      <deroute block="land"/>
-    </block>
-    <block group="land" name="Land Left AF-TD" strip_button="Land left (wp AF-TD)" strip_icon="land-left.png">
-      <set value="-DEFAULT_CIRCLE_RADIUS" var="nav_radius"/>
-      <deroute block="land"/>
-    </block>
-    <block name="land">
-      <call fun="nav_compute_baseleg(WP_AF, WP_TD, WP__BASELEG, nav_radius)"/>
-      <circle radius="nav_radius" until="NavCircleCount() > 0.5" wp="_BASELEG"/>
-      <circle radius="nav_radius" until="And(NavQdrCloseTo(DegOfRad(baseleg_out_qdr)-10), 10 > fabs(GetPosAlt() - WaypointAlt(WP__BASELEG)))" wp="_BASELEG"/>
-    </block>
-    <block name="final">
-      <exception cond="GetAltRef() + 5 > GetPosAlt()" deroute="flare"/>
-      <go from="AF" hmode="route" vmode="glide" wp="TD"/>
-    </block>
-    <block name="flare">
-      <go approaching_time="0" from="AF" hmode="route" throttle="0.0" vmode="throttle" wp="TD"/>
-      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-    </block>
+
+		<block name="Loiter" strip_button="Landing">
+			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
+			<!--call_once fun="set_turning_direction(100)" /-->
+			<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
+		</block>
+
+		<block name="Approach">
+			<go wp="TP" vmode="alt"/>
+			<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
+			<!--call_once fun="set_sf11_agl_mode(true)" /-->
+		</block>
+
+		<block name="Landing">
+			<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
+		</block>
+
+		<block name="flare">
+      <attitude roll="0.0" pitch="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+		</block>
   </blocks>
 </flight_plan>

@@ -28,6 +28,9 @@
 
 #include "std.h"
 #include "mcu_periph/i2c.h"
+#include "math/pprz_algebra_int.h"
+
+#define MEDIAN_DATASIZE 5
 
 enum LidarSF11Status {
 	LIDAR_SF11_REQ_READ,
@@ -51,5 +54,19 @@ extern void lidar_sf11_init(void);
 extern void lidar_sf11_event(void);
 extern void lidar_sf11_periodic(void);
 extern void lidar_sf11_downlink(void);
+
+struct MedianFilterInt {
+  int32_t data[MEDIAN_DATASIZE], sortData[MEDIAN_DATASIZE];
+  int8_t dataIndex;
+};
+
+struct MedianFilter3Int {
+  struct MedianFilterInt mf[3];
+};
+
+extern void init_median_filter(struct MedianFilterInt *filter);
+extern int32_t update_median_filter(struct MedianFilterInt *filter, int32_t new_data);
+extern int32_t get_median_filter(struct MedianFilterInt *filter);
+
 
 #endif /* LIDAR_SF11_I2C_H */

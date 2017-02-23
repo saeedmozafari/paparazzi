@@ -7,7 +7,7 @@
     </description>
     <define name="NAV_ADVANCED_LANDING_APP_DIST" value="300" description="initial approach distance"/>
     <define name="NAV_ADVANCED_LANDING_DIRECTION" value="100" description="initial approach direction"/>
-    <define name="NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH" value="0.5" description="initial time treshold before flair block"/>
+    <define name="NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH" value="2.0" description="initial time treshold before flair block"/>
   </doc>
   <settings>
     <dl_settings name="control">

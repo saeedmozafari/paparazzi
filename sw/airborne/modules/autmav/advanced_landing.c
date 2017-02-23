@@ -16,7 +16,7 @@ abi_event sf11_ev;
 #endif
 
 #ifndef NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH
-#define NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH 0.5
+#define NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH 2.0
 #endif
 
 float nav_advanced_landing_app_dist;
@@ -33,7 +33,7 @@ void advanced_landing_setup(void){
 	AbiBindMsgAGL(ABI_BROADCAST, &sf11_ev, sf11_cb);
 }
 
-void sf11_cb(uint8_t sender_id, float distance){
+void sf11_cb(uint8_t __attribute__((unused)) sender_id, float distance){
 	sf11_alt = distance;
 }
 
@@ -69,9 +69,9 @@ void set_approach_distance(int16_t dist){
 
 void set_sf11_agl_mode(bool state){
 	if(state == TRUE){
-		lidar_sf11.update_agl = 1;
+		//lidar_sf11.update_agl = 1;
 	}
 	else{
-	 	lidar_sf11.update_agl = 0;
+	 	//lidar_sf11.update_agl = 0;
 	}
 }

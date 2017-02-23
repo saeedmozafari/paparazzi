@@ -200,6 +200,8 @@
   	<field name="nominal_throttle" 	type="float"/>
     <field name="throttle_p_part" 	type="float"/>
     <field name="throttle_i_part" 	type="float"/>
+    <field name="sf11_agl"          type="float"/>
+    <field name="sf11_no_rotate"    type="uint32"/>
   </message>
 
   <message name="SVINFO" id="25">

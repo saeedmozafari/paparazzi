@@ -32,7 +32,7 @@
 #include "subsystems/abi.h"
 #include "subsystems/datalink/telemetry.h"
 #include "modules/autmav/advanced_landing.h"
-#include "modules/autmav/lidar_sf11.h"
+//#include "modules/autmav/lidar_sf11.h"
 
 /////// DEFAULT GUIDANCE_V NECESSITIES //////
 
@@ -154,7 +154,9 @@ static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
                          &v_ctl_throttle_ppart, 
-                         &v_ctl_throttle_ipart);
+                         &v_ctl_throttle_ipart,
+                         0,
+                         0);
  }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
@@ -295,10 +297,10 @@ void v_ctl_altitude_loop(void)
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
 
   // Altitude Controller
-  if(!lidar_sf11.update_agl)
+ // if(!lidar_sf11.update_agl)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
-  else
-    v_ctl_altitude_error = v_ctl_altitude_setpoint - sf11_alt;
+ // else
+    //v_ctl_altitude_error = v_ctl_altitude_setpoint - sf11_alt;
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter
@@ -433,7 +435,7 @@ void v_ctl_climb_loop(void)
   Bound(v_ctl_pitch_setpoint, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT)
 
   ac_char_update(controlled_throttle, v_ctl_pitch_of_vz, v_ctl_climb_setpoint, v_ctl_desired_acceleration);
-
+  BoundAbs(controlled_throttle, V_CTL_MAX_THROTTLE);
   v_ctl_throttle_setpoint = TRIM_UPPRZ(controlled_throttle * MAX_PPRZ);
 }
 

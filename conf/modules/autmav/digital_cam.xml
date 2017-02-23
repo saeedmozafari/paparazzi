@@ -59,17 +59,17 @@
   <conflicts>digital_cam_i2c,digital_cam_servo,digital_cam_uart,digital_cam_video</conflicts>
 
   <header>
-    <file name="gpio_cam_ctrl.h"/>
+    <file name="wifi_cam_ctrl.h"/>
     <file name="dc.h"/>
   </header>
 
-  <init fun="gpio_cam_ctrl_init()"/>
+  <init fun="wifi_cam_ctrl_init()"/>
 
-  <periodic fun="gpio_cam_ctrl_periodic()" freq="10" autorun="TRUE"/>
+  <periodic fun="wifi_cam_ctrl_periodic()" freq="10" autorun="TRUE"/>
 
   <makefile target="ap|sim|nps">
     <define name="DIGITAL_CAM" />
-    <file name="gpio_cam_ctrl.c"/>
+    <file name="wifi_cam_ctrl.c"/>
     <file name="dc.c"/>
   </makefile>
 

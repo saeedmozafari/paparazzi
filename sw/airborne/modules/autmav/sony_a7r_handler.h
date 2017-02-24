@@ -7,6 +7,7 @@
 extern void sony_a7r_handler_setup(void);
 
 extern void esp_01_initialize(void);
+extern void esp_01_jap(void);
 extern void sony_a7r_shoot(void);
 
 #endif

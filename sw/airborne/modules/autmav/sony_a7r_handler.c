@@ -11,7 +11,7 @@ struct link_device *wifi_command;
 #endif
 
 #ifndef ESP_01_UART_PORT 
-//#define ESP_01_UART_PORT uart6
+#define ESP_01_UART_PORT uart6
 #endif
 
 void sony_a7r_handler_setup(void){
@@ -33,7 +33,7 @@ void sony_a7r_shoot(void){
 }
 
 void esp_01_initialize(void){
-	char jap_msg[43] = "AT+CWJAP=\"DIRECT-hvE0:ILCE-7R\",\"p9tWfStF\"\r\n";
+	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
 	for(int i=0; i<43; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
@@ -76,5 +76,12 @@ void esp_01_initialize(void){
 	char prepare_to_shoot_msg[264] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost:192.168.122.1:8080\r\nContent-Length: 60\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"startRecMode\",\"params\":[],\"id\":1,\"version\":\"1.0\"}\r\n";
 	for(int i=0; i<264; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)prepare_to_shoot_msg[i]);
+	}
+}
+
+void esp_01_jap(){
+	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
+	for(int i=0; i<43; i++){
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
 }

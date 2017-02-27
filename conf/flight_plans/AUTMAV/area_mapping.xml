@@ -7,6 +7,7 @@
   #include "modules/sensors/airspeed_ms45xx_i2c.h"
   #include "modules/autmav/catapult.h"
 	#include "modules/autmav/advanced_landing.h"
+	<!--#include "modules/autmav/sony_a7r_handler.h"-->
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
@@ -92,5 +93,12 @@
 		<block name="flare">
       <attitude roll="0.0" pitch="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
+		<!--block name="sony_cam_init" strip_button="cam_init">
+      <call_once fun="esp_01_jap()" />
+  </block> 
+
+	<block name="sony_cam_shoot" strip_button="cam_shoot">
+      <call_once fun="sony_a7r_shoot()" />
+  </block-->
   </blocks>
 </flight_plan>

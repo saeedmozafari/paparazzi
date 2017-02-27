@@ -300,7 +300,7 @@ void v_ctl_altitude_loop(void)
   if(!lidar_sf11.update_agl)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
   else
-    v_ctl_altitude_error = v_ctl_altitude_setpoint - sf11_alt;
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - lidar_sf11.distance;
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter

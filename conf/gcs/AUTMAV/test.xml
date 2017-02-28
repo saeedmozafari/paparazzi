@@ -1,0 +1,50 @@
+<!DOCTYPE layout SYSTEM "../layout.dtd">
+
+<layout width="1301" height="744">
+  <rows>
+    <widget NAME="map2d" size="500">
+      <papget type="message_field" display="text" x="50" y="359">
+        <property name="scale" value="1."/>
+        <property name="field" value="ENERGYADAPTIVE_NEW:throttle_p_part"/>
+        <property name="format" value="p_part:%.2f"/>
+        <property name="size" value="15."/>
+        <property name="color" value="#00ff00"/>
+      </papget>
+      <papget type="message_field" display="text" x="29" y="414">
+        <property name="scale" value="1."/>
+        <property name="field" value="DESIRED:climb"/>
+        <property name="format" value="desired_climb:%.2f"/>
+        <property name="size" value="15."/>
+        <property name="color" value="#00ff00"/>
+      </papget>
+      <papget type="message_field" display="text" x="40" y="330">
+        <property name="scale" value="1."/>
+        <property name="field" value="AIRSPEED:airspeed"/>
+        <property name="format" value="Airspeed:%.2f"/>
+        <property name="size" value="15."/>
+        <property name="color" value="#00ff00"/>
+      </papget>
+      <papget type="message_field" display="text" x="22" y="302">
+        <property name="scale" value="57.3"/>
+        <property name="field" value="DESIRED:pitch"/>
+        <property name="format" value="desired pitch:%.2f"/>
+        <property name="size" value="15."/>
+        <property name="color" value="#00ff00"/>
+      </papget>
+      <papget type="message_field" display="text" x="33" y="388">
+        <property name="scale" value="1."/>
+        <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
+        <property name="format" value="i_part:%.5f"/>
+        <property name="size" value="15."/>
+        <property name="color" value="#00ff00"/>
+      </papget>
+    </widget>
+    <columns>
+      <rows SIZE="375">
+        <widget NAME="strips" size="236"/>
+      </rows>
+      <widget NAME="aircraft" size="709"/>
+      <widget NAME="alarms" size="203"/>
+    </columns>
+  </rows>
+</layout>

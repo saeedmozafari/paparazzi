@@ -2,20 +2,23 @@
 
 <flight_plan alt="1160" ground_alt="0" lat0="35.286504" lon0="52.012179" max_dist_from_home="2000" name="Basic" security_height="10">
   <header>
-    #include "subsystems/datalink/datalink.h"
-    #include "modules/autmav/photogrammetry_calculator.h"
-    #include "modules/sensors/airspeed_ms45xx_i2c.h"
-    #include "modules/autmav/catapult.h"
-    #include "modules/autmav/advanced_landing.h"
+  #include "subsystems/datalink/datalink.h"
+	#include "modules/autmav/photogrammetry_calculator.h"
+  #include "modules/sensors/airspeed_ms45xx_i2c.h"
+  #include "modules/autmav/catapult.h"
+	#include "modules/autmav/advanced_landing.h"
+	<!--#include "modules/autmav/sony_a7r_handler.h"-->
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
-    <waypoint height="75.0" name="AP" x="-18.7" y="16.4"/>
-    <waypoint height="75.0" name="TC" x="-18.7" y="16.4"/>
-    <waypoint height="75.0" name="TP" x="-18.7" y="16.4"/>
-    <waypoint height="75.0" name="TO" x="-9.2" y="5.2"/>
+    <waypoint height="75" name="AP" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TC" x="-18.7" y="16.4"/>
+    <waypoint height="75" name="TP" x="-18.7" y="16.4"/>
+    <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
-    <waypoint height="150.0" name="STDBY" x="135.3" y="297.5"/>
+    <waypoint height="150.0" name="STDBY" x="-338.9" y="-136.8"/>
+    <waypoint height="250.0" name="STDBY2" x="-342.7" y="-92.0"/>
+    <waypoint height="400.0" name="STDBY3" x="-286.2" y="-127.5"/>
     <waypoint height="0.0" name="TD" x="-114.9" y="6.7"/>
     <waypoint name="1" x="-355.5" y="107.2"/>
     <waypoint name="2" x="7.4" y="-363.4"/>
@@ -260,7 +263,7 @@
     
   </waypoints>
   <exceptions>
-    <exception cond="datalink_time > 600" deroute="Standby"/>
+    <exception cond="datalink_time > 600" deroute="Standby2"/>
   </exceptions>
   <blocks>
     <block name="Wait GPS">
@@ -272,10 +275,10 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <!--block name="Airspeed calibration" strip_button="Calibration">
+    <block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block-->    
+    </block>    
     <block name="Holding point">
       <set value="1" var="kill_throttle"/>
       <set value="100" var="nav_radius"/>
@@ -301,26 +304,33 @@
       <deroute block="Standby"/>
     </block>
 
-	<block name="Loiter" strip_button="Landing">
-		<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
-		<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
-		<!--call_once fun="set_turning_direction(100)" /-->
-		<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
-		<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
-	</block>
+		<block name="Loiter" strip_button="Landing">
+			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
+			<!--call_once fun="set_turning_direction(100)" /-->
+			<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
+		</block>
 
-	<block name="Approach">
-		<go wp="TP" vmode="alt"/>
-		<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
-		<!--call_once fun="set_sf11_agl_mode(true)" /-->
-	</block>
+		<block name="Approach">
+			<go wp="TP" vmode="alt"/>
+			<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
+			<!--call_once fun="set_sf11_agl_mode(true)" /-->
+		</block>
 
-	<block name="Landing">
-		<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
-	</block>
+		<block name="Landing">
+			<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
+		</block>
 
-	<block name="flare">
-        <attitude roll="0.0" pitch="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-	</block>
+		<block name="flare">
+      <attitude roll="0.0" pitch="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+		</block>
+		<!--block name="sony_cam_init" strip_button="cam_init">
+      <call_once fun="esp_01_jap()" />
+  </block> 
+
+	<block name="sony_cam_shoot" strip_button="cam_shoot">
+      <call_once fun="sony_a7r_shoot()" />
+  </block-->
   </blocks>
 </flight_plan>

@@ -155,8 +155,8 @@ static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
                          &v_ctl_throttle_ppart, 
                          &v_ctl_throttle_ipart,
-                         0,
-                         0);
+                         &lidar_sf11.distance,
+                         &lidar_sf11.distance_raw);
  }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
@@ -300,7 +300,7 @@ void v_ctl_altitude_loop(void)
   if(!lidar_sf11.update_agl)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
   else
-    v_ctl_altitude_error = v_ctl_altitude_setpoint - sf11_alt;
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - lidar_sf11.distance;
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter

@@ -70,7 +70,7 @@
     <load name="gps_ubx_ucenter.xml"/>
     <load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c1"/>
-      <define name="USE_AIRSPEED_MS45XX" value="TRUE"/>
+      <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
     </load>
     <load name="tune_airspeed.xml"/>
     <load name="autmav/survey_polygon.xml"/>
@@ -96,7 +96,7 @@
       <define name="HMC58XX_CHAN_Y_SIGN" value="+"/>
       <define name="HMC58XX_CHAN_Z_SIGN" value="+"/>
     </load-->
-    <!--load name="air_data.xml"/-->
+    <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
     <!--load name="autmav/digital_cam.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
@@ -212,7 +212,7 @@
     <!-- modified loop gains -->
     <define name="MAX_POWER" value="200.0"/>
     <define name="MASS" value="3.2"/>
-    <define name="MAX_THROTTLE" value="0.85"/>
+    <define name="MAX_THROTTLE" value="1.0"/>
 
     <define name="THROTTLE_PGAIN" value="0.25"/>
     <define name="THROTTLE_IGAIN" value="0.1"/>
@@ -221,7 +221,7 @@
     <!-- outer loop proportional gain -->
     <define name="ALTITUDE_PGAIN" value="0.5"/>
     <!-- outer loop saturation -->
-    <define name="ALTITUDE_MAX_CLIMB" value="5.0"/> <!--default 2-->
+    <define name="ALTITUDE_MAX_CLIMB" value="4.0"/> <!--default 2-->
     <!-- auto throttle inner loop -->
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.9"/>
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="RadOfDeg(30.0)"/>
@@ -242,9 +242,9 @@
 
     <define name="THROTTLE_SLEW_LIMITER" value="1.0" unit="s"/>
   
-    <define name="AUTO_GROUNDSPEED_SETPOINT" value="11.5"/> 
+    <!--define name="AUTO_GROUNDSPEED_SETPOINT" value="11.5"/> 
     <define name="AUTO_GROUNDSPEED_PGAIN" value="1.0"/>
-    <define name="AUTO_GROUNDSPEED_IGAIN" value="0.2"/>
+    <define name="AUTO_GROUNDSPEED_IGAIN" value="0.2"/-->
     
   </section>
   
@@ -279,7 +279,7 @@
     <define name="HEADING_DELAY" value="3.0" unit="seconds"/>
     <define name="ACCELERATION_THRESHOLD" value="0.2"/>
     <define name="INITIAL_PITCH" value="30.0" unit="deg"/>
-    <define name="INITIAL_THROTTLE" value="0.85"/>
+    <define name="INITIAL_THROTTLE" value="1.0"/>
   </section>
   
   <section name="DIGITAL_CAMERA" prefix="DC_">

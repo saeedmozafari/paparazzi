@@ -6,7 +6,7 @@
 </header>
   <waypoints>
     <waypoint name="HOME" x="0" y="0" />
-    <waypoint name="STDBY" x="-69.1" y="-14.1"/>
+    <waypoint name="STDBY" x="-69.1" y="-14.1" height="200"/>
     <waypoint name="AF" x="45.8" y="-23.0"/>
     <waypoint name="TD" x="227.3" y="-124.9"/>
     <waypoint name="_BASELEG" x="25.8" y="112.3"/>

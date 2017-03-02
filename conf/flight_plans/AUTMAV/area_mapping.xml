@@ -29,7 +29,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
     <block name="Geo init">
@@ -41,14 +41,14 @@
       <deroute block="Holding point"/>
     </block-->    
     <block name="Holding point">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
 			<call_once fun="set_sf11_agl_mode(false)" />
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
-      <set value="0" var="kill_throttle"/>
+      <set value="0" var="autopilot.kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
     </block>

@@ -40,7 +40,7 @@
 #include "catapult.h"
 #include "firmwares/fixedwing/nav.h"
 #include "generated/flight_plan.h"
-#include "firmwares/fixedwing/autopilot.h"
+#include "autopilot.h"
 #include "firmwares/fixedwing/stabilization/stabilization_attitude.h"
 
 // Imu is required
@@ -121,7 +121,7 @@ void nav_catapult_highrate_module(void)
     else if (nav_catapult_launch >= nav_catapult_motor_delay * NAV_CATAPULT_HIGHRATE_MODULE_FREQ) {
       // Turn on Motor
       NavVerticalThrottleMode(9600 * (nav_catapult_initial_throttle));
-      launch = 1;
+      autopilot.launch = 1;
     }
   } else {
     nav_catapult_launch = 0;

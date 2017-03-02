@@ -74,7 +74,6 @@
 		<block name="Loiter" strip_button="Landing">
 			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
 			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
-			<!--call_once fun="set_turning_direction(100)" /-->
 			<call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
 			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
 		</block>

@@ -151,12 +151,17 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 
 static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
  {
+ 	float sf11_ctl_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+ 	float baro_ctl_error = v_ctl_altitude_setpoint - lidar_sf11.distance;
+
    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
                          &v_ctl_throttle_ppart, 
                          &v_ctl_throttle_ipart,
                          &lidar_sf11.distance,
-                         &lidar_sf11.distance_raw);
+                         &lidar_sf11.distance_raw,
+                         &sf11_ctl_error,
+                         &baro_ctl_error);
  }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics

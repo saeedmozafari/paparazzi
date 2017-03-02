@@ -133,8 +133,8 @@ void lidar_sf11_periodic(void)
  */
 void lidar_sf11_downlink(void)
 {
-  uint8_t trans = lidar_sf11.trans.status;
-  uint8_t status = lidar_sf11.status;
+  //uint8_t trans = lidar_sf11.trans.status;
+  //uint8_t status = lidar_sf11.status;
   /*DOWNLINK_SEND_LIDAR(DefaultChannel, DefaultDevice,
       &lidar_sf11.distance,
       &status,

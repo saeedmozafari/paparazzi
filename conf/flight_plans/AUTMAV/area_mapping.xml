@@ -11,9 +11,9 @@
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="AP" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="TC" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="TP" x="-18.7" y="16.4"/>
+    <waypoint height="45" name="AP" x="-18.7" y="16.4"/>
+    <waypoint height="45" name="TC" x="-18.7" y="16.4"/>
+    <waypoint height="45" name="TP" x="-18.7" y="16.4"/>
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
     <waypoint height="100.0" name="STDBY" x="-338.9" y="-136.8"/>
@@ -281,12 +281,12 @@
     </block>    
     <block name="Holding point">
       <set value="1" var="kill_throttle"/>
-      <set value="100" var="nav_radius"/>
+      <set value="60" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
 			<call_once fun="set_sf11_agl_mode(false)" />
-      <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
+      <exception cond="GetPosAlt() > GetAltRef()+45" deroute="Disarm Catapult"/>
       <set value="0" var="kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
@@ -309,9 +309,9 @@
 
 		<block name="Loiter" strip_button="Landing">
 			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
-			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-2.0" until="75 > (GetPosAlt() - GetAltRef())"/>
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="45 > (GetPosAlt() - GetAltRef())"/>
 		    <call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
-			<circle wp="TD" radius="nav_radius" vmode="alt" alt="75 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="45 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
 		</block>
 
 		<block name="Approach">
@@ -325,7 +325,7 @@
 		</block>
 
 		<block name="flare">
-      <attitude roll="0.0" pitch="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+      <attitude roll="0.0" pitch="5.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
 		<!--block name="sony_cam_init" strip_button="cam_init">
       <call_once fun="esp_01_jap()" />

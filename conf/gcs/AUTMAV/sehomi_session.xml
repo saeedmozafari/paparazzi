@@ -1,0 +1,106 @@
+<!DOCTYPE layout SYSTEM "../layout.dtd">
+
+<layout width="1300" height="716">
+  <columns>
+    <rows SIZE="450">
+      <widget NAME="strips" size="708"/>
+      <widget NAME="alarms" size="1"/>
+    </rows>
+    <rows>
+      <widget NAME="map2d" size="453">
+        <papget type="message_field" display="text" x="638" y="57">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIRSPEED:airspeed"/>
+          <property name="format" value="Airspeed:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="706" y="463">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_p_part"/>
+          <property name="format" value="P_PART:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="15" y="341">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:pitch"/>
+          <property name="format" value="Desired_pitch:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="752" y="414">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:nominal_throttle"/>
+          <property name="format" value="NOMINAL_THR:%.2f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="634" y="90">
+          <property name="scale" value="1."/>
+          <property name="field" value="NAVIGATION:dist_home"/>
+          <property name="format" value="Distance:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="784" y="510">
+          <property name="scale" value="1."/>
+          <property name="field" value="ENERGYADAPTIVE_NEW:throttle_i_part"/>
+          <property name="format" value="I_PART:%.5f"/>
+          <property name="size" value="25."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="655" y="22">
+          <property name="scale" value="0.01"/>
+          <property name="field" value="BAT:amps"/>
+          <property name="format" value="Amps:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="16" y="382">
+          <property name="scale" value="1."/>
+          <property name="field" value="DESIRED:climb"/>
+          <property name="format" value="Desired_climb:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="8" y="268">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIRSPEED:groundspeed_sp"/>
+          <property name="format" value="Groundspeed_SP:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="666" y="94">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIR_DATA:tas"/>
+          <property name="format" value="TAS:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="580" y="129">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIR_DATA:diff_p"/>
+          <property name="format" value="Pressure_diff:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="18" y="303">
+          <property name="scale" value="1."/>
+          <property name="field" value="AIRSPEED:airspeed_sp"/>
+          <property name="format" value="Airspeed_SP:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+        <papget type="message_field" display="text" x="20" y="235">
+          <property name="scale" value="57.3"/>
+          <property name="field" value="DESIRED:roll"/>
+          <property name="format" value="Desired_roll:%.2f"/>
+          <property name="size" value="20."/>
+          <property name="color" value="red"/>
+        </papget>
+      </widget>
+      <widget NAME="aircraft" size="255"/>
+    </rows>
+  </columns>
+</layout>

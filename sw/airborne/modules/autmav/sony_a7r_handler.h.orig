@@ -4,10 +4,17 @@
 #include "std.h"
 #include "paparazzi.h"
 
+<<<<<<< HEAD
+extern void sony_a7r_handler_setup();
+
+extern void esp_01_initialize();
+extern void sony_a7r_shoot();
+=======
 extern void sony_a7r_handler_setup(void);
 
 extern void esp_01_initialize(void);
 extern void esp_01_jap(void);
 extern void sony_a7r_shoot(void);
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 
 #endif

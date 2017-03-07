@@ -1,10 +1,15 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
 
 <module name="sony_a7r_handler" dir="autmav">
   <doc>
     <description>
      	This module is used to handle sony a7r commands.
     </description>
+<<<<<<< HEAD
+    <define name="ESP_01_UART_PORT" value="uart4" description="the port on autopilot which is connected to esp-01 wifi module"/>
+=======
     <define name="ESP_01_UART_PORT" value="uart6" description="the port on autopilot which is connected to esp-01 wifi module"/>
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
     <define name="ESP_01_BAUD" value="B115200" description="baudrate of the port"/>
   </doc>
   <!--<settings>
@@ -17,8 +22,13 @@
   </header>
   <init fun="sony_a7r_handler_setup()"/>
   <makefile target="ap|sim|nps">
+<<<<<<< HEAD
+    <define name="USE_UART4"/>
+    <define name="UART4_BAUD" value="ESP_01_BAUD"/>
+=======
     <define name="USE_UART6"/>
     <define name="UART6_BAUD" value="ESP_01_BAUD"/>
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
     <file name="sony_a7r_handler.c"/>
   </makefile>
 </module>

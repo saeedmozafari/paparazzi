@@ -1,3 +1,8 @@
+#include "sony_a7r_handler.h"
+#include "pprzlink/pprzlink_device.h"
+#include "mcu_periph/uart.h"
+#include "subsystems/datalink/datalink.h" 
+#include "generated/airframe.h"
 
 struct link_device *wifi_command;
 
@@ -5,18 +10,27 @@ struct link_device *wifi_command;
 #define ESP_01_BAUD B115200
 #endif
 
+<<<<<<< HEAD
+void sony_a7r_handler_setup(){
+=======
 #ifndef ESP_01_UART_PORT 
 #define ESP_01_UART_PORT uart6
 #endif
 
 void sony_a7r_handler_setup(void){
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 	wifi_command = &((ESP_01_UART_PORT).device);
 	uart_periph_set_bits_stop_parity(&ESP_01_UART_PORT, UBITS_8, USTOP_1, UPARITY_NO);
 	uart_periph_set_baudrate(&ESP_01_UART_PORT, ESP_01_BAUD);
 }
 
+<<<<<<< HEAD
+void sony_a7r_shoot(){
+	char send_command_msg[18] = "AT+CIPSEND=0,266,\r\n";
+=======
 void sony_a7r_shoot(void){
 	char send_command_msg[19] = "AT+CIPSEND=0,266,\r\n";
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 	for(int i=0; i<18; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
 	}
@@ -27,8 +41,13 @@ void sony_a7r_shoot(void){
 	}
 }
 
+<<<<<<< HEAD
+void esp_01_initialize(){
+	char jap_msg[43] = "AT+CWJAP=\"DIRECT-hvE0:ILCE-7R\",\"p9tWfStF\"\r\n";
+=======
 void esp_01_initialize(void){
 	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 	for(int i=0; i<43; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
@@ -43,7 +62,11 @@ void esp_01_initialize(void){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)start_con_msg[i]);
 	}
 
+<<<<<<< HEAD
+	char send_command_msg[18] = "AT+CIPSEND=0,125\r\n";
+=======
 	char send_command_msg[19] = "AT+CIPSEND=0,125\r\n";
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 	for(int i=0; i<18; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
 	}
@@ -72,6 +95,8 @@ void esp_01_initialize(void){
 	for(int i=0; i<264; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)prepare_to_shoot_msg[i]);
 	}
+<<<<<<< HEAD
+=======
 }
 
 void esp_01_jap(){
@@ -79,4 +104,5 @@ void esp_01_jap(){
 	for(int i=0; i<43; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
 }

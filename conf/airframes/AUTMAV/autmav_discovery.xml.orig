@@ -11,29 +11,35 @@
       <define name="AHRS_TRIGGERED_ATTITUDE_LOOP"/>
     </target>
 
-    <target name="sim" 			board="pc"/>
-
     <define name="USE_MAGNETOMETER" value="FALSE"/>
 	<define name="USE_I2C1"/>
-	   
-    <subsystem name="radio_control" type="ppm"/>
-    <subsystem name="telemetry" type="transparent">
+	<target name="sim" board="pc">
+    	<module name="radio_control" type="ppm"/>
+ 	    <define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
+    </target>
+    <module name="radio_control" type="ppm"/>
+    <module name="telemetry" type="transparent">
    	 <define name="MODEM_PORT" value="UART6" />    
-    </subsystem>
-    <subsystem name="control" type="adaptive"/>
-    <subsystem name="imu" type="drotek_10dof_v2">    
+    </module>
+    <module name="control" type="adaptive"/>
+    <module name="imu" type="drotek_10dof_v2">    
       <configure name="DROTEK_2_I2C_DEV" value="i2c2"/>    
       <define name="IMU_DROTEK_2_ORIENTATION_IC_UP" value="1" /> 
       <define name="DROTEK_2_MPU_I2C_ADDR" value="MPU60X0_ADDR"/>
+<<<<<<< HEAD
     </module> 
     <module name="ahrs" type="int_cmpl_quat"/>
+=======
+    </subsystem> 
+    <subsystem name="ahrs" type="int_cmpl_quat"/>
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
     <module name="gps" type="ublox">
          <define name="GPS_PORT" value="UART3" /> 
     </module>
-  <subsystem name="navigation"/>
-    <subsystem name="ins" type="alt_float">
+  <module name="navigation"/>
+    <module name="ins" type="alt_float">
       <define name="USE_BAROMETER" value="TRUE"/>
-    </subsystem>
+    </module>
   </firmware>
 
   <modules>
@@ -48,14 +54,19 @@
     <servo name="THROTTLE"      no="0" min="1000" neutral="1000" max="2000"/>
     <servo name="ELEVATOR"      no="1" min="2000" neutral="1500" max="1000"/>
     <servo name="RUDDER"        no="2" min="1000"  neutral="1500" max="2000"/>
+<<<<<<< HEAD
     <servo name="AILERON"       no="3" min="1000" neutral="1500" max="2000"/>
+=======
+    <servo name="AILERON_R"     no="3" min="1000" neutral="1500" max="2000"/>
+    <servo name="AILERON_L"     no="4" min="2000" neutral="1500" max="1000"/>
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
   </servos>
 
   <commands>
     <axis name="THROTTLE" failsafe_value="0"/>
     <axis name="ROLL"     failsafe_value="0"/>
     <axis name="PITCH"    failsafe_value="0"/>
-    <axis name="YAW"      failsafe_value="2000"/>
+    <axis name="YAW"      failsafe_value="0"/>
   </commands>
 
   <rc_commands>
@@ -72,13 +83,19 @@
   <command_laws>
     <set servo="THROTTLE"    value="@THROTTLE"/>
     <set servo="ELEVATOR"    value="@PITCH"/>
+<<<<<<< HEAD
     <set servo="RUDDER"      value="-@ROLL"/>
     <set servo="AILERON" value="@YAW"/>
+=======
+    <set servo="RUDDER"      value="@YAW"/>
+    <set servo="AILERON_R" value="-@ROLL"/>
+    <set servo="AILERON_L" value="-@ROLL"/>
+>>>>>>> 6e864ac2262770810a4be801d2c1449380dc361e
   </command_laws>
 
   <section name="AUTO1" prefix="AUTO1_">
-    <define name="MAX_ROLL" value="50" unit="deg"/>
-    <define name="MAX_PITCH" value="40" unit="deg"/>
+    <define name="MAX_ROLL" value="40" unit="deg"/>
+    <define name="MAX_PITCH" value="30" unit="deg"/>
   </section>
 
   <section name="IMU" prefix="IMU_">

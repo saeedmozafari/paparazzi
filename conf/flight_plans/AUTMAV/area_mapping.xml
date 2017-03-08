@@ -7,7 +7,7 @@
   #include "modules/sensors/airspeed_ms45xx_i2c.h"
   #include "modules/autmav/catapult.h"
 	#include "modules/autmav/advanced_landing.h"
-	<!--#include "modules/autmav/sony_a7r_handler.h"-->
+	#include "modules/autmav/sony_a7r_handler.h"
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
@@ -267,7 +267,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
     <block name="Geo init">
@@ -279,13 +279,13 @@
       <deroute block="Holding point"/>
     </block>    
     <block name="Holding point">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
-      <set value="0" var="kill_throttle"/>
+      <set value="0" var="autopilot.kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
     </block>
@@ -328,11 +328,11 @@
 		<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
-		<!--block name="sony_cam_init" strip_button="cam_init">
+		<block name="sony_cam_init" strip_button="cam_init">
       <call_once fun="esp_01_jap()" />
   </block> 
 
-	<block name="sony_cam_shoot" strip_button="cam_shoot">
+	<!--block name="sony_cam_shoot" strip_button="cam_shoot">
       <call_once fun="sony_a7r_shoot()" />
   </block-->
   </blocks>

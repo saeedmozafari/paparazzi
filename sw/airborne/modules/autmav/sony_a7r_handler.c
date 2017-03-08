@@ -1,3 +1,8 @@
+#include "sony_a7r_handler.h"
+#include "pprzlink/pprzlink_device.h"
+#include "mcu_periph/uart.h"
+#include "subsystems/datalink/datalink.h" 
+#include "generated/airframe.h"
 
 struct link_device *wifi_command;
 

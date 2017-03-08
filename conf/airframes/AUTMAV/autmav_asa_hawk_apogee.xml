@@ -77,10 +77,10 @@
     </load>
     <load name="tune_airspeed.xml"/>
     <load name="autmav/survey_polygon.xml"/>
-    <!--load name="autmav/sony_a7r_handler.xml">
+    <load name="autmav/sony_a7r_handler.xml">
 	    <define name="ESP_01_UART_PORT" value="uart6"/>
         <define name="ESP_01_BAUD" value="B115200"/>
-    </load-->
+    </load>
     <load name="autmav/advanced_landing.xml"/>
     <load name="autmav/lidar_sf11.xml">
 	    <configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
@@ -108,8 +108,8 @@
     </load>
     <load name="autmav/photogrammetry_calculator.xml"/>  
     <load name="autmav/RTK_receive.xml">
-        <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
-        <define name="UBX_RTK_GPS_LINK" value="uart6"/>
+        <define name="RTK_RTCM3_UART_DEV" value="uart3"/>
+        <define name="UBX_RTK_GPS_LINK" value="uart3"/>
         <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
     </load>
   </modules>

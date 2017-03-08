@@ -1035,7 +1035,9 @@
       <field name="numsv"   type="uint8"/>
       <field name="fix"     type="uint8" values="NONE|NA|2D|3D|DGPS|RTK"/>
       <field name="comp_id" type="uint8" values="NONE|UBX|NMEA|SIRF|SKYTRAQ|MTK|PIKSI|XSENS|DATALINK|UDP|ARDRONE2|SIM|MULTI|VECTORNAV|IMCU"/>
-      <field name="log"     type="uint8"/>
+      <field name="hacc"    type="uint32" unit="mm"   alt_unit="m"/>
+      <field name="vacc"    type="uint32" unit="mm"   alt_unit="m"/>
+      <field name="log"     type="int8"/>
     </message>
 
     <message name="RATE_LOOP" id="136">

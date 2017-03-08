@@ -94,6 +94,8 @@ struct GpsState {
   uint32_t pacc;                 ///< position accuracy in cm
   uint32_t sacc;                 ///< speed accuracy in cm/s
   uint32_t cacc;                 ///< course accuracy in rad*1e7
+  uint32_t hacc;                 ///< horizontal accuracy in mm
+  uint32_t vacc;                 ///< vertical accuracy in mm
   uint16_t pdop;                 ///< position dilution of precision scaled by 100
   uint8_t num_sv;                ///< number of sat in fix
   uint8_t fix;                   ///< status of fix

@@ -74,6 +74,8 @@ static void send_rtk_status(struct transport_tx *trans, struct link_device *dev)
                         &rtk_gps_ubx.state.num_sv,
                         &rtk_gps_ubx.state.fix,
                         &rtk_gps_ubx.state.comp_id,
+                        &rtk_gps_ubx.state.hacc,
+                        &rtk_gps_ubx.state.vacc,
                         &pprzLogFile);
 }
 
@@ -137,6 +139,9 @@ void rtk_gps_ubx_read_message(void)
       SetBit(rtk_gps_ubx.state.valid_fields, GPS_VALID_POS_LLA_BIT);
       rtk_gps_ubx.state.hmsl        = UBX_NAV_POSLLH_HMSL(rtk_gps_ubx.msg_buf);
       SetBit(rtk_gps_ubx.state.valid_fields, GPS_VALID_HMSL_BIT);
+      rtk_gps_ubx.state.hacc = UBX_NAV_POSLLH_Hacc(rtk_gps_ubx.msg_buf);
+	  rtk_gps_ubx.state.vacc = UBX_NAV_POSLLH_Vacc(rtk_gps_ubx.msg_buf);
+
     } else if (rtk_gps_ubx.msg_id == UBX_NAV_POSUTM_ID) {
       rtk_gps_ubx.state.utm_pos.east = UBX_NAV_POSUTM_EAST(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.utm_pos.north = UBX_NAV_POSUTM_NORTH(rtk_gps_ubx.msg_buf);
@@ -374,8 +379,8 @@ void tag_image_log(void){
 		int err = sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
                     image_number, ((float)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0),
                     ((float)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0), ((float)(rtk_gps_ubx.state.lla_pos.alt)/1000.0),
-                    phi,theta,psi, 0.0, 0.0, (uint16_t)rtk_gps_ubx.state.fix);
-		DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
+                    phi,theta,psi, ((float)(rtk_gps_ubx.state.hacc)/1000.0), ((float)(rtk_gps_ubx.state.vacc)/1000.0), (uint16_t)rtk_gps_ubx.state.fix);
+		//DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
 	}
 	image_number ++;
 

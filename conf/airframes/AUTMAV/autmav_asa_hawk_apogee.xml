@@ -69,7 +69,7 @@
     <!--load name="airspeed_amsys.xml"/-->
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml">
-        <define name="DEBUG_GPS_UBX_UCENTER" value="TRUE" />    
+        <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
     </load>
     <load name="airspeed_ms45xx_i2c.xml">
       <define name="MS45XX_I2C_DEV" value="i2c1"/>

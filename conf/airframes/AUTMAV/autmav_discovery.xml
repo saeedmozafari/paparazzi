@@ -16,12 +16,12 @@
     <define name="USE_MAGNETOMETER" value="FALSE"/>
 	<define name="USE_I2C1"/>
 	   
-    <subsystem name="radio_control" type="ppm"/>
-    <subsystem name="telemetry" type="transparent">
+    <module name="radio_control" type="ppm"/>
+    <module name="telemetry" type="transparent">
    	 <define name="MODEM_PORT" value="UART6" />    
-    </subsystem>
-    <subsystem name="control" type="adaptive"/>
-    <subsystem name="imu" type="drotek_10dof_v2">    
+    </module>
+    <module name="control" type="adaptive"/>
+    <module name="imu" type="drotek_10dof_v2">    
       <configure name="DROTEK_2_I2C_DEV" value="i2c2"/>    
       <define name="IMU_DROTEK_2_ORIENTATION_IC_UP" value="1" /> 
       <define name="DROTEK_2_MPU_I2C_ADDR" value="MPU60X0_ADDR"/>
@@ -30,10 +30,10 @@
     <module name="gps" type="ublox">
          <define name="GPS_PORT" value="UART3" /> 
     </module>
-  <subsystem name="navigation"/>
-    <subsystem name="ins" type="alt_float">
+  <module name="navigation"/>
+    <module name="ins" type="alt_float">
       <define name="USE_BAROMETER" value="TRUE"/>
-    </subsystem>
+    </module>
   </firmware>
 
   <modules>

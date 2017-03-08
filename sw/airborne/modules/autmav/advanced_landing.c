@@ -2,7 +2,8 @@
 //#include "subsystems/navigation/waypoints.h"
 #include "firmwares/fixedwing/nav.h"
 #include "subsystems/gps.h"
-#include "modules/lidar/lidar_sf11.h"
+#include "modules/autmav/lidar_sf11.h"
+#include "subsystems/abi.h"
 
 abi_event sf11_ev;
 

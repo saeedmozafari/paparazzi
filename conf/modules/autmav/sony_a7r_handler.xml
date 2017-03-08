@@ -1,8 +1,9 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
 
 <module name="sony_a7r_handler" dir="autmav">
   <doc>
     <description>
-     	This module is used to handle sony a7r commands.
+      This module is used to handle sony a7r commands.
     </description>
     <define name="ESP_01_UART_PORT" value="uart6" description="the port on autopilot which is connected to esp-01 wifi module"/>
     <define name="ESP_01_BAUD" value="B115200" description="baudrate of the port"/>

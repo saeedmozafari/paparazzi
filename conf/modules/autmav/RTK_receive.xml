@@ -21,8 +21,8 @@
   <datalink message="RTCM_INJECT" fun="parse_DL_RTCM_INJECT()"/>
 
   <makefile target="ap">
-    <define name="USE_UART6"/>
-    <define name="UART6_BAUD" value="RTK_RTCM3_UART_BAUD"/>
+    <define name="USE_UART3"/>
+    <define name="UART3_BAUD" value="RTK_RTCM3_UART_BAUD"/>
     <file name="RTK_receive.c"/>
   </makefile>
 

@@ -3,6 +3,8 @@
 #include "mcu_periph/uart.h"
 #include "subsystems/datalink/datalink.h" 
 #include "generated/airframe.h"
+#include "subsystems/datalink/telemetry.h"
+#include "led.h"
 
 struct link_device *wifi_command;
 
@@ -20,68 +22,88 @@ void sony_a7r_handler_setup(void){
 	uart_periph_set_baudrate(&ESP_01_UART_PORT, ESP_01_BAUD);
 }
 
-void sony_a7r_shoot(void){
-	char send_command_msg[19] = "AT+CIPSEND=0,266,\r\n";
-	for(int i=0; i<18; i++){
-		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
-	}
-
-	char shoot_command_msg[266] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost:192.168.122.1:8080\r\nContent-Length: 62\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"actTakePicture\",\"params\":[],\"id\":1,\"version\":\"1.0\"}\r\n";
-	for(int i=0; i<266; i++){
-		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)shoot_command_msg[i]);
-	}
-}
-
-void esp_01_initialize(void){
+void esp_01_jap(void){
+	LED_ON(3);
 	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
 	for(int i=0; i<43; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
+}
 
+void esp_01_cipmux(void){
 	char multi_con_msg[13] = "AT+CIPMUX=1\r\n";
 	for(int i=0; i<13; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)multi_con_msg[i]);
 	}
+}
 
+void esp_01_cipstart(void){
 	char start_con_msg[45] = "AT+CIPSTART=0,\"UDP\",\"239.255.255.250\",1900\r\n";
 	for(int i=0; i<45; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)start_con_msg[i]);
 	}
+}
 
+void esp_01_cipsend(void){
 	char send_command_msg[19] = "AT+CIPSEND=0,125\r\n";
 	for(int i=0; i<18; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
 	}
+}
 
-	char request_msg[125] = "M-SEARCH * HTTP/1.1\r\nHOST:239.255.255.250:1900\r\nMAN:\"ssdp:discover\"\r\nMX:1\r\nST:urn:schemas-1\r\n\r\n";
+void esp_01_msearch(void){
+	char request_msg[125] = "M-SEARCH * HTTP/1.1\r\nHOST:239.255.255.250:1900\r\nMAN:\"ssdp:discover\"\r\nMX:1\r\nST:urn:schemas-sony-com:service:ScalarWebAPI:1\r\n\r\n";
 	for(int i=0; i<125; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)request_msg[i]);
 	}
+}
 
+void esp_01_cipclose(void){
 	char close_msg[15] = "AT+CIPCLOSE=0\r\n";
 	for(int i=0; i<15; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)close_msg[i]);
 	}
+}
 
-	char start_con_msg_tcp[43] = "AT+CIPSTART=0,\"TCP\",\"192.168.122.1\",8080\r\n";
-	for(int i=0; i<43; i++){
-		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)start_con_msg[i]);
+void esp_01_cipstart_tcp(void){
+	char start_con_msg_tcp[44] = "AT+CIPSTART=0,\"TCP\",\"192.168.122.1\",8080\r\n";
+	for(int i=0; i<44; i++){
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)start_con_msg_tcp[i]);
 	}
+}
 
+void esp_01_cipsend_tcp(void){
 	char send_command_msg_tcp[18] = "AT+CIPSEND=0,264\r\n";
 	for(int i=0; i<18; i++){
-		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg_tcp[i]);
 	}
+}
 
-	char prepare_to_shoot_msg[264] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost:192.168.122.1:8080\r\nContent-Length: 60\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"startRecMode\",\"params\":[],\"id\":1,\"version\":\"1.0\"}\r\n";
+void esp_01_setmode(void){
+	char prepare_to_shoot_msg[264] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 60\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"startRecMode\",\"params\":[],\"id\":1,\"version\":\"1.0\"}\r\n";
 	for(int i=0; i<264; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)prepare_to_shoot_msg[i]);
 	}
 }
 
-void esp_01_jap(){
-	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
-	for(int i=0; i<43; i++){
-		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
+void esp_01_cipsend_shoot(void){
+	char send_command_msg[18] = "AT+CIPSEND=0,266\r\n";
+	for(int i=0; i<18; i++){
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)send_command_msg[i]);
 	}
 }
+
+void sony_a7r_shoot(void){
+	char shoot_command_msg[266] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 62\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"actTakePicture\",\"params\":[],\"id\":1,\"version\":\"1.0\"}\r\n";
+	for(int i=0; i<266; i++){
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)shoot_command_msg[i]);
+	}
+}
+
+void endline(void){
+	char shoot_command_msg[2] = "\r\n";
+	for(int i=0; i<2; i++){
+		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)shoot_command_msg[i]);
+	}
+}
+

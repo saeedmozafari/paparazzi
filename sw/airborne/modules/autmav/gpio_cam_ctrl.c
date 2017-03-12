@@ -139,7 +139,9 @@ void dc_send_command(uint8_t cmd)
   switch (cmd) {
     case DC_SHOOT:
       DC_PUSH(DC_SHUTTER_GPIO);
+#ifndef SITL      
       tag_image_log();
+#endif      
 #ifndef DC_SHOOT_ON_BUTTON_RELEASE
       dc_send_shot_position();
 #endif

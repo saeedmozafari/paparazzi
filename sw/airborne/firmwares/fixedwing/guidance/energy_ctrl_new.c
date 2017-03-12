@@ -300,12 +300,15 @@ void v_ctl_altitude_loop(void)
 {
   // Airspeed Command Saturation
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
-
+#ifndef SITL
   // Altitude Controller
   if(!lidar_sf11.update_agl)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
   else
     v_ctl_altitude_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+#else
+	v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+#endif  
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter

@@ -110,7 +110,7 @@ void nav_catapult_highrate_module(void)
       int32_rmat_transp_vmult(&accel_meas_body, body_to_imu_rmat, &imu.accel);
       reset_lauch = ACCEL_FLOAT_OF_BFP(accel_meas_body.x)  < (nav_catapult_acceleration_threshold * 9.81);
 #else
-      reset_lauch = launch != 1;
+      reset_lauch = autopilot.launch != 1;
 #endif
       if (reset_lauch)
       {

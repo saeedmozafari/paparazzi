@@ -9,10 +9,15 @@
     <define name="RTK_RTCM3_UART_BAUD" value="B57600" description="baudrate of the RTCM3 port"/>
   </doc>
   
+  <autoload name="gps"/>
+  <autoload name="gps_nps"/>
+  <autoload name="gps_sim"/> 
+  
   <header>
     <file name="RTK_receive.h"/>
   </header>
-  
+
+
   <init fun="RTK_receive_init()"/>
   <init fun="rtk_gps_ubx_init()"/>
 
@@ -20,9 +25,10 @@
   
   <datalink message="RTCM_INJECT" fun="parse_DL_RTCM_INJECT()"/>
 
-  <makefile target="ap">
-    <define name="USE_UART3"/>
-    <define name="UART3_BAUD" value="RTK_RTCM3_UART_BAUD"/>
+  <makefile target="ap|sim">
+    <define name="USE_UART4"/>
+    <define name="PRIMARY_GPS" value="gps_ubx"/>
+    <configure name="UART4_BAUD" value="RTK_RTCM3_UART_BAUD"/>
     <file name="RTK_receive.c"/>
   </makefile>
 

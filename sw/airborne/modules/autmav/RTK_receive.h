@@ -15,10 +15,12 @@ extern void tag_image_log(void);
 
 static inline void parse_DL_RTCM_INJECT(void)
 {
-	//uint8_t packet_id = DL_RTCM_INJECT_packet_id(dl_buffer);
+#ifndef SITL	
+  //uint8_t packet_id = DL_RTCM_INJECT_packet_id(dl_buffer);
 	uint8_t data_length = DL_RTCM_INJECT_data_length(dl_buffer);
-	uint8_t *RTCM3_data = DL_RTCM_INJECT_data(dl_buffer);
-	relay_msg(data_length, RTCM3_data);
+	uint8_t *RTCM3_data = DL_RTCM_INJECT_data(dl_buffer);	
+  relay_msg(data_length, RTCM3_data);
+#endif
 }
 
 extern void rtk_gps_ubx_init(void);

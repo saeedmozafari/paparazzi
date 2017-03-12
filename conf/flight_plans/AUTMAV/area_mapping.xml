@@ -11,9 +11,9 @@
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="AP" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="TC" x="-18.7" y="16.4"/>
-    <waypoint height="75" name="TP" x="-18.7" y="16.4"/>
+    <waypoint height="50" name="AP" x="-18.7" y="16.4"/>
+    <waypoint height="50" name="TC" x="-18.7" y="16.4"/>
+    <waypoint height="50" name="TP" x="-18.7" y="16.4"/>
     <waypoint name="TO" x="-9.2" y="5.2"/>
     <waypoint name="CLIMB" x="-48.8" y="-59.3"/>
     <waypoint height="100.0" name="STDBY" x="-338.9" y="-136.8"/>
@@ -274,10 +274,10 @@
       <while cond="LessThan(NavBlockTime(), 10)"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block>    
+    </block-->    
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
       <set value="100" var="nav_radius"/>
@@ -310,9 +310,9 @@
 
 		<block name="Loiter" strip_button="Landing">
 			<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
-			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="45 > (GetPosAlt() - GetAltRef())"/>
+			<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="50 > (GetPosAlt() - GetAltRef())"/>
 		    <call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
-			<circle wp="TD" radius="nav_radius" vmode="alt" alt="45 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
+			<circle wp="TD" radius="nav_radius" vmode="alt" alt="50 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
 		</block>
 
 		<block name="Approach">
@@ -328,9 +328,9 @@
 		<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
-		<block name="sony_cam_init" strip_button="cam_init">
+		<!--block name="sony_cam_init" strip_button="cam_init">
       <call_once fun="esp_01_jap()" />
-  </block> 
+  </block--> 
 
 	<!--block name="sony_cam_shoot" strip_button="cam_shoot">
       <call_once fun="sony_a7r_shoot()" />

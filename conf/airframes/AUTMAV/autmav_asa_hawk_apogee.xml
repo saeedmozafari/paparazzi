@@ -205,7 +205,7 @@
   </section>
 
   <section name="MISC">
-    <define name="NOMINAL_AIRSPEED" value="11.5" unit="m/s"/>
+    <define name="NOMINAL_AIRSPEED" value="10.0" unit="m/s"/>
     <define name="RACE_AIRSPEED" value="18.0" unit="m/s"/>
     <define name="STALL_AIRSPEED" value="7.0" unit="m/s"/>
     <define name="CARROT" value="5." unit="s"/>    

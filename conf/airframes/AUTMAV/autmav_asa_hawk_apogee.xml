@@ -198,10 +198,10 @@
     <define name="VOLTAGE_ADC_A" value="0.008080808"/>
     <define name="VOLTAGE_ADC_B" value="0.177777778"/>
     <define name="VoltageOfAdc(adc)" value="(VOLTAGE_ADC_A * adc + VOLTAGE_ADC_B)"/>
-    <define name="CATASTROPHIC_BAT_LEVEL" value="14.0" unit="V"/>
-    <define name="CRITIC_BAT_LEVEL" value="18.0" unit="V"/>
-    <define name="LOW_BAT_LEVEL" value="19.0" unit="V"/>
-    <define name="MAX_BAT_LEVEL" value="25.2" unit="V"/>
+    <define name="CATASTROPHIC_BAT_LEVEL" value="10.0" unit="V"/>
+    <define name="CRITIC_BAT_LEVEL" value="14.0" unit="V"/>
+    <define name="LOW_BAT_LEVEL" value="14.2" unit="V"/>
+    <define name="MAX_BAT_LEVEL" value="16.2" unit="V"/>
   </section>
 
   <section name="MISC">

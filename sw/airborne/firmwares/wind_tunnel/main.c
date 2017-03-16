@@ -66,7 +66,7 @@ static inline void main_periodic_task(void)
   DOWNLINK_SEND_TAKEOFF(&motor_power);
   wt_baro_periodic();
   modules_periodic_task();
-  DOWNLINK_SEND_DEBUG(3, buf_input);
+  //DOWNLINK_SEND_DEBUG(3, buf_input);
 }
 
 static inline void main_event_task(void)

@@ -328,6 +328,14 @@
 		<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
+	<block name="idle" strip_button="idle">
+      <call_once fun="idle()" />
+			<deroute block="Holding point"/>
+  </block> 
+	<block name="shoot" strip_button="shoot">
+      <call_once fun="shoot()" />
+			<deroute block="Holding point"/>
+  </block> 
 	<block name="endl" strip_button="endl">
   		<call_once fun="endline()" />
 			<deroute block="Holding point"/>

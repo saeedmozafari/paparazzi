@@ -18,7 +18,7 @@
   </header>
   <init fun="sony_a7r_handler_setup()"/>
   <periodic fun="sony_a7r_handler_periodic()" freq="10"/>
-  <makefile target="ap|sim|nps">
+  <makefile target="ap">
     <define name="UART_RX_BUFFER_SIZE" value="512"/>
     <define name="UART_TX_BUFFER_SIZE" value="512"/>
     <define name="USE_UART6"/>

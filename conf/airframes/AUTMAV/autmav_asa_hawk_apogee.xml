@@ -80,13 +80,13 @@
         <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
     </load-->
     <load name="autmav/survey_polygon.xml"/>
-    <!--load name="autmav/sony_a7r_handler.xml">
-	    <define name="ESP_01_UART_PORT" value="uart6"/>
+    <load name="autmav/sony_a7r_handler.xml">
+	<define name="ESP_01_UART_PORT" value="uart6"/>
         <define name="ESP_01_BAUD" value="B115200"/>
-    </load-->
+    </load>
     <load name="autmav/advanced_landing.xml"/>
     <load name="autmav/lidar_sf11.xml">
-	    <configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+	<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
         <configure name="LIDAR_SF11_I2C_ADDR" value="0xcc"/>
         <configure name="USE_LIDAR_SF11_AGL" value="0"/>
         <configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>

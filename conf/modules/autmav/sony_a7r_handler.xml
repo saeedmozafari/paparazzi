@@ -17,7 +17,10 @@
     <file name="sony_a7r_handler.h"/>
   </header>
   <init fun="sony_a7r_handler_setup()"/>
+  <periodic fun="sony_a7r_handler_periodic()" freq="10"/>
   <makefile target="ap">
+    <define name="UART_RX_BUFFER_SIZE" value="512"/>
+    <define name="UART_TX_BUFFER_SIZE" value="512"/>
     <define name="USE_UART6"/>
     <define name="UART6_BAUD" value="ESP_01_BAUD"/>
     <file name="sony_a7r_handler.c"/>

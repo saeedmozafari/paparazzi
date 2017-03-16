@@ -33,95 +33,23 @@
  * @endcode
  */
 
-#include "gpio_cam_ctrl.h"
+#include "wifi_cam_ctrl.h"
 #include "generated/airframe.h"
 #include "generated/modules.h"
 
 // Include Standard Camera Control Interface
 #include "dc.h"
 
-#include "mcu_periph/gpio.h"
 #include "modules/autmav/sony_a7r_handler.h"
-
-#ifndef DC_PUSH
-#define DC_PUSH gpio_set
-#endif
-
-#ifndef DC_RELEASE
-#define DC_RELEASE gpio_clear
-#endif
-
-/** how long to push shutter in seconds */
-#ifndef DC_SHUTTER_DELAY
-#define DC_SHUTTER_DELAY 0.5
-#endif
-
-/** how long to send power off in seconds */
-#ifndef DC_POWER_OFF_DELAY
-#define DC_POWER_OFF_DELAY 0.75
-#endif
-
-#ifdef DC_SHUTTER_LED
-#warning DC_SHUTTER_LED is obsolete, please use DC_SHUTTER_GPIO
-#endif
-#ifndef DC_SHUTTER_GPIO
-#error DC: Please specify at least a DC_SHUTTER_GPIO (e.g. <define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO12"/>)
-#endif
-
-
-// Button Timer
-uint8_t dc_timer;
 
 void wifi_cam_ctrl_init(void)
 {
   // Call common DC init
   dc_init();
-
-  // Do gpio specific DC init
-  dc_timer = 0;
-
-  esp_01_initialize();
- 
-#ifdef DC_ZOOM_IN_GPIO
-  
-#endif
-#ifdef DC_ZOOM_OUT_GPIO
-  
-#endif
-#ifdef DC_POWER_GPIO
-  
-#endif
-#ifdef DC_POWER_OFF_GPIO
-  
-#endif
 }
 
 void wifi_cam_ctrl_periodic(void)
 {
-#ifdef DC_SHOOT_ON_BUTTON_RELEASE
-  if (dc_timer == 1) {
-    dc_send_shot_position();
-  }
-#endif
-
-  if (dc_timer) {
-    dc_timer--;
-  } else {
-    
-#ifdef DC_ZOOM_IN_GPIO
-    
-#endif
-#ifdef DC_ZOOM_OUT_GPIO
-    
-#endif
-#ifdef DC_POWER_GPIO
-    
-#endif
-#ifdef DC_POWER_OFF_GPIO
-    
-#endif
-  }
-
   // Common DC Periodic task
   dc_periodic();
 }
@@ -129,36 +57,13 @@ void wifi_cam_ctrl_periodic(void)
 /* Command The Camera */
 void dc_send_command(uint8_t cmd)
 {
-  dc_timer = DC_SHUTTER_DELAY * WIFI_CAM_CTRL_PERIODIC_FREQ;
-
   switch (cmd) {
     case DC_SHOOT:
-      sony_a7r_shoot();
-#ifndef DC_SHOOT_ON_BUTTON_RELEASE
-      dc_send_shot_position();
-#endif
+      shoot();
+#ifndef SITL      
+      tag_image();
+#endif 
       break;
-#ifdef DC_ZOOM_IN_GPIO
-    case DC_TALLER:
-      
-      break;
-#endif
-#ifdef DC_ZOOM_OUT_GPIO
-    case DC_WIDER:
-      
-      break;
-#endif
-#ifdef DC_POWER_GPIO
-    case DC_ON:
-      
-      break;
-#endif
-#ifdef DC_POWER_OFF_GPIO
-    case DC_OFF:
-      
-      dc_timer = DC_POWER_OFF_DELAY * WIFI_CAM_CTRL_PERIODIC_FREQ;
-      break;
-#endif
     default:
       break;
   }

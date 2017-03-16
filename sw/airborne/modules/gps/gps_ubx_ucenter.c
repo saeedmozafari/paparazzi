@@ -512,7 +512,7 @@ static bool gps_ubx_ucenter_configure(uint8_t nr)
       gps_ubx_ucenter.replies[4] = gps_ubx_ucenter.hw_ver_h;
       gps_ubx_ucenter.replies[5] = gps_ubx_ucenter.hw_ver_l;
 #if DEBUG_GPS_UBX_UCENTER
-      DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 6, gps_ubx_ucenter.replies);
+      //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 6, gps_ubx_ucenter.replies);
 #endif
       // Configure CFG-NAV(5) message
       gps_ubx_ucenter_config_nav();
@@ -573,7 +573,7 @@ static bool gps_ubx_ucenter_configure(uint8_t nr)
 #if DEBUG_GPS_UBX_UCENTER
       // Debug Downlink the result of all configuration steps: see messages
       // To view, enable DEBUG message in your telemetry configuration .xml
-      DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, GPS_UBX_UCENTER_CONFIG_STEPS, gps_ubx_ucenter.replies);
+      //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, GPS_UBX_UCENTER_CONFIG_STEPS, gps_ubx_ucenter.replies);
       for (int i = 0; i < GPS_UBX_UCENTER_CONFIG_STEPS; i++) {
         DEBUG_PRINT("%u\n", gps_ubx_ucenter.replies[i]);
       }

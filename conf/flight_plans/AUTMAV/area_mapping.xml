@@ -325,15 +325,12 @@
 		<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
 	</block>
 
-	<block name="flare">
-        <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-	</block>
-	<!--block name="sony_cam_init" strip_button="cam_init">
-  <call_once fun="esp_01_jap()" />
-  </block--> 
-
-	<!--block name="sony_cam_shoot" strip_button="cam_shoot">
-      <call_once fun="sony_a7r_shoot()" />
-  </block-->
+		<block name="flare">
+      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+		</block>
+	<block name="shoot" strip_button="shoot">
+      <call_once fun="shoot()" />
+			<deroute block="Holding point"/>
+  </block>
   </blocks>
 </flight_plan>

@@ -80,13 +80,13 @@
         <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
     </load-->
     <load name="autmav/survey_polygon.xml"/>
-    <!--load name="autmav/sony_a7r_handler.xml">
-	    <define name="ESP_01_UART_PORT" value="uart6"/>
+    <load name="autmav/sony_a7r_handler.xml">
+	<define name="ESP_01_UART_PORT" value="uart6"/>
         <define name="ESP_01_BAUD" value="B115200"/>
-    </load-->
+    </load>
     <load name="autmav/advanced_landing.xml"/>
     <load name="autmav/lidar_sf11.xml">
-	    <configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+	<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
         <configure name="LIDAR_SF11_I2C_ADDR" value="0xcc"/>
         <configure name="USE_LIDAR_SF11_AGL" value="0"/>
         <configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
@@ -104,7 +104,7 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-    <load name="autmav/digital_cam.xml">
+    <load name="autmav/digital_cam_wifi.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>
@@ -198,10 +198,10 @@
     <define name="VOLTAGE_ADC_A" value="0.008080808"/>
     <define name="VOLTAGE_ADC_B" value="0.177777778"/>
     <define name="VoltageOfAdc(adc)" value="(VOLTAGE_ADC_A * adc + VOLTAGE_ADC_B)"/>
-    <define name="CATASTROPHIC_BAT_LEVEL" value="14.0" unit="V"/>
-    <define name="CRITIC_BAT_LEVEL" value="18.0" unit="V"/>
-    <define name="LOW_BAT_LEVEL" value="19.0" unit="V"/>
-    <define name="MAX_BAT_LEVEL" value="25.2" unit="V"/>
+    <define name="CATASTROPHIC_BAT_LEVEL" value="10.0" unit="V"/>
+    <define name="CRITIC_BAT_LEVEL" value="14.0" unit="V"/>
+    <define name="LOW_BAT_LEVEL" value="14.2" unit="V"/>
+    <define name="MAX_BAT_LEVEL" value="16.2" unit="V"/>
   </section>
 
   <section name="MISC">

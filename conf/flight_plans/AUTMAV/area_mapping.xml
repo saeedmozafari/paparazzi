@@ -328,73 +328,9 @@
 		<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
 		</block>
-	<block name="idle" strip_button="idle">
-      <call_once fun="idle()" />
-			<deroute block="Holding point"/>
-  </block> 
 	<block name="shoot" strip_button="shoot">
       <call_once fun="shoot()" />
 			<deroute block="Holding point"/>
-  </block> 
-	<block name="endl" strip_button="endl">
-  		<call_once fun="endline()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_jap" strip_button="cam_jap">
-  		<call_once fun="esp_01_jap()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipmux" strip_button="cam_cipmux">
-      <call_once fun="esp_01_cipmux()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipstart" strip_button="cam_cipstart">
-      <call_once fun="esp_01_cipstart()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipsend" strip_button="cam_cipsend">
-      <call_once fun="esp_01_cipsend()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_msearch" strip_button="cam_msearch">
-      <call_once fun="esp_01_msearch()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipclose" strip_button="cam_cipclose">
-      <call_once fun="esp_01_cipclose()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipstart_tcp" strip_button="cam_cipstart_tcp">
-      <call_once fun="esp_01_cipstart_tcp()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipsend_tcp" strip_button="cam_cipsend_tcp">
-      <call_once fun="esp_01_cipsend_tcp()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_setmode" strip_button="cam_setmode">
-      <call_once fun="esp_01_setmode()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_cipsend_shoot" strip_button="cam_cipsend_shoot">
-      <call_once fun="esp_01_cipsend_shoot()" />
-			<deroute block="Holding point"/>
-  </block> 
-
-	<block name="cam_shoot" strip_button="cam_shoot">
-      <call_once fun="sony_a7r_shoot()" />
-			<deroute block="Holding point"/>
-  </block> 
-
+  </block>
   </blocks>
 </flight_plan>

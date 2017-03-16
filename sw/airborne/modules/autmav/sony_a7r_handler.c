@@ -22,6 +22,7 @@ int result_counter = 0;
 int name_counter = 0;
 int delay_counter = 0;
 int tcp_connection_errors = 0;
+int udp_connection_errors = 0;
 int time_counter = 0;
 bool result_read = false;
 bool mode_set = false;
@@ -55,6 +56,7 @@ void sony_a7r_handler_setup(void){
 	uart_periph_set_baudrate(&ESP_01_UART_PORT, ESP_01_BAUD);
 	mode_set = false;
 	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SONY_CAMERA_STATUS, send_camera_state);
+	clear_image_name();
 }
 
 void esp_01_jap(void){
@@ -154,7 +156,7 @@ void sony_a7r_handler_periodic(void){
 	char curr_byte;
 
 	switch(sony_a7r_state){
-		case SEND_AT:
+		case READY:
 			
 			for(int i=0; i<4; i++){
 				wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)ready_test[i]);
@@ -166,157 +168,169 @@ void sony_a7r_handler_periodic(void){
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = ESP_CONNECTED_TO_APPOGEE;
+					sony_a7r_state = CONNECTING_TO_CAM_AP;
 				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = SEND_AT;
-				}*/
+				if(camera_parser_status == GOT_ERROR){
+					sony_a7r_state = READY;
+				}
 			}
 		break;
-		case ESP_CONNECTED_TO_APPOGEE:
+		case CONNECTING_TO_CAM_AP:
 			esp_01_jap();
-			sony_a7r_state = ESP_CONNECTING_TO_CAM_AP;
+			sony_a7r_state = WAIT_FOR_CONNECTING_TO_CAM_AP;
 		break;
-		case ESP_CONNECTING_TO_CAM_AP:
+		case WAIT_FOR_CONNECTING_TO_CAM_AP:
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = ESP_CONNECTED_TO_CAM_AP;
+					sony_a7r_state = SETTING_CIPMUX;
 				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = ESP_CONNECTED_TO_APPOGEE;
-				}*/
+				if(camera_parser_status == GOT_FAIL || camera_parser_status == GOT_ERROR){
+					sony_a7r_state = CONNECTING_TO_CAM_AP;
+				}
 			}
-		break;
-		case ESP_CONNECTED_TO_CAM_AP:
-			esp_01_cipmux();
-			sony_a7r_state = SETTING_CIPMUX;
 		break;
 		case SETTING_CIPMUX:
+			esp_01_cipmux();
+			sony_a7r_state = WAIT_FOR_SETTING_CIPMUX;
+		break;
+		case WAIT_FOR_SETTING_CIPMUX:
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = CIPMUX_SET;
+					sony_a7r_state = STARTING_UDP_CONNECTION;
 				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = ESP_CONNECTED_TO_CAM_AP;
-				}*/
+				if(camera_parser_status == GOT_FAIL || camera_parser_status == GOT_ERROR){
+					sony_a7r_state = SETTING_CIPMUX;
+				}
 			}
 		break;
-		case CIPMUX_SET:
+		case STARTING_UDP_CONNECTION:
 			esp_01_cipstart();
-			sony_a7r_state = CONNECTING_TO_CAM_CLIENT_UDP;
-		break;
-		case CONNECTING_TO_CAM_CLIENT_UDP:
-			while(wifi_command->char_available(wifi_command->periph)){
-				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
-				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = CONNECTED_TO_CAM_CLIENT_UDP;
-				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = CIPMUX_SET;
-				}*/
-			}
-		break;
-		case CONNECTED_TO_CAM_CLIENT_UDP:
-			esp_01_cipsend();
-			sony_a7r_state = SENDING_SEND_COMMAND_UDP;
-		break;
-		case SENDING_SEND_COMMAND_UDP:
-			while(wifi_command->char_available(wifi_command->periph)){
-				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
-				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = READY_TO_SEND_DISCOVERY_MSG;
-				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = CIPMUX_SET;
-				}*/
-			}
-		break;
-		case READY_TO_SEND_DISCOVERY_MSG:
-			esp_01_msearch();
-			sony_a7r_state = SENDING_DISCOVERY_MSG;
-		break;
-		case SENDING_DISCOVERY_MSG:
-			while(wifi_command->char_available(wifi_command->periph)){
-				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
-				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = CAM_DISCOVERED;
-				}
-				/*if(camera_parser_status == GOT_FAIL){
-					sony_a7r_state = CIPMUX_SET;
-				}*/
-			}
-		break;
-		case CAM_DISCOVERED:
-			esp_01_cipclose();
-			sony_a7r_state = CLOSING_UDP_CONNECTION;
-		break;
-		case CLOSING_UDP_CONNECTION:
-			while(wifi_command->char_available(wifi_command->periph)){
-				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
-				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = UDP_CONNECTION_CLOSED;
-				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = CAM_DISCOVERED;
-				}*/
-			}
-		break;
-		case UDP_CONNECTION_CLOSED:
-			esp_01_cipstart_tcp();
-			sony_a7r_state = CONNECTING_TO_CAM_CLIENT_TCP;
+			sony_a7r_state = WAIT_FOR_STARTING_UDP_CONNECTION;
 			already_connected = false;
 		break;
-		case CONNECTING_TO_CAM_CLIENT_TCP:
+		case WAIT_FOR_STARTING_UDP_CONNECTION:
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = CONNECTED_TO_CAM_CLIENT_TCP;
+					sony_a7r_state = REQUESTING_SEND;
 				}
-				/*if(camera_parser_status == GOT_ALREADY){
+				if(camera_parser_status == GOT_ALREADY){
 					already_connected = true;
-					sony_a7r_state = CONNECTED_TO_CAM_CLIENT_TCP;
-				}*/
-				/*if(camera_parser_status == GOT_ERROR && !already_connected){
+					sony_a7r_state = REQUESTING_SEND;
+				}
+				if(camera_parser_status == GOT_ERROR && !already_connected){
+					if(udp_connection_errors < 3){
+						sony_a7r_state = STARTING_UDP_CONNECTION;
+						udp_connection_errors++;
+					}
+					else{
+						udp_connection_errors = 0;
+						sony_a7r_state = CONNECTING_TO_CAM_AP;
+					}
+				}
+			}
+		break;
+		case REQUESTING_SEND:
+			esp_01_cipsend();
+			sony_a7r_state = WAIT_FOR_REQUESTING_SEND;
+		break;
+		case WAIT_FOR_REQUESTING_SEND:
+			while(wifi_command->char_available(wifi_command->periph)){
+				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
+				if(camera_parser_status == GOT_OK){
+					sony_a7r_state = SENDING_DISCOVERY_MSG;
+				}
+				if(camera_parser_status == GOT_ERROR){
+					sony_a7r_state = REQUESTING_SEND;
+				}
+			}
+		break;
+		case SENDING_DISCOVERY_MSG:
+			esp_01_msearch();
+			sony_a7r_state = WAIT_FOR_SENDING_DISCOVERY_MSG;
+		break;
+		case WAIT_FOR_SENDING_DISCOVERY_MSG:
+			while(wifi_command->char_available(wifi_command->periph)){
+				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
+				if(camera_parser_status == GOT_OK){
+					sony_a7r_state = CLOSING_UDP_CONNECTION;
+				}
+				if(camera_parser_status == GOT_FAIL || camera_parser_status == GOT_ERROR){
+					sony_a7r_state = REQUESTING_SEND;
+				}
+			}
+		break;
+		case CLOSING_UDP_CONNECTION:
+			esp_01_cipclose();
+			sony_a7r_state = WAIT_FOR_CLOSING_UDP_CONNECTION;
+		break;
+		case WAIT_FOR_CLOSING_UDP_CONNECTION:
+			while(wifi_command->char_available(wifi_command->periph)){
+				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
+				if(camera_parser_status == GOT_OK){
+					sony_a7r_state = STARTING_TCP_CONNECTION;
+				}
+				if(camera_parser_status == GOT_ERROR){
+					sony_a7r_state = CLOSING_UDP_CONNECTION;
+				}
+			}
+		break;
+		case STARTING_TCP_CONNECTION:
+			esp_01_cipstart_tcp();
+			sony_a7r_state = WAIT_FOR_STARTING_TCP_CONNECTION;
+			already_connected = false;
+		break;
+		case WAIT_FOR_STARTING_TCP_CONNECTION:
+			while(wifi_command->char_available(wifi_command->periph)){
+				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
+				if(camera_parser_status == GOT_OK){
+					sony_a7r_state = REQUESTING_SEND_TCP;
+				}
+				if(camera_parser_status == GOT_ALREADY){
+					already_connected = true;
+					sony_a7r_state = REQUESTING_SEND_TCP;
+				}
+				if(camera_parser_status == GOT_ERROR && !already_connected){
 					if(tcp_connection_errors < 3){
-						sony_a7r_state = UDP_CONNECTION_CLOSED;
+						sony_a7r_state = STARTING_TCP_CONNECTION;
 						tcp_connection_errors++;
 					}
 					else{
 						tcp_connection_errors = 0;
-						sony_a7r_state = ESP_CONNECTED_TO_APPOGEE;
+						sony_a7r_state = CONNECTING_TO_CAM_AP;
 					}
-				}*/
+				}
 			}
 		break;
-		case CONNECTED_TO_CAM_CLIENT_TCP:
+		case REQUESTING_SEND_TCP:
 			if(!mode_set){
 				esp_01_cipsend_tcp();
-				sony_a7r_state = SENDING_SEND_COMMAND_TCP;
+				sony_a7r_state = WAIT_FOR_REQUESTING_SEND_TCP;
 			}
 			else{
 				sony_a7r_state = CAM_IDLE_MODE;
 				tcp_connected = true;
 			}
 		break;
-		case SENDING_SEND_COMMAND_TCP:
+		case WAIT_FOR_REQUESTING_SEND_TCP:
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = READY_TO_SEND_MODE_MSG;
+					sony_a7r_state = SENDING_SHOOT_MODE_MSG;
 				}
-				/*if(camera_parser_status == GOT_ERROR){
-					sony_a7r_state = UDP_CONNECTION_CLOSED;
-				}*/
+				if(camera_parser_status == GOT_ERROR){
+					sony_a7r_state = REQUESTING_SEND_TCP;
+				}
 			}
 		break;
-		case READY_TO_SEND_MODE_MSG:
+		case SENDING_SHOOT_MODE_MSG:
 			esp_01_setmode();
-			sony_a7r_state = SENDING_MODE_MSG;
+			sony_a7r_state = WAIT_FOR_SENDING_SHOOT_MODE_MSG;
 			result_read = false;
 		break;
-		case SENDING_MODE_MSG:
+		case WAIT_FOR_SENDING_SHOOT_MODE_MSG:
 			while(wifi_command->char_available(wifi_command->periph)){
 				curr_byte = wifi_command->get_byte(wifi_command->periph);
 				wifi_response_parser(curr_byte);
@@ -331,15 +345,15 @@ void sony_a7r_handler_periodic(void){
 							delay_counter = 0;
 							
 						}
-						/*else{
-							sony_a7r_state = UDP_CONNECTION_CLOSED;
-						}*/
+						else{
+							sony_a7r_state = STARTING_TCP_CONNECTION;
+						}
 					}
 					result_counter++;
 				}
-				/*if(camera_parser_status == GOT_FAIL){
-					sony_a7r_state = UDP_CONNECTION_CLOSED;
-				}*/
+				if(camera_parser_status == GOT_FAIL){
+					sony_a7r_state = STARTING_TCP_CONNECTION;
+				}
 			}
 			if(delay_mode){
 				if(delay_counter < 3){
@@ -366,11 +380,11 @@ void sony_a7r_handler_periodic(void){
 					break;
 					case CAMERA_SHOOT:
 						if(!tcp_connected){
-							sony_a7r_state = UDP_CONNECTION_CLOSED;
+							sony_a7r_state = STARTING_TCP_CONNECTION;
 						}
 						else{
 							esp_01_cipsend_shoot();
-							sony_a7r_state = SENDING_SEND_SHOOT;
+							sony_a7r_state = WAIT_FOR_REQUESTING_SEND_SHOOT_TCP;
 						}
 					break;
 				}
@@ -380,29 +394,24 @@ void sony_a7r_handler_periodic(void){
 
 
 
-		case SENDING_SEND_SHOOT:
+		case WAIT_FOR_REQUESTING_SEND_SHOOT_TCP:
 			while(wifi_command->char_available(wifi_command->periph)){
 				wifi_response_parser(wifi_command->get_byte(wifi_command->periph));
 				if(camera_parser_status == GOT_OK){
-					sony_a7r_state = READY_TO_SEND_SHOOT_COMMAND;
+					sony_a7r_state = WAIT_FOR_SENDING_SHOOT_COMMAND_MSG_MSG;
 				}
-				/*if(camera_parser_status == GOT_ERROR){
-					tcp_connected = false;
+				if(camera_parser_status == GOT_ERROR){
 					sony_a7r_state = CAM_IDLE_MODE;
-				}*/
+				}
 			}
 		break;
-		case READY_TO_SEND_SHOOT_COMMAND:
+		case WAIT_FOR_SENDING_SHOOT_COMMAND_MSG_MSG:
 			sony_a7r_shoot();
-			sony_a7r_state = SENDING_SHOOT_COMMAND;
+			sony_a7r_state = WAIT_FOR_SENDING_SHOOT_COMMAND_MSG;
 			result_read = false;
-			time_counter = 0;
+			clear_image_name();
 		break;
-		case SENDING_SHOOT_COMMAND:
-			//if(time_counter > 20){
-				//sony_a7r_state = CAM_IDLE_MODE;
-				//break;
-			//}
+		case WAIT_FOR_SENDING_SHOOT_COMMAND_MSG:
 			while(wifi_command->char_available(wifi_command->periph)){
 				curr_byte = wifi_command->get_byte(wifi_command->periph);
 				wifi_response_parser(curr_byte);
@@ -427,9 +436,11 @@ void sony_a7r_handler_periodic(void){
 					}
 					name_counter++;
 				}
-				/*if(camera_parser_status == GOT_FAIL){
+				if(camera_parser_status == GOT_FAIL){
+					tcp_connected = false;
+					camera_order = CAMERA_IDLE;
 					sony_a7r_state = CAM_IDLE_MODE;
-				}*/
+				}
 			}
 			if(delay_mode){
 				if(delay_counter < 10){
@@ -437,12 +448,11 @@ void sony_a7r_handler_periodic(void){
 				}
 				else{
 					tcp_connected = false;
-					//camera_order = CAMERA_IDLE;
+					camera_order = CAMERA_IDLE;
 					sony_a7r_state = CAM_IDLE_MODE;
 					delay_mode = false;
 				}
 			}
-			//time_counter++;
 		break;
 	}
 }
@@ -509,6 +519,67 @@ void wifi_response_parser(char curr_byte){
 		return;
 	}
 	else if(camera_parser_status == GOT_ERRO && curr_byte != 'R'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+
+	if(!word_processing && curr_byte == 'A'){
+		camera_parser_status = GOT_A;
+		word_processing = true;
+		return;
+	}
+	if(camera_parser_status == GOT_A && curr_byte == 'L'){
+		camera_parser_status = GOT_AL;
+		return;
+	}
+	else if(camera_parser_status == GOT_A && curr_byte != 'L'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+	if(camera_parser_status == GOT_AL && curr_byte == 'R'){
+		camera_parser_status = GOT_ALR;
+		return;
+	}
+	else if(camera_parser_status == GOT_AL && curr_byte != 'R'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+	if(camera_parser_status == GOT_ALR && curr_byte == 'E'){
+		camera_parser_status = GOT_ALRE;
+		return;
+	}
+	else if(camera_parser_status == GOT_ALR && curr_byte != 'E'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+	if(camera_parser_status == GOT_ALRE && curr_byte == 'A'){
+		camera_parser_status = GOT_ALREA;
+		return;
+	}
+	else if(camera_parser_status == GOT_ALRE && curr_byte != 'A'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+	if(camera_parser_status == GOT_ALREA && curr_byte == 'D'){
+		camera_parser_status = GOT_ALREAD;
+		return;
+	}
+	else if(camera_parser_status == GOT_ALREA && curr_byte != 'D'){
+		camera_parser_status = IDLE;
+		word_processing = false;
+		goto lable;
+	}
+	if(camera_parser_status == GOT_ALREAD && curr_byte == 'Y'){
+		camera_parser_status = GOT_ALREADY;
+		word_processing = false;
+		return;
+	}
+	else if(camera_parser_status == GOT_ALREAD && curr_byte != 'Y'){
 		camera_parser_status = IDLE;
 		word_processing = false;
 		goto lable;
@@ -703,7 +774,6 @@ void wifi_response_parser(char curr_byte){
 	}
 	if(camera_parser_status == GOT_FA && curr_byte == 'I'){
 		camera_parser_status = GOT_FAI;
-		word_processing = false;
 		return;
 	}
 	else if(camera_parser_status == GOT_FA && curr_byte != 'I'){
@@ -721,6 +791,8 @@ void wifi_response_parser(char curr_byte){
 		word_processing = false;
 		goto lable;
 	}
+
+
 
 	if(!word_processing && curr_byte == '4'){
 		camera_parser_status = GOT_4;
@@ -742,9 +814,9 @@ void clear_image_name(void){
 }
 
 void shoot(void){
-	sony_a7r_state = CAM_IDLE_MODE;
+	camera_order = CAMERA_SHOOT;
 }
 
 void idle(void){
-	camera_order = CAMERA_SHOOT;
+
 }

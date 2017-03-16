@@ -300,12 +300,15 @@ void v_ctl_altitude_loop(void)
 {
   // Airspeed Command Saturation
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
-
+#ifndef SITL
   // Altitude Controller
   if(!lidar_sf11.update_agl)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
   else
     v_ctl_altitude_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+#else
+	v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+#endif  
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter
@@ -402,7 +405,7 @@ void v_ctl_climb_loop(void)
       v_ctl_auto_throttle_of_airspeed_igain * speed_error * dt_attidude
       + en_tot_err * v_ctl_energy_total_igain * dt_attidude
       + v_ctl_throttle_ipart;
-    Bound(v_ctl_auto_throttle_nominal_cruise_throttle, 0.0f, 1.0f);
+    Bound(v_ctl_auto_throttle_nominal_cruise_throttle, 0.0f, V_CTL_MAX_THROTTLE);
   }
 
   // Total Controller
@@ -412,7 +415,7 @@ void v_ctl_climb_loop(void)
                               + v_ctl_energy_total_pgain * en_tot_err
                               + v_ctl_throttle_ppart;
 
-  if ((controlled_throttle >= 1.0f) || (controlled_throttle <= 0.0f) || (autopilot_throttle_killed() == 1)) {
+  if ((controlled_throttle >= V_CTL_MAX_THROTTLE) || (autopilot_throttle_killed() == 1)) {
     // If your energy supply is not sufficient, then neglect the climb requirement
     en_dis_err = -vdot_err;
 

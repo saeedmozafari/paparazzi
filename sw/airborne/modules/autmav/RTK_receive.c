@@ -3,10 +3,12 @@
 #include "RTK_receive.h"
 
 #include "subsystems/gps.h"
+#include "subsystems/abi_sender_ids.h" 
 #include "subsystems/datalink/downlink.h"
 #include "modules/loggers/sdlog_chibios.h"
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
+#include "subsystems/abi.h"
 
 /** Includes macros generated from ubx.xml */
 #include "ubx_protocol.h"
@@ -53,6 +55,7 @@ void relay_msg(uint8_t length, uint8_t *relay_data){
 #define UTM_HEM_NORTH 0
 #define UTM_HEM_SOUTH 1
 
+#define RTK_GPS_UBX_ID GPS_UBX_ID
 struct RTKGpsUbx rtk_gps_ubx;
 
 #if USE_RTK_GPS_UBX_RXM_RAW
@@ -85,7 +88,7 @@ void rtk_gps_ubx_init(void)
   rtk_gps_ubx.msg_available = false;
   rtk_gps_ubx.error_cnt = 0;
   rtk_gps_ubx.error_last = RTK_GPS_UBX_ERR_NONE;
-  //rtk_gps_ubx.state.comp_id = RTK_GPS_UBX_ID;
+  rtk_gps_ubx.state.comp_id = RTK_GPS_UBX_ID;
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_RTK_STATUS, send_rtk_status);
 }
 
@@ -348,7 +351,7 @@ void rtk_ubx_send_cfg_rst(struct link_device *dev, uint16_t bbr , uint8_t reset_
 void rtk_gps_ubx_msg(void)
 {
   //current timestamp
-  //uint32_t now_ts = get_sys_time_usec();
+  uint32_t now_ts = get_sys_time_usec();
 
   rtk_gps_ubx.state.last_msg_ticks = sys_time.nb_sec_rem;
   rtk_gps_ubx.state.last_msg_time = sys_time.nb_sec;
@@ -362,11 +365,11 @@ void rtk_gps_ubx_msg(void)
       rtk_gps_ubx.state.last_3dfix_ticks = sys_time.nb_sec_rem;
       rtk_gps_ubx.state.last_3dfix_time = sys_time.nb_sec;
     }
-    //AbiSendMsgGPS(RTK_GPS_UBX_ID, now_ts, &rtk_gps_ubx.state);
+    AbiSendMsgGPS(RTK_GPS_UBX_ID, now_ts, &rtk_gps_ubx.state);
   }
   rtk_gps_ubx.msg_available = false;
 }
-
+#ifndef SITL
 void tag_image_log(void){
 
 	static uint16_t image_number = 1;
@@ -376,12 +379,17 @@ void tag_image_log(void){
 	float psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
 	
 	if (pprzLogFile != -1){
-		int err = sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
-                    image_number, ((float)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0),
-                    ((float)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0), ((float)(rtk_gps_ubx.state.lla_pos.alt)/1000.0),
-                    phi,theta,psi, ((float)(rtk_gps_ubx.state.hacc)/1000.0), ((float)(rtk_gps_ubx.state.vacc)/1000.0), (uint16_t)rtk_gps_ubx.state.fix);
+		sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
+		            image_number, ((float)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0),
+		            ((float)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0), ((float)(rtk_gps_ubx.state.lla_pos.alt)/1000.0),
+		            phi,theta,psi, ((float)(rtk_gps_ubx.state.hacc)/1000.0), ((float)(rtk_gps_ubx.state.vacc)/1000.0), (uint16_t)rtk_gps_ubx.state.fix);
 		//DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
 	}
 	image_number ++;
 
 }
+#else
+void tag_image_log(void){
+
+}
+#endif

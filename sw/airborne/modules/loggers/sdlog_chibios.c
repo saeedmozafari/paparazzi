@@ -62,8 +62,8 @@
 
 #define DefaultAdcOfVoltage(voltage) ((uint32_t) (voltage/(DefaultVoltageOfAdc(1))))
 static const uint16_t V_ALERT = DefaultAdcOfVoltage(5.5f);
-static const char PPRZ_LOG_NAME[] = "pprzlog_";
-static const char PPRZ_LOG_DIR[] = "PPRZ";
+static const char PPRZ_LOG_NAME[] = "flight_";
+static const char PPRZ_LOG_DIR[] = "GEOTAGS";
 
 /*
  * Start log thread
@@ -87,8 +87,8 @@ FileDes pprzLogFile = -1;
 struct chibios_sdlog chibios_sdlog;
 
 #if FLIGHTRECORDER_SDLOG
-static const char FLIGHTRECORDER_LOG_NAME[] = "fr_";
-static const char FR_LOG_DIR[] = "FLIGHT_RECORDER";
+static const char FLIGHTRECORDER_LOG_NAME[] = "record_";
+static const char FR_LOG_DIR[] = "BLACKBOX";
 FileDes flightRecorderLogFile = -1;
 #endif
 
@@ -217,18 +217,18 @@ static void thd_startlog(void *arg)
     sdOk = false;
   } else {
     removeEmptyLogs(PPRZ_LOG_DIR, PPRZ_LOG_NAME, 50);
-    if (sdLogOpenLog(&pprzLogFile, PPRZ_LOG_DIR, PPRZ_LOG_NAME, SDLOG_AUTO_FLUSH_PERIOD, true) != SDLOG_OK) {
+    if (sdLogOpenLog(&pprzLogFile, PPRZ_LOG_DIR,
+		     PPRZ_LOG_NAME, SDLOG_AUTO_FLUSH_PERIOD, true,
+		     SDLOG_CONTIGUOUS_STORAGE_MEM, false) != SDLOG_OK) {
       sdOk = false;
     }
-    // try to reserve contiguous mass storage memory
-    sdLogExpandLogFile(pprzLogFile, SDLOG_CONTIGUOUS_STORAGE_MEM, false);
 #if FLIGHTRECORDER_SDLOG
     removeEmptyLogs(FR_LOG_DIR, FLIGHTRECORDER_LOG_NAME, 50);
-    if (sdLogOpenLog(&flightRecorderLogFile, FR_LOG_DIR, FLIGHTRECORDER_LOG_NAME, SDLOG_AUTO_FLUSH_PERIOD, false) != SDLOG_OK) {
+    if (sdLogOpenLog(&flightRecorderLogFile, FR_LOG_DIR, FLIGHTRECORDER_LOG_NAME,
+		     SDLOG_AUTO_FLUSH_PERIOD, false,
+		      SDLOG_CONTIGUOUS_STORAGE_MEM, false) != SDLOG_OK) {
       sdOk = false;
     }
-    // try to reserve contiguous mass storage memory
-    sdLogExpandLogFile(flightRecorderLogFile, SDLOG_CONTIGUOUS_STORAGE_MEM, false);
 #endif
   }
 

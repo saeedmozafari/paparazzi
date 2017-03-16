@@ -104,7 +104,7 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-    <load name="autmav/digital_cam.xml">
+    <load name="autmav/digital_cam_wifi.xml">
 	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
   	<define name="DC_PUSH" value="gpio_set"/>
   	<define name="DC_RELEASE" value="gpio_clear"/>

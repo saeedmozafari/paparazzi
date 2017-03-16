@@ -6,6 +6,7 @@
 #include "subsystems/abi_sender_ids.h" 
 #include "subsystems/datalink/downlink.h"
 #include "modules/loggers/sdlog_chibios.h"
+#include "modules/autmav/sony_a7r_handler.h"
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/abi.h"
@@ -62,6 +63,12 @@ struct RTKGpsUbx rtk_gps_ubx;
 struct RTKGpsUbxGpsUbxRaw rtk_gps_rtk_ubx_raw;
 #endif
 
+double log_phi;
+double log_theta;
+double log_psi;
+double log_lat,log_lon,log_alt;
+double log_vacc,log_hacc;
+
 struct GpsTimeSync rtk_gps_rtk_ubx_time_sync;
 
 static void send_rtk_status(struct transport_tx *trans, struct link_device *dev)
@@ -90,6 +97,11 @@ void rtk_gps_ubx_init(void)
   rtk_gps_ubx.error_last = RTK_GPS_UBX_ERR_NONE;
   rtk_gps_ubx.state.comp_id = RTK_GPS_UBX_ID;
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_RTK_STATUS, send_rtk_status);
+  log_phi = 0;
+  log_theta = 0;
+  log_psi = 0;
+  log_lat = 0; log_lon = 0; log_alt = 0;
+  log_vacc = 0; log_hacc = 0;
 }
 
 void rtk_gps_ubx_event(void)
@@ -370,26 +382,41 @@ void rtk_gps_ubx_msg(void)
   rtk_gps_ubx.msg_available = false;
 }
 #ifndef SITL
+void tag_image(void){
+
+	log_phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
+	log_theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
+	log_psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
+  log_lat = ((double)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0);
+  log_lon = ((double)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0);
+  log_alt = ((double)(rtk_gps_ubx.state.lla_pos.alt)/1000.0);
+  log_vacc = ((double)(rtk_gps_ubx.state.vacc)/1000.0);
+  log_hacc = ((double)(rtk_gps_ubx.state.hacc)/1000.0);
+}
 void tag_image_log(void){
+  static uint16_t image_number = 1;
 
-	static uint16_t image_number = 1;
-	
-	float phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
-	float theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
-	float psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
-	
-	if (pprzLogFile != -1){
-		sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
-		            image_number, ((float)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0),
-		            ((float)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0), ((float)(rtk_gps_ubx.state.lla_pos.alt)/1000.0),
-		            phi,theta,psi, ((float)(rtk_gps_ubx.state.hacc)/1000.0), ((float)(rtk_gps_ubx.state.vacc)/1000.0), (uint16_t)rtk_gps_ubx.state.fix);
-		//DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
-	}
-	image_number ++;
+  int image_name_cnt = 0;
+  /*char log_image_name[30];
+  int image_name_cnt = 0;
 
+  while(image_name[image_name_cnt] != '&' && image_name_cnt != 30){
+    log_image_name[image_name_cnt] = image_name[image_name_cnt];
+  }*/
+
+  if (pprzLogFile != -1){
+    
+    while(image_name[image_name_cnt] != '&'){
+      sdLogWriteLog(pprzLogFile, "%c",image_name[image_name_cnt]);
+      image_name_cnt++;
+    }
+
+    sdLogWriteLog(pprzLogFile, ",%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f\n",
+                log_lat, log_lon, log_alt, log_phi, log_theta, log_psi, log_hacc, log_vacc);
+    //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
+  }
+  image_number ++;
 }
 #else
-void tag_image_log(void){
 
-}
 #endif

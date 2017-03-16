@@ -105,6 +105,8 @@ extern bool already_connected;
 extern bool delay_mode;
 extern bool got_status;
 extern bool chars_recieved;
+extern bool image_name_started;
+extern bool image_name_finished;
 extern char image_name[100];
 extern float curr_time;
 extern float start_time;

@@ -12,6 +12,7 @@
 extern void relay_msg(uint8_t length, uint8_t *relay_data);
 extern void RTK_receive_init(void);
 extern void tag_image_log(void);
+extern void tag_image(void);
 
 static inline void parse_DL_RTCM_INJECT(void)
 {
@@ -73,6 +74,12 @@ struct RTKGpsUbxGpsUbxRaw {
 
 extern struct GpsUbxRaw rtk_gps_ubx_raw;
 #endif
+
+extern double log_phi;
+extern double log_theta;
+extern double log_psi;
+extern double log_lat,log_lon,log_alt;
+extern double log_vacc,log_hacc;
 
 /*
  * This part is used by the autopilot to read data from a uart

@@ -1,4 +1,5 @@
 #include "sony_a7r_handler.h"
+#include "RTK_receive.h"
 #include "pprzlink/pprzlink_device.h"
 #include "mcu_periph/uart.h"
 #include "subsystems/datalink/datalink.h" 
@@ -31,6 +32,8 @@ bool word_processing = false;
 bool already_connected = false;
 bool delay_mode = false;
 bool chars_recieved = false;
+bool image_name_started = false;
+bool image_name_finished = false;
 char image_name[100];
 char ready_test[4] = "AT\r\n";
 float curr_time = 0.0;
@@ -61,9 +64,9 @@ void sony_a7r_handler_setup(void){
 
 void esp_01_jap(void){
 	LED_ON(3);
-	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
-	//char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
-	for(int i=0; i<43; i++){
+	//char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
+	char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
+	for(int i=0; i<45; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
 }
@@ -418,6 +421,8 @@ void sony_a7r_handler_periodic(void){
 				if(camera_parser_status == GOT_result){
 					result_read = true;
 					name_counter = 4;
+					image_name_finished = false;
+					image_name_started = false;
 				}
 				if(result_read){
 					if(camera_parser_status == GOT_slashpict){
@@ -425,16 +430,25 @@ void sony_a7r_handler_periodic(void){
 						image_name[1] = 'i';
 						image_name[2] = 'c';
 						image_name[3] = 't';
+
+						image_name_started = true;
+						continue;
 					}
+					if(image_name_started){
 					
-					if(camera_parser_status != GOT_JPG){
-						image_name[name_counter] = curr_byte;
+						if(camera_parser_status != GOT_JPG){
+							if(!image_name_finished){
+								image_name[name_counter] = curr_byte;
+								name_counter++;
+							}
+						}
+						else{
+							image_name[name_counter] = curr_byte;
+							image_name_finished = true;
+							delay_mode = true;
+							delay_counter = 0;
+						}
 					}
-					else{
-						delay_mode = true;
-						delay_counter = 0;
-					}
-					name_counter++;
 				}
 				if(camera_parser_status == GOT_FAIL){
 					tcp_connected = false;
@@ -447,6 +461,7 @@ void sony_a7r_handler_periodic(void){
 					delay_counter++;
 				}
 				else{
+					tag_image_log();
 					tcp_connected = false;
 					camera_order = CAMERA_IDLE;
 					sony_a7r_state = CAM_IDLE_MODE;

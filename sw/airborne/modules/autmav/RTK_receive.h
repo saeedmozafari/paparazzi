@@ -80,6 +80,8 @@ extern double log_theta;
 extern double log_psi;
 extern double log_lat,log_lon,log_alt;
 extern double log_vacc,log_hacc;
+extern double log_shot_command_time_stamp;
+extern double log_shot_confirm_time_stamp;
 
 /*
  * This part is used by the autopilot to read data from a uart

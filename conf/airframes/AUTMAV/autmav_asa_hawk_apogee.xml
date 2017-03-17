@@ -23,8 +23,8 @@
 	  <define name="BAT_CHECKER_DELAY" value="30"/>
       <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
       <module name="autmav/RTK_receive.xml">
-            <define name="RTK_RTCM3_UART_DEV" value="uart4"/>
-            <define name="UBX_RTK_GPS_LINK" value="uart4"/>
+            <define name="RTK_RTCM3_UART_DEV" value="uart3"/>
+            <define name="UBX_RTK_GPS_LINK" value="uart3"/>
             <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
       </module>
         <module name="airspeed_ms45xx_i2c.xml">

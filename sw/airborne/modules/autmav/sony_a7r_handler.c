@@ -64,9 +64,9 @@ void sony_a7r_handler_setup(void){
 
 void esp_01_jap(void){
 	LED_ON(3);
-	//char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
-	char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
-	for(int i=0; i<45; i++){
+	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
+	//char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
+	for(int i=0; i<43; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
 }
@@ -445,6 +445,7 @@ void sony_a7r_handler_periodic(void){
 						else{
 							image_name[name_counter] = curr_byte;
 							image_name_finished = true;
+							tag_image_log();
 							delay_mode = true;
 							delay_counter = 0;
 						}
@@ -457,11 +458,10 @@ void sony_a7r_handler_periodic(void){
 				}
 			}
 			if(delay_mode){
-				if(delay_counter < 10){
+				if(delay_counter < 2){
 					delay_counter++;
 				}
 				else{
-					tag_image_log();
 					tcp_connected = false;
 					camera_order = CAMERA_IDLE;
 					sony_a7r_state = CAM_IDLE_MODE;

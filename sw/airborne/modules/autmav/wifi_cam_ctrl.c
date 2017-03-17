@@ -36,15 +36,23 @@
 #include "wifi_cam_ctrl.h"
 #include "generated/airframe.h"
 #include "generated/modules.h"
+#include "mcu_periph/sys_time.h"
 
 // Include Standard Camera Control Interface
 #include "dc.h"
 
 #include "modules/autmav/sony_a7r_handler.h"
+#include "modules/autmav/RTK_receive.h"
+
+struct link_device *time_port;
+union float_2_byte f2b;
 
 void wifi_cam_ctrl_init(void)
 {
   // Call common DC init
+  time_port = &((uart4).device);
+  uart_periph_set_bits_stop_parity(&uart4, UBITS_8, USTOP_1, UPARITY_NO);
+  uart_periph_set_baudrate(&uart4, B115200);
   dc_init();
 }
 
@@ -54,11 +62,25 @@ void wifi_cam_ctrl_periodic(void)
   dc_periodic();
 }
 
+void time_streamer(void){
+  float current_time = get_sys_time_float();
+  f2b.value = current_time;
+
+  char next_line = '\n';
+
+  time_port->put_byte(time_port->periph, 0, (uint8_t)f2b.bytes[0]);
+  time_port->put_byte(time_port->periph, 0, (uint8_t)f2b.bytes[1]);
+  time_port->put_byte(time_port->periph, 0, (uint8_t)f2b.bytes[2]);
+  time_port->put_byte(time_port->periph, 0, (uint8_t)f2b.bytes[3]);
+  time_port->put_byte(time_port->periph, 0, (uint8_t)next_line);
+}
+
 /* Command The Camera */
 void dc_send_command(uint8_t cmd)
 {
   switch (cmd) {
     case DC_SHOOT:
+      log_shot_command_time_stamp = get_sys_time_float();
       shoot();
 #ifndef SITL      
       tag_image();

@@ -10,6 +10,7 @@
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/abi.h"
+#include "mcu_periph/sys_time.h"
 
 /** Includes macros generated from ubx.xml */
 #include "ubx_protocol.h"
@@ -68,6 +69,8 @@ double log_theta;
 double log_psi;
 double log_lat,log_lon,log_alt;
 double log_vacc,log_hacc;
+double log_shot_command_time_stamp;
+double log_shot_confirm_time_stamp;
 
 struct GpsTimeSync rtk_gps_rtk_ubx_time_sync;
 
@@ -102,6 +105,8 @@ void rtk_gps_ubx_init(void)
   log_psi = 0;
   log_lat = 0; log_lon = 0; log_alt = 0;
   log_vacc = 0; log_hacc = 0;
+  log_shot_command_time_stamp = 0.0;
+  log_shot_confirm_time_stamp = 0.0;
 }
 
 void rtk_gps_ubx_event(void)
@@ -396,16 +401,15 @@ void tag_image(void){
 void tag_image_log(void){
   static uint16_t image_number = 1;
 
-  int image_name_cnt = 0;
-  /*char log_image_name[30];
-  int image_name_cnt = 0;
+  log_shot_confirm_time_stamp = get_sys_time_float();
 
-  while(image_name[image_name_cnt] != '&' && image_name_cnt != 30){
-    log_image_name[image_name_cnt] = image_name[image_name_cnt];
-  }*/
+  int image_name_cnt = 0;
 
   if (pprzLogFile != -1){
-    
+
+    sdLogWriteLog(pprzLogFile, "%.7f,%.7f\t",
+                log_shot_command_time_stamp,log_shot_confirm_time_stamp);
+
     while(image_name[image_name_cnt] != '&'){
       sdLogWriteLog(pprzLogFile, "%c",image_name[image_name_cnt]);
       image_name_cnt++;

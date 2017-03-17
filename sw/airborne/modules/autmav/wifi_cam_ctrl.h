@@ -31,9 +31,17 @@
 #ifndef WIFI_CAM_CTRL_H
 #define WIFI_CAM_CTRL_H
 
+union float_2_byte{
+	float value;
+	char bytes[4];
+};
+
+extern union float_2_byte f2b;
+
 extern void wifi_cam_ctrl_init(void);
 
 /** Periodic */
 extern void wifi_cam_ctrl_periodic(void);
+extern void time_streamer(void);
 
 #endif // GPIO_CAM_CTRL_H

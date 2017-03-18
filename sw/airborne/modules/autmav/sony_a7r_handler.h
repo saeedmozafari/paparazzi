@@ -108,6 +108,7 @@ extern bool chars_recieved;
 extern bool image_name_started;
 extern bool image_name_finished;
 extern char image_name[100];
+extern char final_name[100];
 extern float curr_time;
 extern float start_time;
 extern FILE *image_names;

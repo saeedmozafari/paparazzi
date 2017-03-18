@@ -22,15 +22,10 @@
 	  <define name="ADC_CHANNEL_VSUPPLY" value="ADC_1"/>   <!-- Battery voltage-->
 	  <define name="BAT_CHECKER_DELAY" value="30"/>
       <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
-      <module name="autmav/RTK_receive.xml">
-            <define name="RTK_RTCM3_UART_DEV" value="uart3"/>
-            <define name="UBX_RTK_GPS_LINK" value="uart3"/>
-            <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
-      </module>
-        <module name="airspeed_ms45xx_i2c.xml">
+      <module name="airspeed_ms45xx_i2c.xml">
             <define name="MS45XX_I2C_DEV" value="i2c1"/>
             <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
-        </module>
+      </module>
         <module name="tune_airspeed.xml"/>
     </target>
     
@@ -74,7 +69,12 @@
     
   </firmware>
 
-  <modules>
+  <modules main_freq="500">
+    <load name="autmav/RTK_receive.xml">
+        <define name="RTK_RTCM3_UART_DEV" value="uart4"/>
+        <define name="UBX_RTK_GPS_LINK" value="uart4"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
+    </load>
     <load name="geo_mag.xml"/>
     <!--load name="gps_ubx_ucenter.xml">
         <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    

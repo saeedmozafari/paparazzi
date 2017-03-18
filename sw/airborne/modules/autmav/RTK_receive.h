@@ -81,7 +81,8 @@ extern double log_psi;
 extern double log_lat,log_lon,log_alt;
 extern double log_vacc,log_hacc;
 extern double log_shot_command_time_stamp;
-extern double log_shot_confirm_time_stamp;
+extern double log_target_rtk_time_stamp;
+extern double last_rtk_msg_time;
 
 /*
  * This part is used by the autopilot to read data from a uart
@@ -117,5 +118,13 @@ extern void rtk_gps_ubx_msg(void);
       rtk_gps_ubx.reset = CFG_RST_BBR_Coldstart;                    \
     ubx_send_cfg_rst(&(UBX_RTK_GPS_LINK).device, rtk_gps_ubx.reset, CFG_RST_Reset_Controlled);   \
   }
+
+#ifndef RTK_DATA_LAG_MS
+#define RTK_DATA_LAG_MS 125
+#endif
+
+#ifndef RTK_DATA_PERIOD_MS
+#define RTK_DATA_PERIOD_MS 200
+#endif
 
 #endif

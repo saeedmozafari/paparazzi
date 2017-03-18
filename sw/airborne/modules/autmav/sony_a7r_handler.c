@@ -35,6 +35,7 @@ bool chars_recieved = false;
 bool image_name_started = false;
 bool image_name_finished = false;
 char image_name[100];
+char final_name[100];
 char ready_test[4] = "AT\r\n";
 float curr_time = 0.0;
 float start_time = 0.0;
@@ -64,9 +65,9 @@ void sony_a7r_handler_setup(void){
 
 void esp_01_jap(void){
 	LED_ON(3);
-	char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
-	//char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
-	for(int i=0; i<43; i++){
+	//char jap_msg[43] = "AT+CWJAP=\"DIRECT-PXE0:ILCE-7R\",\"wLmAKDZS\"\r\n";
+	char jap_msg[45] = "AT+CWJAP=\"DIRECT-oXE0:ILCE-6000\",\"a5u7LVJY\"\r\n";
+	for(int i=0; i<45; i++){
 		wifi_command->put_byte(wifi_command->periph, 0, (uint8_t)jap_msg[i]);
 	}
 }
@@ -444,6 +445,9 @@ void sony_a7r_handler_periodic(void){
 						}
 						else{
 							image_name[name_counter] = curr_byte;
+							for(int i=0;i<100;i++){
+								final_name[i] = image_name[i];
+							}
 							image_name_finished = true;
 							tag_image_log();
 							delay_mode = true;

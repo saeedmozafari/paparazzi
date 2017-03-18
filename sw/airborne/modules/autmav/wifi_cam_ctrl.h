@@ -31,6 +31,12 @@
 #ifndef WIFI_CAM_CTRL_H
 #define WIFI_CAM_CTRL_H
 
+
+#include "std.h"
+#include "paparazzi.h"
+#include <stdio.h>
+#include "std.h"
+
 union float_2_byte{
 	float value;
 	char bytes[4];
@@ -43,5 +49,15 @@ extern void wifi_cam_ctrl_init(void);
 /** Periodic */
 extern void wifi_cam_ctrl_periodic(void);
 extern void time_streamer(void);
+
+extern bool register_shoot_command;
+extern bool calculated_target_shot_time;
+extern bool tag_image_on_target_rtk;
+extern bool tag_next_rtk_msg;
+extern bool tagged_image;
+
+extern double register_shoot_command_time;
+extern double target_shot_time;
+extern double target_rtk_time;
 
 #endif // GPIO_CAM_CTRL_H

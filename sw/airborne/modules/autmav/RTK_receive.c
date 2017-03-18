@@ -15,6 +15,7 @@
 /** Includes macros generated from ubx.xml */
 #include "ubx_protocol.h"
 #include "led.h"
+#include "wifi_cam_ctrl.h"
 
 struct link_device *RTK_receive_device;
 
@@ -69,8 +70,11 @@ double log_theta;
 double log_psi;
 double log_lat,log_lon,log_alt;
 double log_vacc,log_hacc;
+
 double log_shot_command_time_stamp;
-double log_shot_confirm_time_stamp;
+double log_target_rtk_time_stamp;
+
+double last_rtk_msg_time;
 
 struct GpsTimeSync rtk_gps_rtk_ubx_time_sync;
 
@@ -106,7 +110,7 @@ void rtk_gps_ubx_init(void)
   log_lat = 0; log_lon = 0; log_alt = 0;
   log_vacc = 0; log_hacc = 0;
   log_shot_command_time_stamp = 0.0;
-  log_shot_confirm_time_stamp = 0.0;
+  log_target_rtk_time_stamp = 0.0;
 }
 
 void rtk_gps_ubx_event(void)
@@ -160,7 +164,8 @@ void rtk_gps_ubx_read_message(void)
       rtk_gps_ubx.state.hmsl        = UBX_NAV_POSLLH_HMSL(rtk_gps_ubx.msg_buf);
       SetBit(rtk_gps_ubx.state.valid_fields, GPS_VALID_HMSL_BIT);
       rtk_gps_ubx.state.hacc = UBX_NAV_POSLLH_Hacc(rtk_gps_ubx.msg_buf);
-	  rtk_gps_ubx.state.vacc = UBX_NAV_POSLLH_Vacc(rtk_gps_ubx.msg_buf);
+	    rtk_gps_ubx.state.vacc = UBX_NAV_POSLLH_Vacc(rtk_gps_ubx.msg_buf);
+      last_rtk_msg_time = get_sys_time_float();
 
     } else if (rtk_gps_ubx.msg_id == UBX_NAV_POSUTM_ID) {
       rtk_gps_ubx.state.utm_pos.east = UBX_NAV_POSUTM_EAST(rtk_gps_ubx.msg_buf);
@@ -388,38 +393,45 @@ void rtk_gps_ubx_msg(void)
 }
 #ifndef SITL
 void tag_image(void){
+  
+  double now = get_sys_time_float();
 
-	log_phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
-	log_theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
-	log_psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
-  log_lat = ((double)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0);
-  log_lon = ((double)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0);
-  log_alt = ((double)(rtk_gps_ubx.state.lla_pos.alt)/1000.0);
-  log_vacc = ((double)(rtk_gps_ubx.state.vacc)/1000.0);
-  log_hacc = ((double)(rtk_gps_ubx.state.hacc)/1000.0);
+  if((tag_next_rtk_msg) && (last_rtk_msg_time < now)) {
+    log_phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
+    log_theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
+    log_psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
+    log_lat = ((double)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0);
+    log_lon = ((double)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0);
+    log_alt = ((double)(rtk_gps_ubx.state.lla_pos.alt)/1000.0);
+    log_vacc = ((double)(rtk_gps_ubx.state.vacc)/1000.0);
+    log_hacc = ((double)(rtk_gps_ubx.state.hacc)/1000.0); 
+    tag_next_rtk_msg = false;
+    tagged_image = true;
+  } 
+	
 }
 void tag_image_log(void){
-  static uint16_t image_number = 1;
+  
+  if(tagged_image){
 
-  log_shot_confirm_time_stamp = get_sys_time_float();
+    int image_name_cnt = 0;
 
-  int image_name_cnt = 0;
+    if (pprzLogFile != -1){
 
-  if (pprzLogFile != -1){
+       // sdLogWriteLog(pprzLogFile, "%.7f,%.7f\n",
+       //             log_shot_command_time_stamp,log_target_rtk_time_stamp);
 
-    sdLogWriteLog(pprzLogFile, "%.7f,%.7f\t",
-                log_shot_command_time_stamp,log_shot_confirm_time_stamp);
+      while(final_name[image_name_cnt] != '&'){
+        sdLogWriteLog(pprzLogFile, "%c",final_name[image_name_cnt]);
+        image_name_cnt++;
+      }
 
-    while(image_name[image_name_cnt] != '&'){
-      sdLogWriteLog(pprzLogFile, "%c",image_name[image_name_cnt]);
-      image_name_cnt++;
+      sdLogWriteLog(pprzLogFile, ",%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f\n",
+                  log_lat, log_lon, log_alt, log_phi, log_theta, log_psi, log_hacc, log_vacc);
+      //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
     }
-
-    sdLogWriteLog(pprzLogFile, ",%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f\n",
-                log_lat, log_lon, log_alt, log_phi, log_theta, log_psi, log_hacc, log_vacc);
-    //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
+    tagged_image = false;
   }
-  image_number ++;
 }
 #else
 

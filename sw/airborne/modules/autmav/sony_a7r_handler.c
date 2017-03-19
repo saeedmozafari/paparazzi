@@ -414,8 +414,14 @@ void sony_a7r_handler_periodic(void){
 			sony_a7r_state = WAIT_FOR_SENDING_SHOOT_COMMAND_MSG;
 			result_read = false;
 			clear_image_name();
+			time_counter = 0;
 		break;
 		case WAIT_FOR_SENDING_SHOOT_COMMAND_MSG:
+			if(time_counter > (MODULES_FREQUENCY * 3)){ // module frequency * 3 seconds
+				tcp_connected = false;
+				camera_order = CAMERA_IDLE;
+				sony_a7r_state = CAM_IDLE_MODE;
+			}
 			while(wifi_command->char_available(wifi_command->periph)){
 				curr_byte = wifi_command->get_byte(wifi_command->periph);
 				wifi_response_parser(curr_byte);
@@ -472,6 +478,8 @@ void sony_a7r_handler_periodic(void){
 					delay_mode = false;
 				}
 			}
+
+			time_counter++;
 		break;
 	}
 }

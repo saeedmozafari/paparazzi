@@ -34,7 +34,7 @@ float dist2_to_wp;
 
 bool too_far_from_home;
 
-const uint8_t nb_waypoint = NB_WAYPOINT;
+const uint16_t nb_waypoint = NB_WAYPOINT;
 struct point waypoints[NB_WAYPOINT] = WAYPOINTS_UTM;
 
 float ground_alt;
@@ -108,7 +108,7 @@ void nav_reset_alt(void)
 /** Shift altitude of the waypoint according to a new ground altitude */
 void nav_update_waypoints_alt(void)
 {
-  uint8_t i;
+  uint16_t i;
   for (i = 0; i < NB_WAYPOINT; i++) {
     waypoints[i].a += ground_alt - previous_ground_alt;
   }
@@ -125,7 +125,7 @@ void common_nav_periodic_task_4Hz()
  * @param[in] uy    UTM y (north) coordinate
  * @param[in] alt   Altitude above MSL.
  */
-void nav_move_waypoint(uint8_t wp_id, float ux, float uy, float alt)
+void nav_move_waypoint(uint16_t wp_id, float ux, float uy, float alt)
 {
   if (wp_id < nb_waypoint) {
     float dx, dy;

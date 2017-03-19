@@ -73,7 +73,7 @@ extern bool nav_in_segment;
 extern float nav_circle_x, nav_circle_y, nav_circle_radius; /* m */
 extern float nav_segment_x_1, nav_segment_y_1, nav_segment_x_2, nav_segment_y_2; /* m */
 
-extern uint8_t last_wp __attribute__((unused));
+extern uint16_t last_wp __attribute__((unused));
 
 extern int nav_mode;
 #define NAV_MODE_ROLL 1
@@ -94,11 +94,11 @@ extern void fly_to_xy(float x, float y);
 
 
 extern void nav_eight_init(void);
-extern void nav_eight(uint8_t, uint8_t, float);
+extern void nav_eight(uint16_t, uint16_t, float);
 #define Eight(a, b, c) nav_eight((a), (b), (c))
 
 extern void nav_oval_init(void);
-extern void nav_oval(uint8_t, uint8_t, float);
+extern void nav_oval(uint16_t, uint16_t, float);
 extern uint8_t nav_oval_count;
 #define Oval(a, b, c) nav_oval((b), (a), (c))
 
@@ -123,15 +123,15 @@ extern float nav_circle_trigo_qdr; /** Angle from center to mobile */
 extern void nav_circle_XY(float x, float y, float radius);
 
 extern float baseleg_out_qdr;
-extern void nav_compute_baseleg(uint8_t wp_af, uint8_t wp_td, uint8_t wp_baseleg, float radius);
-extern void nav_compute_final_from_glide(uint8_t wp_af, uint8_t wp_td, float glide);
+extern void nav_compute_baseleg(uint16_t wp_af, uint16_t wp_td, uint16_t wp_baseleg, float radius);
+extern void nav_compute_final_from_glide(uint16_t wp_af, uint16_t wp_td, float glide);
 
 #define RCLost() bit_is_set(imcu_get_status(), STATUS_RADIO_REALLY_LOST)
 
 extern void nav_follow(uint8_t _ac_id, float _distance, float _height);
 #define NavFollow(_ac_id, _distance, _height) nav_follow(_ac_id, _distance, _height)
 
-extern void nav_glide(uint8_t start_wp, uint8_t wp);
+extern void nav_glide(uint16_t start_wp, uint16_t wp);
 #define NavGlide(_start_wp, _wp) nav_glide(_start_wp, _wp)
 
 #define NavCircleWaypoint(wp, radius) \
@@ -242,7 +242,7 @@ bool nav_approaching_xy(float x, float y, float from_x, float from_y, float appr
     pprz_msg_send_NAVIGATION(_trans, _dev, AC_ID, &nav_block, &nav_stage, &(pos->x), &(pos->y), &dist_wp, &dist_home, &_circle_count, &nav_oval_count); \
   }
 
-extern void DownlinkSendWpNr(uint8_t _wp);
+extern void DownlinkSendWpNr(uint16_t _wp);
 
 #endif /* DOWNLINK */
 

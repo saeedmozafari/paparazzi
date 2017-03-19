@@ -77,7 +77,7 @@ void firmware_parse_msg(struct link_device *dev __attribute__((unused)), struct 
 
     case DL_MOVE_WP: {
       if (DL_MOVE_WP_ac_id(buf) != AC_ID) { break; }
-      uint8_t wp_id = DL_MOVE_WP_wp_id(buf);
+      uint16_t wp_id = DL_MOVE_WP_wp_id(buf);
 
       /* Computes from (lat, long) in the referenced UTM zone */
       struct LlaCoor_f lla;

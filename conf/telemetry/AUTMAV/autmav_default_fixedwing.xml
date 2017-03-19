@@ -42,6 +42,7 @@
       <message name="DEBUG"               period="1.0"/> <!--log -->
       <message name="LOGGER_STATUS"       period="5.1"/>
       <message name="SONY_CAMERA_STATUS"  period="0.5"/>
+      <message name="RTOS_MON"            period="0.5"/> <!--log -->
 
     </mode>
 

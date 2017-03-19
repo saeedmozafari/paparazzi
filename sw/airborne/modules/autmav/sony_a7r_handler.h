@@ -93,7 +93,7 @@ extern enum cam_order camera_order;
 extern int result_counter;
 extern int name_counter;
 extern int delay_counter;
-extern int tcp_connection_errors;
+extern uint8_t tcp_connection_errors;
 extern int udp_connection_errors;
 extern int time_counter;
 extern int got_status_counter;

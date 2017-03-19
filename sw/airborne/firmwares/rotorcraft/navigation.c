@@ -89,7 +89,7 @@ struct EnuCoor_i navigation_carrot;
 
 struct EnuCoor_i nav_last_point;
 
-uint8_t last_wp UNUSED;
+uint16_t last_wp UNUSED;
 
 bool exception_flag[10] = {0}; //exception flags that can be used in the flight plan
 
@@ -165,7 +165,7 @@ static void send_nav_status(struct transport_tx *trans, struct link_device *dev)
 
 static void send_wp_moved(struct transport_tx *trans, struct link_device *dev)
 {
-  static uint8_t i;
+  static uint16_t i;
   i++;
   if (i >= nb_waypoint) { i = 0; }
   pprz_msg_send_WP_MOVED_ENU(trans, dev, AC_ID,
@@ -378,7 +378,7 @@ void nav_periodic_task(void)
   nav_run();
 }
 
-void navigation_update_wp_from_speed(uint8_t wp, struct Int16Vect3 speed_sp, int16_t heading_rate_sp)
+void navigation_update_wp_from_speed(uint16_t wp, struct Int16Vect3 speed_sp, int16_t heading_rate_sp)
 {
   //  MY_ASSERT(wp < nb_waypoint); FIXME
   int32_t s_heading, c_heading;
@@ -459,7 +459,7 @@ float get_dist2_to_point(struct EnuCoor_i *p)
 }
 
 /** Returns squared horizontal distance to given waypoint */
-float get_dist2_to_waypoint(uint8_t wp_id)
+float get_dist2_to_waypoint(uint16_t wp_id)
 {
   return get_dist2_to_point(&waypoints[wp_id].enu_i);
 }
@@ -504,7 +504,7 @@ void nav_set_heading_towards(float x, float y)
 }
 
 /** Set heading in the direction of a waypoint */
-void nav_set_heading_towards_waypoint(uint8_t wp)
+void nav_set_heading_towards_waypoint(uint16_t wp)
 {
   nav_set_heading_towards(WaypointX(wp), WaypointY(wp));
 }
@@ -631,7 +631,7 @@ void nav_oval_init(void)
  * OR21 (route [p2] to [p1], OC2 (half circle next to [p2]) and OR12 (opposite leg).
  * Initial state is the route along the desired segment (OC2).
  */
-void nav_oval(uint8_t p1, uint8_t p2, float radius)
+void nav_oval(uint16_t p1, uint16_t p2, float radius)
 {
   radius = - radius; /* Historical error ? */
   int32_t alt = waypoints[p1].enu_i.z;

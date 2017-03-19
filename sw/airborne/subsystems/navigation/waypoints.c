@@ -28,7 +28,7 @@
 #include "subsystems/datalink/downlink.h"
 #include "generated/flight_plan.h"
 
-const uint8_t nb_waypoint = NB_WAYPOINT;
+const uint16_t nb_waypoint = NB_WAYPOINT;
 struct Waypoint waypoints[NB_WAYPOINT];
 
 /** initialize global and local waypoints */
@@ -38,7 +38,7 @@ void waypoints_init(void)
   struct LlaCoor_i wp_tmp_lla_i[NB_WAYPOINT] = WAYPOINTS_LLA_WGS84;
   /* element in array is TRUE if absolute/global waypoint */
   bool is_global[NB_WAYPOINT] = WAYPOINTS_GLOBAL;
-  uint8_t i = 0;
+  uint16_t i = 0;
   for (i = 0; i < nb_waypoint; i++) {
     /* clear all flags */
     waypoints[i].flags = 0;
@@ -52,7 +52,7 @@ void waypoints_init(void)
   }
 }
 
-bool waypoint_is_global(uint8_t wp_id)
+bool waypoint_is_global(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     return bit_is_set(waypoints[wp_id].flags, WP_FLAG_GLOBAL);
@@ -60,21 +60,21 @@ bool waypoint_is_global(uint8_t wp_id)
   return false;
 }
 
-void waypoint_set_global_flag(uint8_t wp_id)
+void waypoint_set_global_flag(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     SetBit(waypoints[wp_id].flags, WP_FLAG_GLOBAL);
   }
 }
 
-void waypoint_clear_global_flag(uint8_t wp_id)
+void waypoint_clear_global_flag(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     ClearBit(waypoints[wp_id].flags, WP_FLAG_GLOBAL);
   }
 }
 
-float waypoint_get_x(uint8_t wp_id)
+float waypoint_get_x(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     return waypoints[wp_id].enu_f.x;
@@ -82,7 +82,7 @@ float waypoint_get_x(uint8_t wp_id)
   return 0.f;
 }
 
-float waypoint_get_y(uint8_t wp_id)
+float waypoint_get_y(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     return waypoints[wp_id].enu_f.y;
@@ -90,7 +90,7 @@ float waypoint_get_y(uint8_t wp_id)
   return 0.f;
 }
 
-float waypoint_get_alt(uint8_t wp_id)
+float waypoint_get_alt(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     return waypoints[wp_id].enu_f.z;
@@ -98,7 +98,7 @@ float waypoint_get_alt(uint8_t wp_id)
   return 0.f;
 }
 
-void waypoint_set_enu_i(uint8_t wp_id, struct EnuCoor_i *enu)
+void waypoint_set_enu_i(uint16_t wp_id, struct EnuCoor_i *enu)
 {
   if (wp_id < nb_waypoint) {
     waypoints[wp_id].enu_i = *enu;
@@ -110,7 +110,7 @@ void waypoint_set_enu_i(uint8_t wp_id, struct EnuCoor_i *enu)
   }
 }
 
-void waypoint_set_enu(uint8_t wp_id, struct EnuCoor_f *enu)
+void waypoint_set_enu(uint16_t wp_id, struct EnuCoor_f *enu)
 {
   if (wp_id < nb_waypoint) {
     waypoints[wp_id].enu_f = *enu;
@@ -122,7 +122,7 @@ void waypoint_set_enu(uint8_t wp_id, struct EnuCoor_f *enu)
   }
 }
 
-void waypoint_move_enu_i(uint8_t wp_id, struct EnuCoor_i *new_pos)
+void waypoint_move_enu_i(uint16_t wp_id, struct EnuCoor_i *new_pos)
 {
   if (wp_id < nb_waypoint) {
     waypoint_set_enu_i(wp_id, new_pos);
@@ -135,7 +135,7 @@ void waypoint_move_enu_i(uint8_t wp_id, struct EnuCoor_i *new_pos)
  * Set only local XY coordinates of waypoint without update altitude.
  * @todo: how to handle global waypoints?
  */
-void waypoint_set_xy_i(uint8_t wp_id, int32_t x, int32_t y)
+void waypoint_set_xy_i(uint16_t wp_id, int32_t x, int32_t y)
 {
   if (wp_id < nb_waypoint) {
     waypoints[wp_id].enu_i.x = x;
@@ -147,7 +147,7 @@ void waypoint_set_xy_i(uint8_t wp_id, int32_t x, int32_t y)
   }
 }
 
-void waypoint_set_alt_i(uint8_t wp_id, int32_t alt)
+void waypoint_set_alt_i(uint16_t wp_id, int32_t alt)
 {
   if (wp_id < nb_waypoint) {
     waypoints[wp_id].enu_i.z = alt;
@@ -157,7 +157,7 @@ void waypoint_set_alt_i(uint8_t wp_id, int32_t alt)
   }
 }
 
-void waypoint_set_alt(uint8_t wp_id, float alt)
+void waypoint_set_alt(uint16_t wp_id, float alt)
 {
   if (wp_id < nb_waypoint) {
     waypoints[wp_id].enu_f.z = alt;
@@ -167,7 +167,7 @@ void waypoint_set_alt(uint8_t wp_id, float alt)
   }
 }
 
-void waypoint_set_lla(uint8_t wp_id, struct LlaCoor_i *lla)
+void waypoint_set_lla(uint16_t wp_id, struct LlaCoor_i *lla)
 {
   if (wp_id >= nb_waypoint) {
     return;
@@ -177,7 +177,7 @@ void waypoint_set_lla(uint8_t wp_id, struct LlaCoor_i *lla)
   waypoint_localize(wp_id);
 }
 
-void waypoint_move_lla(uint8_t wp_id, struct LlaCoor_i *lla)
+void waypoint_move_lla(uint16_t wp_id, struct LlaCoor_i *lla)
 {
   if (wp_id >= nb_waypoint) {
     return;
@@ -197,7 +197,7 @@ void waypoint_move_lla(uint8_t wp_id, struct LlaCoor_i *lla)
 }
 
 /** set waypoint latitude/longitude without updating altitude */
-void waypoint_set_latlon(uint8_t wp_id, struct LlaCoor_i *lla)
+void waypoint_set_latlon(uint16_t wp_id, struct LlaCoor_i *lla)
 {
   if (wp_id >= nb_waypoint) {
     return;
@@ -209,7 +209,7 @@ void waypoint_set_latlon(uint8_t wp_id, struct LlaCoor_i *lla)
 }
 
 /** set waypoint to current location and altitude */
-void waypoint_set_here(uint8_t wp_id)
+void waypoint_set_here(uint16_t wp_id)
 {
   if (wp_id >= nb_waypoint) {
     return;
@@ -222,7 +222,7 @@ void waypoint_set_here(uint8_t wp_id)
 }
 
 /** set waypoint to current horizontal location without modifying altitude */
-void waypoint_set_here_2d(uint8_t wp_id)
+void waypoint_set_here_2d(uint16_t wp_id)
 {
   if (wp_id >= nb_waypoint) {
     return;
@@ -234,7 +234,7 @@ void waypoint_set_here_2d(uint8_t wp_id)
   }
 }
 
-void waypoint_globalize(uint8_t wp_id)
+void waypoint_globalize(uint16_t wp_id)
 {
   if (state.ned_initialized_i) {
     struct EcefCoor_i ecef;
@@ -245,7 +245,7 @@ void waypoint_globalize(uint8_t wp_id)
 }
 
 /** update local ENU coordinates from its LLA coordinates */
-void waypoint_localize(uint8_t wp_id)
+void waypoint_localize(uint16_t wp_id)
 {
   if (state.ned_initialized_i) {
     struct EnuCoor_i enu;
@@ -264,7 +264,7 @@ void waypoint_localize(uint8_t wp_id)
 /** update local ENU coordinates of global waypoints */
 void waypoints_localize_all(void)
 {
-  uint8_t i = 0;
+  uint16_t i = 0;
   for (i = 0; i < nb_waypoint; i++) {
     if (waypoint_is_global(i)) {
       waypoint_localize(i);
@@ -279,7 +279,7 @@ void waypoints_localize_all(void)
  * @param  wp_id waypoint id
  * @return pointer to waypoint LLA coordinates, NULL if invalid
  */
-struct LlaCoor_i *waypoint_get_lla(uint8_t wp_id)
+struct LlaCoor_i *waypoint_get_lla(uint16_t wp_id)
 {
   if (wp_id < nb_waypoint) {
     if (!waypoint_is_global(wp_id) && !bit_is_set(waypoints[wp_id].flags, WP_FLAG_LLA_I)) {
@@ -292,14 +292,14 @@ struct LlaCoor_i *waypoint_get_lla(uint8_t wp_id)
   }
 }
 
-void waypoint_copy(uint8_t wp_dest, uint8_t wp_src)
+void waypoint_copy(uint16_t wp_dest, uint16_t wp_src)
 {
   if (wp_dest < nb_waypoint && wp_src < nb_waypoint) {
     waypoints[wp_dest] = waypoints[wp_src];
   }
 }
 
-void waypoint_position_copy(uint8_t wp_dest, uint8_t wp_src)
+void waypoint_position_copy(uint16_t wp_dest, uint16_t wp_src)
 {
   if (wp_dest < nb_waypoint && wp_src < nb_waypoint) {
     waypoints[wp_dest].enu_f.x = waypoints[wp_src].enu_f.x;

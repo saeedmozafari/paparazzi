@@ -22,7 +22,7 @@ struct link_device *wifi_command;
 int result_counter = 0;
 int name_counter = 0;
 int delay_counter = 0;
-int tcp_connection_errors = 0;
+uint8_t tcp_connection_errors = 0;
 int udp_connection_errors = 0;
 int time_counter = 0;
 bool result_read = false;
@@ -48,7 +48,7 @@ enum cam_order camera_order;
 static void send_camera_state(struct transport_tx *trans, struct link_device *dev)
  {
    	uint8_t cam_state_for_debug = sony_a7r_state;
-   	uint8_t parser_state_for_debug = camera_parser_status;
+   	//uint8_t parser_state_for_debug = camera_parser_status;
 	pprz_msg_send_SONY_CAMERA_STATUS(trans, dev, AC_ID,
                          &cam_state_for_debug,
                          &tcp_connection_errors);

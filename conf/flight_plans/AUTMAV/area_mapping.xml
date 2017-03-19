@@ -28,7 +28,7 @@
     <waypoint name="6" x="135.3" y="297.5"/>
     <waypoint name="7" x="135.3" y="297.5"/>
     <waypoint name="8" x="135.3" y="297.5"/>
-    <waypoint name="9" x="135.3" y="297.5"/>
+    <!--waypoint name="9" x="135.3" y="297.5"/>
     <waypoint name="10" x="135.3" y="297.5"/>
     <waypoint name="11" x="135.3" y="297.5"/>
     <waypoint name="12" x="135.3" y="297.5"/>
@@ -259,7 +259,7 @@
     <waypoint name="237" x="135.3" y="297.5"/>
     <waypoint name="238" x="135.3" y="297.5"/>
     <waypoint name="239" x="135.3" y="297.5"/>
-    <waypoint name="240" x="135.3" y="297.5"/>
+    <waypoint name="240" x="135.3" y="297.5"/-->
     
   </waypoints>
   <exceptions>
@@ -303,7 +303,7 @@
       <circle radius="nav_radius" wp="STDBY3"/>
     </block>
     <block name="Survey 1" strip_button="Survey1" strip_icon="survey.png">
-      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 4)"/>
+      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 8)"/>
       <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>

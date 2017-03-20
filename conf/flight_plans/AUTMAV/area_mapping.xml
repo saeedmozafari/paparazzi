@@ -1032,6 +1032,7 @@
     </block>
     <block name="Geo init">
       <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
     <!--block name="Airspeed calibration" strip_button="Calibration">
@@ -1063,7 +1064,7 @@
       <circle radius="nav_radius" wp="258"/>
     </block>
     <block name="Survey 1" strip_button="Survey1" strip_icon="survey.png">
-      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 8)"/>
+      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 4)"/>
       <call fun="nav_survey_polygon_run()"/>
       <deroute block="Standby"/>
     </block>
@@ -1085,9 +1086,9 @@
 		<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
 	</block>
 
-		<block name="flare">
+	<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-		</block>
+	</block>
 	
   </blocks>
 </flight_plan>

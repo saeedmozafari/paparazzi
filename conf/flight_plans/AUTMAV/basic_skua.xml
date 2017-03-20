@@ -19,7 +19,7 @@
  
  <blocks>
     <block name="Wait GPS">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
     
@@ -30,7 +30,7 @@
     </block>
 
     <block name="Holding point">
-      <set value="1" var="kill_throttle"/>
+      <set value="1" var="autopilot.kill_throttle"/>
       <set value="100" var="nav_radius"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>

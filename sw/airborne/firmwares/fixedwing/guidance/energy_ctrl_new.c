@@ -158,7 +158,7 @@ static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
                          &v_ctl_throttle_ppart, 
                          &v_ctl_throttle_ipart,
-                         &v_ctl_altitude_setpoint,
+                         &lidar_sf11.distance,
                          &lidar_sf11.distance_raw,
                          &sf11_ctl_error,
                          &baro_ctl_error);

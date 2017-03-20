@@ -303,7 +303,7 @@
   
   <section name="Photogrammetry" prefix="PHOTOGRAMMETRY_">
     <!-- Camera Parameters -->
-    <define name="FOCAL_LENGTH" value="35.2" unit="mm"/>
+ 	<define name="FOCAL_LENGTH" value="35.2" unit="mm"/>
     <define name="SENSOR_WIDTH" value="22.3" unit="mm"/>    <!-- In direction of the plane's wings -->
     <define name="SENSOR_HEIGHT" value="14.9" unit="mm"/> 	<!-- In direction of the plane's nose -->
     <define name="PIXELS_WIDTH" value="5184" unit=""/>

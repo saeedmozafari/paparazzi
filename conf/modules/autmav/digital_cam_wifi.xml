@@ -22,9 +22,6 @@
 
         <dl_setting max="255" min="0" step="1" module="autmav/dc" var="0" handler="send_command" shortname="Shutter">
           <strip_button name="Photo" icon="digital-camera.png" value="32" group="maindc"/>
-          <strip_button name="Power" icon="off.png" value="111" group="maindc"/>
-          <strip_button name="ZoomIn" icon="zoom.png" value="116" group="dczoom"/>
-          <strip_button name="ZoomOut" icon="zoom.png" value="119" group="dczoom"/>
         </dl_setting>
 
         <dl_setting max="3" min="0" step="1" var="dc_autoshoot" values="STOP|PERIODIC|DISTANCE|EXT_TRIG">
@@ -49,7 +46,7 @@
 
   <header>
     <file name="wifi_cam_ctrl.h"/>
-    <file name="survey_polygon.h"/>
+    <file name="survey.h"/>
     <file name="dc.h"/>
   </header>
 

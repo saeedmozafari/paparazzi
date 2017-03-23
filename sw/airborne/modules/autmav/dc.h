@@ -129,7 +129,8 @@ typedef enum {
   DC_AUTOSHOOT_DISTANCE = 2,
   DC_AUTOSHOOT_EXT_TRIG = 3,
   DC_AUTOSHOOT_SURVEY = 4,
-  DC_AUTOSHOOT_CIRCLE = 5
+  DC_AUTOSHOOT_CIRCLE = 5,
+  DC_AUTOSHOOT_SURVEY_WP = 6
 } dc_autoshoot_type;
 extern dc_autoshoot_type dc_autoshoot;
 
@@ -215,7 +216,7 @@ extern uint8_t dc_survey(float interval, float x, float y);
 
 #define dc_Survey(interval) dc_survey(interval, DC_IGNORE, DC_IGNORE)
 
-
+extern void dc_start_shooting(void);
 /**
  * Stop dc control.
  * Sets the dc control in inactive mode,

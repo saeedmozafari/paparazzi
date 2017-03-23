@@ -7,12 +7,12 @@
       <message name="AIRSPEED"            period="1"/>
       <message name="ALIVE"               period="5"/>
       <message name="GPS"                 period="0.25"/>
-      <message name="RTK_STATUS"          period="0.25"/>
+      <message name="RTK_STATUS"          period="0.5"/>
       <message name="NAVIGATION"          period="1."/>
-      <message name="ATTITUDE"            period="0.5"/>
+      <message name="ATTITUDE"            period="0.25"/>
       <message name="ESTIMATOR"           period="0.5"/>
       <message name="ENERGY"              period="2.5"/>
-      <message name="WP_MOVED"            period="0.5"/>
+      <!--message name="WP_MOVED"            period="0.5"/-->
       <message name="CIRCLE"              period="1.05"/>
       <message name="DESIRED"             period="1.05"/> <!--log -->
       <message name="BAT"                 period="1.1"/>
@@ -42,7 +42,7 @@
       <message name="DEBUG"               period="1.0"/> <!--log -->
       <message name="LOGGER_STATUS"       period="5.1"/>
       <message name="SONY_CAMERA_STATUS"  period="0.5"/>
-      <message name="RTOS_MON"            period="0.5"/> <!--log -->
+      <message name="RTOS_MON"            period="2.5"/> <!--log -->
 
     </mode>
 

@@ -1,0 +1,16 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="survey" dir="autmav">
+  <doc>
+    <description>
+     The main survey mission module
+    </description>
+  </doc>
+  <header>
+    <file name="survey.h"/>
+  </header>
+  <init fun="nav_survey_photo_init()"/>
+  <makefile target="ap|sim|nps">
+    <file name="survey.c"/>
+  </makefile>
+</module>

@@ -52,6 +52,10 @@ extern void nav_move_waypoint(uint16_t wp_id, float utm_east, float utm_north, f
 
 extern const uint16_t nb_waypoint;
 extern struct point waypoints[];
+
+extern bool turn_waypoint[];
+extern bool approach_waypoint[];
+
 /** size == nb_waypoint, waypoint 0 is a dummy waypoint */
 
 /** altitude of the ground in m above MSL */

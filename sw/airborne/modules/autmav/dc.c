@@ -48,6 +48,8 @@
 #include "mcu_periph/sys_time.h"
 #include "subsystems/datalink/telemetry.h"
 
+#include "survey.h"
+
 /** default time interval for periodic mode: 1sec */
 #ifndef DC_AUTOSHOOT_PERIOD
 #define DC_AUTOSHOOT_PERIOD 1.0
@@ -271,7 +273,11 @@ uint8_t dc_survey(float interval, float x, float y)
   dc_info();
   return 0;
 }
-
+// shoot on survey waypoints
+void dc_start_shooting(void)
+{
+  dc_autoshoot = DC_AUTOSHOOT_SURVEY_WP;
+}
 uint8_t dc_stop(void)
 {
   dc_autoshoot = DC_AUTOSHOOT_STOP;
@@ -356,14 +362,45 @@ void dc_periodic(void)
       		
       		NavAttitude(0.0);
       		v_ctl_pitch_setpoint = 0.0;
-    		NavVerticalThrottleMode(v_ctl_throttle_setpoint);
+    		  NavVerticalThrottleMode(v_ctl_throttle_setpoint);
       	}
        	else {
        		NavVerticalAutoThrottleMode(0.0);
-  			NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
+  			  //NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
        	}
 
       }
+    }
+
+    case DC_AUTOSHOOT_SURVEY_WP: {
+      
+      if (nav_approaching_xy(waypoints[survey_current_wp].x, waypoints[survey_current_wp].y,waypoints[survey_current_wp-1].x, waypoints[survey_current_wp-1].y, 0.0)) {
+        if (dc_time_after_last_shot >= dc_camera_shot_delay) {
+          dc_send_command(DC_SHOOT);
+          dc_last_shot_time = get_sys_time_float();
+        }
+      }
+      if((turn_waypoint[survey_current_wp + 1] == false) && (approach_waypoint[survey_current_wp + 1] == false)) {
+        float dist_x = waypoints[survey_current_wp + 1].x - stateGetPositionEnu_f()->x;
+        float dist_y = waypoints[survey_current_wp + 1].y - stateGetPositionEnu_f()->y;
+        dc_time_to_next_shot = sqrtf(dist_x * dist_x + dist_y * dist_y) / stateGetHorizontalSpeedNorm_f();
+        dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
+        if (dc_stabilized_shot) {
+          if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
+          
+            NavAttitude(0.0);
+            v_ctl_pitch_setpoint = 0.0;
+            NavVerticalThrottleMode(v_ctl_throttle_setpoint);
+          }
+          else {
+            NavVerticalAutoThrottleMode(0.0);
+            NavVerticalAltitudeMode(waypoints[survey_current_wp].a, 0.0);
+          }
+
+        }
+        survey_current_wp++;
+      }
+      
     }
     break;
 

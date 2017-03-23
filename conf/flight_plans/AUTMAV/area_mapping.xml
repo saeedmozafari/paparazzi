@@ -1,13 +1,13 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1160" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="3000" name="Basic" security_height="10">
+<flight_plan alt="1150" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="10000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
-    #include "modules/autmav/photogrammetry_calculator.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
     #include "modules/autmav/catapult.h"
     #include "modules/autmav/advanced_landing.h"
     #include "modules/autmav/sony_a7r_handler.h"
+    #include "modules/autmav/survey.h"
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="-18.7" y="16.4"/>
@@ -120,7 +120,7 @@
     <waypoint name="98" x="135.3" y="297.5"/>
     <waypoint name="99" x="135.3" y="297.5"/>
     <waypoint name="100" x="135.3" y="297.5"/>
-    <waypoint name="101" x="135.3" y="297.5"/>
+  <!--  <waypoint name="101" x="135.3" y="297.5"/>
     <waypoint name="102" x="135.3" y="297.5"/>
     <waypoint name="103" x="135.3" y="297.5"/>
     <waypoint name="104" x="135.3" y="297.5"/>
@@ -1019,7 +1019,7 @@
     <waypoint name="997" x="135.3" y="297.5"/>
     <waypoint name="998" x="135.3" y="297.5"/>
     <waypoint name="999" x="135.3" y="297.5"/>
-    <waypoint name="1000" x="135.3" y="297.5"/>
+    <waypoint name="1000" x="135.3" y="297.5"/> -->
         
  </waypoints>
   <exceptions>
@@ -1042,6 +1042,7 @@
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
       <set value="100" var="nav_radius"/>
+      <call_once fun="nav_survey_photo_init()"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
@@ -1061,11 +1062,10 @@
       <circle radius="nav_radius" wp="STDBY2"/>
     </block>
     <block name="Standby3">
-      <circle radius="nav_radius" wp="258"/>
+      <circle radius="nav_radius" wp="50"/>
     </block>
-    <block name="Survey 1" strip_button="Survey1" strip_icon="survey.png">
-      <call fun="PhotogrammetryCalculatorPolygonSurvey(WP_1, 4)"/>
-      <call fun="nav_survey_polygon_run()"/>
+    <block name="Survey" strip_button="Survey" strip_icon="survey.png">
+      <call fun="nav_survey_photo_run()"/>
       <deroute block="Standby"/>
     </block>
 

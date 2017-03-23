@@ -1309,7 +1309,16 @@
       <field name="comp_id" type="uint8" values="NONE|GENERIC|IR|ICQ|ICE|FC|DCM|FINV|MLKF|GX3|CHIMU|VN"/>
     </message>
 
-    <!-- 158 is free -->
+    <message name="SURVEY_MISSION_STATUS" id="158">
+      <field name="mission_availabe" type="uint8" unit="bool"/>
+      <field name="total_wp"   type="uint16"/>
+      <field name="survey_dir" type="float" unit="deg"/>
+      <field name="radius" type="float" unit="m"/>
+      <field name="status" type="uint8" values="IDLE|SETUP|TURN|APPROACH|FLY"/>
+      <field name="start_wp"   type="uint16"/>
+      <field name="current_wp"   type="uint16"/>
+      <field name="end_wp"   type="uint16"/>
+    </message>
 
     <message name="ROTORCRAFT_NAV_STATUS" id="159">
       <field name="block_time" type="uint16" unit="s"/>
@@ -1971,6 +1980,7 @@
       <field name="lat" type="int32" unit="1e7deg" alt_unit="deg" alt_unit_coef="0.0000001"/>
       <field name="lon" type="int32" unit="1e7deg" alt_unit="deg" alt_unit_coef="0.0000001"/>
       <field name="alt" type="int32" unit="mm" alt_unit="m">Height above Mean Sea Level (geoid)</field>
+      <field name="flags" type="uint8"/>
     </message>
 
     <message name="WIND_INFO" id="3" link="forwarded">
@@ -2380,6 +2390,14 @@
     <message name="RTCM_INJECT" id="157" link="broadcasted">
       <field name="packet_id" type="uint8"/>
       <field name="data" type="uint8[]"/>
+    </message>
+
+    <message name="SURVEY_MISSION" id="158" link="forwarded">
+      <field name="ac_id" type="uint8"/>
+      <field name="mission_availabe" type="uint8" unit="bool"/>
+      <field name="total_wp"   type="uint16"/>
+      <field name="survey_dir" type="float" unit="deg"/>
+      <field name="radius" type="float" unit="m"/>
     </message>
 
   </msg_class>

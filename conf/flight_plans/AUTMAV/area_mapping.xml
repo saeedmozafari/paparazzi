@@ -1,6 +1,6 @@
 <!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
 
-<flight_plan alt="1150" ground_alt="1000" lat0="36.769565" lon0="52.970928" max_dist_from_home="10000" name="Basic" security_height="10">
+<flight_plan alt="1150" ground_alt="1000" lat0="35.728108" lon0="51.441201" max_dist_from_home="10000" name="Basic" security_height="10">
   <header>
     #include "subsystems/datalink/datalink.h"
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
@@ -120,7 +120,7 @@
     <waypoint name="98" x="135.3" y="297.5"/>
     <waypoint name="99" x="135.3" y="297.5"/>
     <waypoint name="100" x="135.3" y="297.5"/>
-  <!--  <waypoint name="101" x="135.3" y="297.5"/>
+    <waypoint name="101" x="135.3" y="297.5"/>
     <waypoint name="102" x="135.3" y="297.5"/>
     <waypoint name="103" x="135.3" y="297.5"/>
     <waypoint name="104" x="135.3" y="297.5"/>
@@ -1019,8 +1019,8 @@
     <waypoint name="997" x="135.3" y="297.5"/>
     <waypoint name="998" x="135.3" y="297.5"/>
     <waypoint name="999" x="135.3" y="297.5"/>
-    <waypoint name="1000" x="135.3" y="297.5"/> -->
-        
+    <waypoint name="1000" x="135.3" y="297.5"/> 
+
  </waypoints>
   <exceptions>
     <exception cond="datalink_time > 60" deroute="Loiter"/>

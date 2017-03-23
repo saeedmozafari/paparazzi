@@ -4,15 +4,15 @@
   <process name="Ap">
     <mode name="default">
       <message name="AUTOPILOT_VERSION"   period="11.1"/>
-      <message name="AIRSPEED"            period="1"/>
-      <message name="ALIVE"               period="5"/>
+      <message name="AIRSPEED"            period="1."/>
+      <message name="ALIVE"               period="5."/>
       <message name="GPS"                 period="0.25"/>
       <message name="RTK_STATUS"          period="0.5"/>
       <message name="NAVIGATION"          period="1."/>
       <message name="ATTITUDE"            period="0.25"/>
       <message name="ESTIMATOR"           period="0.5"/>
       <message name="ENERGY"              period="2.5"/>
-      <!--message name="WP_MOVED"            period="0.5"/-->
+      <message name="WP_MOVED"            period="1.0"/>
       <message name="CIRCLE"              period="1.05"/>
       <message name="DESIRED"             period="1.05"/> <!--log -->
       <message name="BAT"                 period="1.1"/>
@@ -27,8 +27,6 @@
       <message name="IMU_GYRO"            period="1.1"/> <!--log -->
       <message name="SURVEY"              period="2.1"/>
       <message name="GPS_SOL"             period="2.0"/>
-      <message name="CAM"                 period="0.5"/>
-      <message name="CAM_POINT"           period="1.0"/>
       <message name="COMMANDS"            period="5"/> <!--log -->
       <message name="FBW_STATUS"          period="2"/> <!--log -->
       <message name="AIR_DATA"            period="1.3"/> 

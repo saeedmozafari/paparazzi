@@ -156,10 +156,11 @@ void nps_autopilot_run_step(double time)
   if (nps_sensors_sonar_available()) {
     float dist = (float) sensors.sonar.value;
     AbiSendMsgAGL(AGL_SONAR_NPS_ID, dist);
-
+   
+#ifndef NPS_DISABLE_IVY_DATA
     uint16_t foo = 0;
     DOWNLINK_SEND_SONAR(DefaultChannel, DefaultDevice, &foo, &dist);
-
+#endif
     Fbw(event_task);
     Ap(event_task);
   }

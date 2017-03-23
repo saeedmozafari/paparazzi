@@ -363,7 +363,12 @@
       <field name="alt" type="int32" unit="mm" alt_unit="m">Height above Mean Sea Level (geoid)</field>
     </message>
 
-    <!-- 48 is free -->
+    <message name="WP_ACK" id="48">
+    <description>
+      Waypoint with id wp_id has been updated/moved to the specified UTM coordinates.
+    </description>
+      <field name="wp_id" type="uint16"/>
+    </message>
 
     <message name="WP_MOVED_ENU" id="49">
       <field name="wp_id" type="uint16"/>

@@ -28,8 +28,9 @@
       </module>
         <module name="tune_airspeed.xml"/>
     </target>
-    
+    <configure name="USE_SONAR" value="FALSE"/>
     <target name="nps" board="pc">
+        <define name="NPS_DISABLE_IVY_DATA"/>
         <module name="radio_control" type="ppm"/>
  	    <module name="fdm"   type="jsbsim"/>
         <module name="gps" type="ublox"/>
@@ -46,7 +47,7 @@
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module>
     <module name="telemetry" type="transparent">
-        <configure name="MODEM_BAUD" value="B9600"/>    
+        <configure name="MODEM_BAUD" value="B57600"/>    
     </module>
     <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>

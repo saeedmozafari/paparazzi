@@ -94,17 +94,21 @@ void firmware_parse_msg(struct link_device *dev __attribute__((unused)), struct 
       utm.east = waypoints[wp_id].x + nav_utm_east0;
       utm.north = waypoints[wp_id].y + nav_utm_north0;
 
-      uint8_t flag = DL_MOVE_WP_flags();
-      if(bit_is_set(flag, 0)) {
+      uint8_t flag = DL_MOVE_WP_flags(buf);
+      
+      if(bit_is_set(flag, 0)) 
+      {
         
-        turn_waypoint[wp_id] = true;
+        turn_waypoint[wp_id] = 1;
 
-      } else if(bit_is_set(flag, 1)) {
+      } else if(bit_is_set(flag, 1)) 
+      {
 
-        approach_waypoint[wp_id] = true;
+        approach_waypoint[wp_id] = 1;
       }
 
       pprz_msg_send_WP_MOVED(trans, dev, AC_ID, &wp_id, &utm.east, &utm.north, &utm.alt, &nav_utm_zone0);
+      pprz_msg_send_WP_ACK(trans, dev, AC_ID, &wp_id);
     }
     break;
 #endif /** NAV */

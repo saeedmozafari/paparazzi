@@ -314,9 +314,9 @@ void *nps_main_display(void *data __attribute__((unused)))
     memcpy(&fdm_ivy, &fdm, sizeof(fdm));
     memcpy(&sensors_ivy, &sensors, sizeof(sensors));
     pthread_mutex_unlock(&fdm_mutex);
-
+#ifndef NPS_DISABLE_IVY_DATA
     nps_ivy_display(&fdm_ivy, &sensors_ivy);
-
+#endif
     clock_get_current_time(&requestEnd);
 
     // Calculate time it took

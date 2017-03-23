@@ -347,7 +347,7 @@
       <field name="alt" type="float" unit="m"/>
     </message>
 
-    <!-- 45 is free -->
+    <message name="MISSION_ACK" id="45"/>
 
     <message name="BARO_WORDS" id="46">
       <field name="w1"  type="uint16"/>

@@ -15,7 +15,7 @@
 
 #include "firmwares/fixedwing/nav.h"
 #include "state.h"
-#include "autopilot.h"
+
 #include "generated/flight_plan.h"
 
 #ifdef DIGITAL_CAM
@@ -32,7 +32,7 @@
 #include "subsystems/datalink/datalink.h" 
 #include "subsystems/datalink/telemetry.h"
 
-bool survey_mission_available;
+uint8_t survey_mission_available;
 bool survey_first_time_setup;
 
 
@@ -49,18 +49,21 @@ uint16_t survey_flyover_end_wp;
 
 static void send_survey_status(struct transport_tx *trans, struct link_device *dev)
 {
+	uint8_t stage = survey_stage;
   pprz_msg_send_SURVEY_MISSION_STATUS(trans, dev, AC_ID,
                         &survey_mission_available,
                         &survey_nb_wp,
                         &survey_angle_deg,
                         &survey_nav_radius,
-                        &survey_stage,
+                        &stage,
                         &survey_flyover_start_wp,
                         &survey_current_wp,
                         &survey_flyover_end_wp);
 }
 
-
+void send_mission_ack(void) {
+	pprz_msg_send_MISSION_ACK(&(DefaultChannel).trans_tx, &(DefaultDevice).device, AC_ID);
+}
 void nav_survey_photo_init(void) {
 
 	survey_mission_available = false;
@@ -71,7 +74,7 @@ void nav_survey_photo_init(void) {
 	survey_angle_deg = 0;
 	survey_nb_wp = 0;
 	survey_last_wp = 0;
-
+	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SURVEY_MISSION_STATUS, send_survey_status);
 	uint16_t i;
 	for(i=0; i < NB_WAYPOINT; i++) {
 		turn_waypoint[i] = false;

@@ -374,15 +374,16 @@ void dc_periodic(void)
 
     case DC_AUTOSHOOT_SURVEY_WP: {
       
-      if (nav_approaching_xy(waypoints[survey_current_wp].x, waypoints[survey_current_wp].y,waypoints[survey_current_wp-1].x, waypoints[survey_current_wp-1].y, 0.0)) {
+      if (NavApproaching(survey_current_wp, 0.5)) {
         if (dc_time_after_last_shot >= dc_camera_shot_delay) {
           dc_send_command(DC_SHOOT);
           dc_last_shot_time = get_sys_time_float();
+          survey_current_wp++;
         }
       }
-      if((turn_waypoint[survey_current_wp + 1] == false) && (approach_waypoint[survey_current_wp + 1] == false)) {
-        float dist_x = waypoints[survey_current_wp + 1].x - stateGetPositionEnu_f()->x;
-        float dist_y = waypoints[survey_current_wp + 1].y - stateGetPositionEnu_f()->y;
+      if((survey_current_wp <= survey_flyover_end_wp) && (survey_flyover_start_wp<=survey_current_wp)) {
+        float dist_x = waypoints[survey_current_wp].x - stateGetPositionEnu_f()->x;
+        float dist_y = waypoints[survey_current_wp].y - stateGetPositionEnu_f()->y;
         dc_time_to_next_shot = sqrtf(dist_x * dist_x + dist_y * dist_y) / stateGetHorizontalSpeedNorm_f();
         dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
         if (dc_stabilized_shot) {
@@ -398,7 +399,6 @@ void dc_periodic(void)
           }
 
         }
-        survey_current_wp++;
       }
       
     }

@@ -15,7 +15,7 @@
 
 #include "firmwares/fixedwing/nav.h"
 #include "state.h"
-
+#include "autopilot.h"
 #include "generated/flight_plan.h"
 
 #ifdef DIGITAL_CAM
@@ -76,12 +76,47 @@ void nav_survey_photo_init(void) {
 	survey_last_wp = 0;
 	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SURVEY_MISSION_STATUS, send_survey_status);
 	uint16_t i;
-	for(i=0; i < NB_WAYPOINT; i++) {
+	for(i=11; i < NB_WAYPOINT; i++) {
 		turn_waypoint[i] = false;
 		approach_waypoint[i] = false;
 	}
 }
 
+bool nav_vicinity_xy(float x, float y, float approaching_distance)
+{
+  /** distance to waypoint in x */
+  float pw_x = x - stateGetPositionEnu_f()->x;
+  /** distance to waypoint in y */
+  float pw_y = y - stateGetPositionEnu_f()->y;
+
+  if (pw_x * pw_x + pw_y * pw_y <= approaching_distance * approaching_distance){
+  	return true;
+  } 
+  else {
+  	return false;
+  }
+}
+
+void clean_current_mission(void) {
+
+	survey_mission_available = false;
+	survey_first_time_setup =false;
+	survey_current_wp = 0;
+	survey_stage = SRV_IDLE;
+	survey_nav_radius = 0;
+	survey_angle_deg = 0;
+	survey_nb_wp = 0;
+	survey_last_wp = 0;
+	uint16_t i;
+	for(i=11; i < NB_WAYPOINT; i++) {
+		turn_waypoint[i] = false;
+		approach_waypoint[i] = false;
+		waypoints[i].x = 0.0;
+		waypoints[i].y = 0.0;
+		waypoints[i].a = 0.0;
+
+	}
+}
 bool nav_survey_photo_run(void) {
 
 	if(survey_mission_available) {
@@ -89,8 +124,8 @@ bool nav_survey_photo_run(void) {
 		if(!survey_first_time_setup) {
 		
 			uint16_t i = 0;
-			while((approach_waypoint[i] = false)&&(turn_waypoint[i] == false)&&(i<NB_WAYPOINT)) i++;
-			survey_last_wp = i + survey_nb_wp - 1;
+			while((approach_waypoint[i] == false)&&(turn_waypoint[i] == false)&&(i<NB_WAYPOINT)) i++;
+			survey_last_wp = survey_nb_wp + 10;
 
 			if(turn_waypoint[i] == true) {
 				survey_current_wp = i;
@@ -118,12 +153,14 @@ bool nav_survey_photo_run(void) {
 #ifdef DIGITAL_CAM
       			dc_stop();
 #endif	
-    			if (NavCourseCloseTo(survey_angle_deg)
-        			&& nav_approaching_xy(waypoints[survey_current_wp+1].x, waypoints[survey_current_wp+1].y, last_x, last_y, CARROT)
+    			if (NavCourseCloseTo(survey_angle_deg + 180.0)
+        			&& nav_vicinity_xy(waypoints[survey_current_wp+1].x, waypoints[survey_current_wp+1].y, fabs(survey_nav_radius) / 5.0)
         			&& fabs(stateGetPositionUtm_f()->alt - waypoints[survey_current_wp].a) <= 10) {
 
     				survey_stage = SRV_APPROACH;
+    				survey_nav_radius *= -1;
     				survey_current_wp++;
+    				survey_angle_deg += 180.0;
 
     				nav_init_stage();
     			}
@@ -131,7 +168,7 @@ bool nav_survey_photo_run(void) {
 
 			case SRV_APPROACH:
 				nav_route_xy(waypoints[survey_current_wp].x, waypoints[survey_current_wp].y,waypoints[survey_current_wp+1].x, waypoints[survey_current_wp+1].y);
-				if (nav_approaching_xy(waypoints[survey_current_wp+1].x, waypoints[survey_current_wp+1].y,waypoints[survey_current_wp].x, waypoints[survey_current_wp].y, 1.0)){
+				if (nav_approaching_xy(waypoints[survey_current_wp].x, waypoints[survey_current_wp].y, last_x, last_y, CARROT)){
 
 					survey_stage = SRV_FLYOVER_SETUP;
 					nav_init_stage();
@@ -142,8 +179,16 @@ bool nav_survey_photo_run(void) {
 			case SRV_FLYOVER_SETUP:
 				survey_flyover_start_wp = survey_current_wp;
 				uint16_t i = survey_flyover_start_wp;
-				while((turn_waypoint[i] == false)&&(i<NB_WAYPOINT)) i++;
-				survey_flyover_end_wp = i-1;
+				if(survey_current_wp != survey_last_wp) {
+					
+					while((turn_waypoint[i] == false)&&(i<NB_WAYPOINT)) i++;
+					survey_flyover_end_wp = i-1;
+
+				} else {
+
+					survey_flyover_end_wp = survey_flyover_start_wp;
+				}
+				
 				survey_stage = SRV_FLYOVER;
 #ifdef DIGITAL_CAM
       				dc_start_shooting();
@@ -151,18 +196,24 @@ bool nav_survey_photo_run(void) {
 			break;
 
 			case SRV_FLYOVER:
-				nav_route_xy(waypoints[survey_flyover_start_wp].x, waypoints[survey_flyover_start_wp].y, waypoints[survey_flyover_end_wp].x, waypoints[survey_flyover_end_wp].y); 
+				if(survey_flyover_start_wp == survey_flyover_end_wp) {
+					nav_route_xy(waypoints[survey_current_wp-1].x, waypoints[survey_current_wp-1].y, waypoints[survey_current_wp].x, waypoints[survey_current_wp].y);	
+				} else {
+					nav_route_xy(waypoints[survey_flyover_start_wp].x, waypoints[survey_flyover_start_wp].y, waypoints[survey_flyover_end_wp].x, waypoints[survey_flyover_end_wp].y); 
+				}
+				
 				if(turn_waypoint[survey_current_wp] == true) {
 					survey_stage = SRV_TURN;
 #ifdef DIGITAL_CAM
       				dc_stop();
 #endif		
 				}
-				if(survey_current_wp == survey_last_wp){
+				if((survey_current_wp == (survey_last_wp + 1))){
 #ifdef DIGITAL_CAM
       				dc_stop();
 #endif
-					survey_mission_available = false;
+      				survey_mission_available = false;
+      				return false;
 				}
 			break;
 		}

@@ -397,9 +397,7 @@ void tag_image(void){
   double now = get_sys_time_float();
 
   if((tag_next_rtk_msg) && (last_rtk_msg_time < now)) {
-    log_phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
-    log_theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
-    log_psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
+    
     log_lat = ((double)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0);
     log_lon = ((double)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0);
     log_alt = ((double)(rtk_gps_ubx.state.lla_pos.alt)/1000.0);

@@ -111,6 +111,9 @@ void wifi_cam_ctrl_periodic(void)
 
   if((tag_image_on_target_rtk) && (target_rtk_time < now)) {
     
+    log_phi = DegOfRad(stateGetNedToBodyEulers_f()->phi);
+    log_theta = DegOfRad(stateGetNedToBodyEulers_f()->theta);
+    log_psi = DegOfRad(stateGetNedToBodyEulers_f()->psi);
     tag_next_rtk_msg = true;
     tag_image_on_target_rtk = false;
   }

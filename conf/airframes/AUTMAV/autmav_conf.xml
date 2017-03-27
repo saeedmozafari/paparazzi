@@ -7,8 +7,8 @@
    telemetry="telemetry/AUTMAV/autmav_default_fixedwing.xml"
    flight_plan="flight_plans/basic.xml"
    settings="settings/fixedwing_basic.xml settings/control/ctl_adaptive_h_ff.xml settings/estimation/ac_char.xml settings/control/ctl_energyadaptive_new.xml settings/control/ctl_yaw.xml"
-   gui_color="blue"
    settings_modules="modules/autmav/photogrammetry_calculator.xml modules/autmav/digital_cam.xml modules/autmav/catapult.xml modules/air_data.xml modules/tune_airspeed.xml modules/geo_mag.xml modules/lidar_sf11.xml modules/gps_ubx_ucenter.xml modules/gps.xml modules/ahrs_int_cmpl_quat.xml modules/imu_common.xml modules/stabilization_adaptive_fw.xml modules/nav_basic_fw.xml"
+   gui_color="blue"
   />
   <aircraft
    name="ASA_Hawk_Apogee"

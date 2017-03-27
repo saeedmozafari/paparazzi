@@ -325,9 +325,9 @@
     <define name="RADIUS_MIN" value="100" unit="m"/>
     <!-- Fligh plan parameters -->
     <define name="SWEEP_ANGLE" value="0" unit="deg"/> 
-	<define name="OVERLAP" value="50"/> 	<!-- unit = percent-->
-	<define name="SIDELAP" value="50"/>		<!-- unit = percent-->
-	<define name="RESOLUTION" value="50"/>	<!-- unit = mm per pixel -->
+	  <define name="OVERLAP" value="50"/> 	<!-- unit = percent-->
+	  <define name="SIDELAP" value="50"/>		<!-- unit = percent-->
+	  <define name="RESOLUTION" value="50"/>	<!-- unit = mm per pixel -->
   </section>
 
   <section name="CAM" prefix="CAM_">

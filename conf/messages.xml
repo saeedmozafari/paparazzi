@@ -1319,7 +1319,7 @@
       <field name="total_wp"   type="uint16"/>
       <field name="survey_dir" type="float" unit="deg"/>
       <field name="radius" type="float" unit="m"/>
-      <field name="status" type="uint8" values="IDLE|SETUP|TURN|APPROACH|FLY"/>
+      <field name="status" type="uint8" values="IDLE|TSETUP|SETUP|TURN|APPROACH|FLY"/>
       <field name="start_wp"   type="uint16"/>
       <field name="current_wp"   type="uint16"/>
       <field name="end_wp"   type="uint16"/>
@@ -1992,7 +1992,6 @@
       <field name="lat" type="int32" unit="1e7deg" alt_unit="deg" alt_unit_coef="0.0000001"/>
       <field name="lon" type="int32" unit="1e7deg" alt_unit="deg" alt_unit_coef="0.0000001"/>
       <field name="alt" type="int32" unit="mm" alt_unit="m">Height above Mean Sea Level (geoid)</field>
-      <field name="flags" type="uint8"/>
     </message>
 
     <message name="WIND_INFO" id="3" link="forwarded">
@@ -2407,9 +2406,11 @@
     <message name="SURVEY_MISSION" id="158" link="forwarded">
       <field name="ac_id" type="uint8"/>
       <field name="mission_availabe" type="uint8" unit="bool"/>
+      <field name="perpendicular" type="uint8" unit="bool"/>
       <field name="total_wp"   type="uint16"/>
       <field name="survey_dir" type="float" unit="deg"/>
-      <field name="radius" type="float" unit="m"/>
+      <field name="side_distance" type="float" unit="m"/>
+      <field name="trig_distance" type="float" unit="m"/>
     </message>
 
   </msg_class>

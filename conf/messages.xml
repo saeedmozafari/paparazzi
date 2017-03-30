@@ -1316,9 +1316,11 @@
 
     <message name="SURVEY_MISSION_STATUS" id="158">
       <field name="mission_availabe" type="uint8" unit="bool"/>
+      <field name="perpendicular" type="uint8" unit="bool"/>
       <field name="total_wp"   type="uint16"/>
       <field name="survey_dir" type="float" unit="deg"/>
-      <field name="radius" type="float" unit="m"/>
+      <field name="trigger" type="float" unit="m"/>
+      <field name="side" type="float" unit="m"/>
       <field name="status" type="uint8" values="IDLE|TSETUP|SETUP|TURN|APPROACH|FLY"/>
       <field name="start_wp"   type="uint16"/>
       <field name="current_wp"   type="uint16"/>

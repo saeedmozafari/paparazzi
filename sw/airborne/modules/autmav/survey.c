@@ -58,9 +58,11 @@ static void send_survey_status(struct transport_tx *trans, struct link_device *d
 	uint8_t stage = survey_stage;
   pprz_msg_send_SURVEY_MISSION_STATUS(trans, dev, AC_ID,
                         &survey_mission_available,
+                        &survey_perpendicular,
                         &survey_nb_wp,
                         &survey_angle_deg,
-                        &survey_nav_radius,
+                        &survey_trigger_distance,
+                        &survey_side_distance,
                         &stage,
                         &survey_flyover_start_wp,
                         &survey_current_wp,
@@ -104,7 +106,6 @@ void clean_current_mission(void) {
 	survey_angle_deg = 0;
 	survey_nb_wp = 0;
 	survey_last_wp = 0;
-	survey_trigger_distance = 0;
 	turn_waypoint.x = 0.0;
 	turn_waypoint.y = 0.0;
 	turn_waypoint.a = 0.0;
@@ -117,7 +118,8 @@ bool nav_survey_photo_run(void) {
 	if(survey_mission_available) {
 		
 		if(!survey_first_time_setup) {
-		
+
+			survey_nav_radius = Max(fabs(survey_side_distance), nav_radius);
 			survey_last_wp = survey_nb_wp + 10;
 			survey_current_wp = 11;
 			survey_stage = SRV_TURN_SETUP;
@@ -137,15 +139,14 @@ bool nav_survey_photo_run(void) {
 			break;
 
 			case SRV_TURN_SETUP:
-				turn_waypoint.x = waypoints[survey_current_wp].x - survey_trigger_distance * cosf(RadOfDeg(survey_angle_deg)) + 30.0 * sinf(RadOfDeg(survey_angle_deg));
-				turn_waypoint.y = waypoints[survey_current_wp].y + survey_trigger_distance * sinf(RadOfDeg(survey_angle_deg)) + 30.0 * cosf(RadOfDeg(survey_angle_deg));
+				turn_waypoint.x = waypoints[survey_current_wp].x - survey_nav_radius * cosf(RadOfDeg(survey_angle_deg)) + 30.0 * sinf(RadOfDeg(survey_angle_deg));
+				turn_waypoint.y = waypoints[survey_current_wp].y + survey_nav_radius * sinf(RadOfDeg(survey_angle_deg)) + 30.0 * cosf(RadOfDeg(survey_angle_deg));
 				turn_waypoint.a = waypoints[survey_current_wp].a;
 				
 				approach_waypoint.x = waypoints[survey_current_wp].x + 30.0 * sinf(RadOfDeg(survey_angle_deg));
 				approach_waypoint.y = waypoints[survey_current_wp].y + 30.0 * cosf(RadOfDeg(survey_angle_deg));
 				approach_waypoint.a = waypoints[survey_current_wp].a;
 
-				survey_nav_radius = Max(fabs(survey_side_distance), nav_radius);
 				survey_stage = SRV_TURN;
 			break;
 
@@ -182,7 +183,7 @@ bool nav_survey_photo_run(void) {
 				survey_flyover_end_wp = survey_current_wp;
 				survey_stage = SRV_FLYOVER;
 #ifdef DIGITAL_CAM
-      				dc_start_shooting();
+      				//dc_start_shooting();
 #endif
 			break;
 

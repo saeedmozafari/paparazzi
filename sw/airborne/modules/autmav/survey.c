@@ -210,11 +210,11 @@ bool nav_survey_photo_run(void) {
 					survey_perpendicular = devision;
 					if(devision == 0) {
 #ifdef DIGITAL_CAM
-//     					dc_stop();
+    					dc_stop();
 #endif							
 					} else {
 #ifdef DIGITAL_CAM
-//		      			dc_survey(survey_trigger_distance, waypoints[survey_current_wp].x, waypoints[survey_current_wp].y);
+		      			dc_survey(survey_trigger_distance, waypoints[survey_current_wp-1].x, waypoints[survey_current_wp-1].y);
 #endif						
 					}
 
@@ -222,7 +222,9 @@ bool nav_survey_photo_run(void) {
 				}
 
 				if(survey_current_wp == (survey_last_wp + 1)) {
-
+#ifdef DIGITAL_CAM
+    					dc_stop();
+#endif	
 						survey_mission_available = false;
       					return false;
 				}

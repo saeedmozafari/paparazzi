@@ -38,6 +38,7 @@ extern uint16_t survey_flyover_start_wp;
 extern uint16_t survey_flyover_end_wp;
 extern float survey_trigger_distance;
 extern float survey_side_distance;
+extern uint8_t survey_devision;
 
 extern struct point turn_waypoint;
 extern struct point approach_waypoint;

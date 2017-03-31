@@ -281,6 +281,7 @@ void dc_start_shooting(void)
 uint8_t dc_stop(void)
 {
   dc_autoshoot = DC_AUTOSHOOT_STOP;
+  dc_gps_count = 0;
   dc_info();
   return 0;
 }
@@ -298,7 +299,7 @@ static float dim_mod(float a, float b, float m)
 void dc_periodic(void)
 {
   static float last_shot_time = 0.;
-
+  dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
   switch (dc_autoshoot) {
 
     case DC_AUTOSHOOT_PERIODIC: {
@@ -355,8 +356,6 @@ void dc_periodic(void)
       }
 
       dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
-      dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
-
       if (dc_stabilized_shot) {
       	if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
       		

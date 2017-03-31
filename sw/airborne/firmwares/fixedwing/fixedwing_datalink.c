@@ -93,6 +93,10 @@ void firmware_parse_msg(struct link_device *dev __attribute__((unused)), struct 
          coordinates */
       utm.east = waypoints[wp_id].x + nav_utm_east0;
       utm.north = waypoints[wp_id].y + nav_utm_north0;
+      uint8_t flags = DL_MOVE_WP_flags(buf);
+      
+      if(flags == 1) start_wp[wp_id] = true;
+      if(flags == 2) end_wp[wp_id] = true;
 
       pprz_msg_send_WP_MOVED(trans, dev, AC_ID, &wp_id, &utm.east, &utm.north, &utm.alt, &nav_utm_zone0);
       pprz_msg_send_WP_ACK(trans, dev, AC_ID, &wp_id);

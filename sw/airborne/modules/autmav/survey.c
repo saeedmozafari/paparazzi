@@ -112,6 +112,11 @@ void clean_current_mission(void) {
 	approach_waypoint.x = 0.0;
 	approach_waypoint.y = 0.0;
 	approach_waypoint.a = 0.0;
+	uint16_t i;
+	for(i = 0; i<NB_WAYPOINT; i++){
+		start_wp[i] = false;
+		end_wp[i] = false;
+	}
 }
 bool nav_survey_photo_run(void) {
 
@@ -178,10 +183,17 @@ bool nav_survey_photo_run(void) {
 			break;
 
 			case SRV_FLYOVER_SETUP:
-				survey_flyover_start_wp = survey_current_wp;
-				survey_current_wp++;
-				survey_flyover_end_wp = survey_current_wp;
-				survey_stage = SRV_FLYOVER;
+				if(start_wp[survey_current_wp] == true) {
+					survey_flyover_start_wp = survey_current_wp;
+					survey_current_wp++;
+				}
+				if(end_wp[survey_current_wp] == true) {
+					survey_flyover_end_wp = survey_current_wp;
+					survey_stage = SRV_FLYOVER;
+				} else {
+					survey_current_wp++;
+				}
+				
 #ifdef DIGITAL_CAM
       				//dc_start_shooting();
 #endif

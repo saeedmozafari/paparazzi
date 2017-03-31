@@ -52,6 +52,8 @@ extern void nav_move_waypoint(uint16_t wp_id, float utm_east, float utm_north, f
 
 extern const uint16_t nb_waypoint;
 extern struct point waypoints[];
+extern bool start_wp[];
+extern bool end_wp[];
 
 /** size == nb_waypoint, waypoint 0 is a dummy waypoint */
 

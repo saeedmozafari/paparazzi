@@ -37,6 +37,9 @@ bool too_far_from_home;
 const uint16_t nb_waypoint = NB_WAYPOINT;
 struct point waypoints[NB_WAYPOINT] = WAYPOINTS_UTM;
 
+bool start_wp[NB_WAYPOINT];
+bool end_wp[NB_WAYPOINT];
+
 
 float ground_alt;
 

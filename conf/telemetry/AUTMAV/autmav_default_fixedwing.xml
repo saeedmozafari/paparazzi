@@ -21,7 +21,7 @@
       <message name="STATE_FILTER_STATUS" period="5."/>
       <message name="DATALINK_REPORT"     period="5.1"/>
       <message name="DL_VALUE"            period="1.5"/>
-      <message name="SURVEY_MISSION_STATUS"  period="2.1"/>
+      <message name="SURVEY_MISSION_STATUS"  period="0.2"/>
       <message name="VECTORNAV_INFO"      period="0.5"/>
     </mode>
 

@@ -370,6 +370,7 @@ void dc_periodic(void)
 
       }
     }
+    break;
 
     case DC_AUTOSHOOT_SURVEY_WP: {
       

@@ -823,7 +823,13 @@
       <field name="itow" type="uint32" unit="ms">GPS time of week</field>
     </message>
 
-    <!--111 free-->
+    <message name="CAMERA_SETTINGS" id="111">
+      <field name="shutter_speed" type="float"/>
+      <field name="iso" type="uint16"/>
+      <field name="fnumber" type="float"/>
+      <field name="last_set_setting" type="uint8"/>
+      <field name="success" type="uint8"/>
+    </message>
 
     <message name="MOTOR_MIXING" id="112">
       <field name="values" type="int16[]" unit="none"/>
@@ -2414,6 +2420,15 @@
       <field name="survey_dir" type="float" unit="deg"/>
       <field name="side_distance" type="float" unit="m"/>
       <field name="trig_distance" type="float" unit="m"/>
+    </message>
+
+    <message name="CAMERA_SETTINGS_GS" id="111">
+      <field name="camera_model" type="uint8"/>
+      <field name="shutter_speed" type="float"/>
+      <field name="iso" type="uint16"/>
+      <field name="fnumber" type="float"/>
+      <field name="last_set_setting" type="uint8"/>
+      <field name="enable" type="uint8"/>
     </message>
 
   </msg_class>

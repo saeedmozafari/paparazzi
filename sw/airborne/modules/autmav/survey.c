@@ -1,8 +1,8 @@
 /*
 ############################## AUTMAV ##############################
-# PROJECT: AUTMAV MODIFIED PAPARAZZI                       #
-# DEVELOPED BY: ALI JAMEEI                             #
-# Copyright (C) 2014-2017                          #
+# PROJECT: AUTMAV MODIFIED PAPARAZZI                               #
+# DEVELOPED BY: ALI JAMEEI                                         #
+# Copyright (C) 2014-2017                                          #
 ####################################################################
 */
 
@@ -69,10 +69,6 @@ static void send_survey_status(struct transport_tx *trans, struct link_device *d
                                       &survey_flyover_end_wp);
 }
 
-void send_mission_ack(void)
-{
-  pprz_msg_send_MISSION_ACK(&(DefaultChannel).trans_tx, &(DefaultDevice).device, AC_ID);
-}
 void nav_survey_photo_init(void)
 {
 

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "std.h"
 #include "subsystems/datalink/datalink.h" 
+#include "mission_handler.h"
 
 enum cam_state{
 	
@@ -180,6 +181,7 @@ extern void sony_a7r_handler_periodic(void);
 extern void clear_image_name(void);
 
 static inline void on_settings_msg_receive(void){
+
 	cam_model = DL_CAMERA_SETTINGS_GS_camera_model(dl_buffer);
 	ssvalue = DL_CAMERA_SETTINGS_GS_shutter_speed(dl_buffer);
 	sival = DL_CAMERA_SETTINGS_GS_iso(dl_buffer);
@@ -195,6 +197,7 @@ static inline void on_settings_msg_receive(void){
 			mode_set = true;
 		}
 	}
+	send_mission_ack(CAMERA_SETTINGS_ACK);
 }
 
 extern void wifi_response_parser(char);

@@ -347,7 +347,9 @@
       <field name="alt" type="float" unit="m"/>
     </message>
 
-    <message name="MISSION_ACK" id="45"/>
+    <message name="MISSION_ACK" id="45">
+      <field name="ack_id"  type="uint8"/>
+    </message>
 
     <message name="BARO_WORDS" id="46">
       <field name="w1"  type="uint16"/>
@@ -2422,6 +2424,12 @@
       <field name="trig_distance" type="float" unit="m"/>
     </message>
 
+    <message name="SURVEY_MISSION_SETTINGS" id="159" link="forwarded">
+      <field name="ac_id" type="uint8"/>
+      <field name="setting_id" type="uint8"/>
+      <field name="setting_value" type="uint32"/>
+    </message>
+
     <message name="CAMERA_SETTINGS_GS" id="111">
       <field name="camera_model" type="uint8"/>
       <field name="shutter_speed" type="float"/>
@@ -2430,6 +2438,8 @@
       <field name="last_set_setting" type="uint8"/>
       <field name="enable" type="uint8"/>
     </message>
+
+
 
   </msg_class>
 

@@ -19,10 +19,11 @@
 
 #include <stdio.h>
 #include "subsystems/datalink/datalink.h" // dl_buffer
+#include "mission_handler.h"
 
 extern void nav_survey_photo_init(void);
 extern bool nav_survey_photo_run(void);
-extern void send_mission_ack(void);
+
 extern void clean_current_mission(void);
 
 enum survey_stage_enum {SRV_IDLE, SRV_TURN_SETUP, SRV_FLYOVER_SETUP, SRV_TURN, SRV_APPROACH, SRV_FLYOVER};
@@ -53,7 +54,7 @@ static inline void parse_DL_SURVEY_MISSION(void)
 	survey_angle_deg = DL_SURVEY_MISSION_survey_dir(dl_buffer);
 	survey_side_distance = DL_SURVEY_MISSION_side_distance(dl_buffer);
 	survey_trigger_distance = DL_SURVEY_MISSION_trig_distance(dl_buffer);
-	send_mission_ack();
+	send_mission_ack(SURVEY_MISSION_ACK);
 }
 
 #endif

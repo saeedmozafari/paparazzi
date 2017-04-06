@@ -233,232 +233,232 @@ void esp_01_cipsend_setting_ss(void){
 
 void set_shutter_speed(float val1){
 	char value[9];
-	char *char_ptr;
+	
 
 	if(val1 == 30 ){
 		char temp_value[9] = "30";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 25){
 		char temp_value[9] = "25";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 20){
 		char temp_value[9] = "20";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 15){
 		char temp_value[9] = "15";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 13){
 		char temp_value[9] = "13";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 10){
 		char temp_value[9] = "10";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 8){
 		char temp_value[9] = "8";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 6){
 		char temp_value[9] = "6";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 5){
 		char temp_value[9] = "5";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 4){
 		char temp_value[9] = "4";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 3.2){
 		char temp_value[9] = "3.2";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 2.5){
 		char temp_value[9] = "2.5";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 2){
 		char temp_value[9] = "2";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 1.6){
 		char temp_value[9] = "1.6";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 1.3){
 		char temp_value[9] = "1.3";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 1){
 		char temp_value[9] = "1";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.8){
 		char temp_value[9] = "0.8";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.6){
 		char temp_value[9] = "0.6";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.5){
 		char temp_value[9] = "0.5";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.4){
 		char temp_value[9] = "0.4";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.25){
 		char temp_value[9] = "0.25";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.2){
 		char temp_value[9] = "0.2";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.125){
 		char temp_value[9] = "0.125";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.1){
 		char temp_value[9] = "0.1";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.05){
 		char temp_value[9] = "0.05";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.04){
 		char temp_value[9] = "0.04";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.025){
 		char temp_value[9] = "0.025";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.02){
 		char temp_value[9] = "0.02";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0125){
 		char temp_value[9] = "0.0125";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.01){
 		char temp_value[9] = "0.01";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.008){
 		char temp_value[9] = "0.008";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.005){
 		char temp_value[9] = "0.005";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.004){
 		char temp_value[9] = "0.004";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.003125){
 		char temp_value[9] = "0.003125";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0025){
 		char temp_value[9] = "0.0025";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.002){
 		char temp_value[9] = "0.002";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0015625){
 		char temp_value[9] = "0.0015625";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.00125){
 		char temp_value[9] = "0.00125";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.001){
 		char temp_value[9] = "0.001";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0008){
 		char temp_value[9] = "0.0008";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.000625){
 		char temp_value[9] = "0.000625";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0005){
 		char temp_value[9] = "0.0005";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0004){
 		char temp_value[9] = "0.0004";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.0003125){
 		char temp_value[9] = "0.0003125";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 	if(val1 == 0.00025){
 		char temp_value[9] = "0.00025";
 		strncpy(value, temp_value, 9);
-		char_ptr = temp_value;
+		
 	}
 
 	char set_shutter_speeds_msg[278] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 74\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"setShutterSpeed\",\"params\":[\"         \"],\"id\":1,\"version\":\"1.0\"}\r\n";
@@ -509,127 +509,127 @@ void esp_01_cipsend_setting_si(void){
 
 void set_iso(uint16_t val){
 	char value[5];
-	char *char_ptr;
+	
 
 	if(val == 0){
 		char temp_value[5] = "AUTO";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 100){
 		char temp_value[5] = "100";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 125){
 		char temp_value[5] = "125";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 160){
 		char temp_value[5] = "160";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 200){
 		char temp_value[5] = "200";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 250){
 		char temp_value[5] = "250";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 320){
 		char temp_value[5] = "320";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 400){
 		char temp_value[5] = "400";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 500){
 		char temp_value[5] = "500";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 640){
 		char temp_value[5] = "640";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 800){
 		char temp_value[5] = "800";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 1000){
 		char temp_value[5] = "1000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 1250){
 		char temp_value[5] = "1250";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 1600){
 		char temp_value[5] = "1600";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 2000){
 		char temp_value[5] = "2000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 2500){
 		char temp_value[5] = "2500";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 3200){
 		char temp_value[5] = "3200";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 4000){
 		char temp_value[5] = "4000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 5000){
 		char temp_value[5] = "5000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 6400){
 		char temp_value[5] = "6400";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 8000){
 		char temp_value[5] = "8000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 10000){
 		char temp_value[5] = "10000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 12800){
 		char temp_value[5] = "12800";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 	if(val == 16000){
 		char temp_value[5] = "16000";
 		strncpy(value, temp_value, 5);
-		char_ptr = temp_value;
+		
 	}
 
 	char set_iso_msg[274] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 70\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"setIsoSpeedRate\",\"params\":[\"     \"],\"id\":1,\"version\":\"1.0\"}\r\n";
@@ -679,97 +679,97 @@ void esp_01_cipsend_setting_sf(void){
 
 void set_fnumber(float val){
 	char value[3];
-	char *char_ptr;
+	
 
 	if(val == 2.8){
 		char temp_value[3] = "2.8";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 3.5){
 		char temp_value[3] = "3.5";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 4.0){
 		char temp_value[3] = "4.0";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 4.5){
 		char temp_value[3] = "4.5";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 5.0){
 		char temp_value[3] = "5.0";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 5.6){
 		char temp_value[3] = "5.6";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 6.3){
 		char temp_value[3] = "6.3";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 7.1){
 		char temp_value[3] = "7.1";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 8.0){
 		char temp_value[3] = "8.0";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 9.0){
 		char temp_value[3] = "9.0";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 10){
 		char temp_value[3] = "10";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 11){
 		char temp_value[3] = "11";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 13){
 		char temp_value[3] = "13";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 14){
 		char temp_value[3] = "14";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 16){
 		char temp_value[3] = "16";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 18){
 		char temp_value[3] = "18";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 20){
 		char temp_value[3] = "20";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 	if(val == 22){
 		char temp_value[3] = "22";
 		strncpy(value, temp_value, 3);
-		char_ptr = temp_value; 
+		 
 	}
 
 	char set_fnumber_msg[267] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 63\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"setFNumber\",\"params\":[\"   \"],\"id\":1,\"version\":\"1.0\"}\r\n";

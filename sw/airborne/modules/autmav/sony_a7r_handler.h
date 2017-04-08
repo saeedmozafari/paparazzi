@@ -181,8 +181,9 @@ extern void sony_a7r_handler_periodic(void);
 extern void clear_image_name(void);
 
 static inline void on_settings_msg_receive(void){
-
+#ifndef SITL
 	cam_model = DL_CAMERA_SETTINGS_GS_camera_model(dl_buffer);
+#endif
 	ssvalue = DL_CAMERA_SETTINGS_GS_shutter_speed(dl_buffer);
 	sival = DL_CAMERA_SETTINGS_GS_iso(dl_buffer);
 	sfval = DL_CAMERA_SETTINGS_GS_fnumber(dl_buffer);

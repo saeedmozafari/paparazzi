@@ -64,5 +64,6 @@ extern float h_ctl_yaw_ny_igain;
   }
 
 extern bool use_airspeed_ratio;
+extern void h_ctl_initialize_variables(void);
 
 #endif /* FW_H_CTL_A_H */

@@ -53,6 +53,7 @@ struct RTKGpsUbx {
 };
 
 extern struct RTKGpsUbx rtk_gps_ubx;
+extern struct GpsRelposNED rtk_gps_relposned;
 
 #if USE_RTK_GPS_UBX_RXM_RAW
 struct RTKGpsUbxGpsUbxRawMes {

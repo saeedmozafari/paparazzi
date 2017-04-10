@@ -40,7 +40,9 @@
       <message name="DEBUG"               period="1.0"/> <!--log -->
       <message name="LOGGER_STATUS"       period="5.1"/>
       <message name="SONY_CAMERA_STATUS"  period="1.5"/>
-      <message name="RTOS_MON"            period="2.5"/> <!--log -->     
+      <message name="RTOS_MON"            period="2.5"/> <!--log -->
+      <message name="GPS_RTK"      period="0.5"/>
+      <message name="GPS_RXMRTCM"      period="0.5"/>     
     </mode>
 
     <mode name="raw_sensors">
@@ -57,15 +59,7 @@
       <message name="ALIVE"               period="5"/>
     </mode>
     <mode name="extremal">
-      <message name="ALIVE"               period="5"/>
-      <message name="GPS"                 period="5.1"/>
-      <message name="ESTIMATOR"           period="5.3"/>
-      <message name="BAT"                 period="10.1"/>
-      <message name="DESIRED"             period="10.2"/>
-      <message name="NAVIGATION"          period="5.4"/>
-      <message name="PPRZ_MODE"           period="5.5"/>
-      <message name="STATE_FILTER_STATUS" period="7."/>
-      <message name="DATALINK_REPORT"            period="5.7"/>
+     <message name="ATTITUDE"            period="0.10"/>
     </mode>
   </process>
   <process name="Fbw">

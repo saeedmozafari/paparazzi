@@ -55,8 +55,7 @@ struct RTKGpsUbx {
 extern struct RTKGpsUbx rtk_gps_ubx;
 extern struct GpsRelposNED rtk_gps_relposned;
 
-#if USE_RTK_GPS_UBX_RXM_RAW
-struct RTKGpsUbxGpsUbxRawMes {
+struct RTKGpsUbxRawMes {
   double cpMes;
   double prMes;
   float doMes;
@@ -66,15 +65,15 @@ struct RTKGpsUbxGpsUbxRawMes {
   uint8_t lli;
 };
 
-struct RTKGpsUbxGpsUbxRaw {
+struct RTKGpsUbxRaw {
   int32_t iTOW;
   int16_t week;
   uint8_t numSV;
-  struct GpsUbxRawMes measures[RTK_GPS_UBX_NB_CHANNELS];
+  struct RTKGpsUbxRawMes measures[RTK_GPS_UBX_NB_CHANNELS];
 };
 
-extern struct GpsUbxRaw rtk_gps_ubx_raw;
-#endif
+extern struct RTKGpsUbxRaw rtk_gps_ubx_raw;
+
 
 extern double log_phi;
 extern double log_theta;

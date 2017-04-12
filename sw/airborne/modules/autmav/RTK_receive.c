@@ -6,7 +6,7 @@
 #include "subsystems/abi_sender_ids.h" 
 #include "subsystems/datalink/downlink.h"
 #include "modules/loggers/sdlog_chibios.h"
-#include "modules/autmav/sony_a7r_handler.h"
+#include "modules/autmav/sony_camera_handler.h"
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/abi.h"
@@ -419,8 +419,8 @@ void tag_image_log(void){
        // sdLogWriteLog(pprzLogFile, "%.7f,%.7f\n",
        //             log_shot_command_time_stamp,log_target_rtk_time_stamp);
 
-      while(final_name[image_name_cnt] != '&'){
-        sdLogWriteLog(pprzLogFile, "%c",final_name[image_name_cnt]);
+      while(image_name[image_name_cnt] != '&'){
+        sdLogWriteLog(pprzLogFile, "%c",image_name[image_name_cnt]);
         image_name_cnt++;
       }
 
@@ -429,7 +429,9 @@ void tag_image_log(void){
       //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
     }
     tagged_image = false;
+   LED_ON(4);
   }
+ LED_ON(3);
 }
 #else
 

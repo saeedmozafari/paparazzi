@@ -6,7 +6,7 @@
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
     #include "modules/autmav/catapult.h"
     #include "modules/autmav/advanced_landing.h"
-    #include "modules/autmav/sony_a7r_handler.h"
+    #include "modules/autmav/sony_camera_handler.h"
     #include "modules/autmav/survey.h"
 </header>
   <waypoints>
@@ -1088,6 +1088,10 @@
 
 	<block name="flare">
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+	</block>
+
+	<block name="send_settings" strip_button="send_settings">
+      		<call_once fun="send_settings()" />
 	</block>
 	
   </blocks>

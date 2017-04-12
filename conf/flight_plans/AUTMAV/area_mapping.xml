@@ -8,6 +8,8 @@
     #include "modules/autmav/advanced_landing.h"
     #include "modules/autmav/sony_camera_handler.h"
     #include "modules/autmav/survey.h"
+    #include "firmwares/fixedwing/guidance/energy_ctrl_new.h"
+    #include "firmwares/fixedwing/stabilization/stabilization_adaptive.h"
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="0.0" y="0.0"/>
@@ -1023,7 +1025,8 @@
 
  </waypoints>
   <exceptions>
-    <exception cond="datalink_time > 60" deroute="Loiter"/>
+    <!--exception cond="datalink_failsafe()" deroute="Loiter"/>
+    <exception cond="max_distance_failsafe()" deroute="Loiter"/-->
   </exceptions>
   <blocks>
     <block name="Wait GPS">
@@ -1041,12 +1044,17 @@
     </block-->    
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
-      <set value="100" var="nav_radius"/>
+      <set value="70" var="nav_radius"/>
+      <set value="0" var="survey_mission_available"/>
       <call_once fun="nav_survey_photo_init()"/>
+      <call_once fun="initialize_mission_vars()"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
       <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
+      <call_once fun="v_ctl_initialize_variables()"/>
+      <call_once fun="h_ctl_initialize_variables()"/>
+      <call_once fun="set_sf11_agl_mode(false)" />
       <set value="0" var="autopilot.kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
@@ -1064,7 +1072,10 @@
     <block name="Standby3">
       <circle radius="nav_radius" wp="50"/>
     </block>
-    <block name="Survey" strip_button="Survey" strip_icon="survey.png">
+    <block name="Climb" strip_button="Survey" strip_icon="survey.png">
+      <circle wp="STDBY" vmode="climb" climb="3.0" radius="nav_radius" until=" GetPosAlt() > WaypointAlt(WP_1)"/>
+    </block>
+    <block name="Survey">
       <call fun="nav_survey_photo_run()"/>
       <deroute block="Standby"/>
     </block>
@@ -1079,7 +1090,7 @@
 	<block name="Approach">
 		<go wp="TP" vmode="alt"/>
 		<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
-		<call_once fun="set_sf11_agl_mode(true)" />
+		<call_once fun="set_sf11_agl_mode(false)" />
 	</block>
 
 	<block name="Landing">
@@ -1087,11 +1098,8 @@
 	</block>
 
 	<block name="flare">
+      <exception cond="LessThan(10 ,NavBlockTime())" deroute="Holding point"/>
       <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
-	</block>
-
-	<block name="send_settings" strip_button="send_settings">
-      		<call_once fun="send_settings()" />
 	</block>
 	
   </blocks>

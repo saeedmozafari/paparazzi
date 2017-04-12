@@ -225,7 +225,7 @@ uint8_t dc_distance(float interval)
   last_shot_pos.x = 0;
   last_shot_pos.y = 0;
 
-  dc_info();
+  //dc_info();
   return 0;
 }
 
@@ -247,7 +247,7 @@ uint8_t dc_circle(float interval, float start)
   //dc_circle_last_block = floorf(dc_circle_start_angle/dc_circle_interval);
   dc_circle_last_block = 0;
   dc_circle_max_blocks = floorf(360. / dc_circle_interval);
-  dc_info();
+  //dc_info();
   return 0;
 }
 
@@ -270,7 +270,7 @@ uint8_t dc_survey(float interval, float x, float y)
     dc_gps_y = y;
   }
   dc_gps_next_dist = 0;
-  dc_info();
+  //dc_info();
   return 0;
 }
 // shoot on survey waypoints
@@ -281,7 +281,8 @@ void dc_start_shooting(void)
 uint8_t dc_stop(void)
 {
   dc_autoshoot = DC_AUTOSHOOT_STOP;
-  dc_info();
+  dc_gps_count = 0;
+  //dc_info();
   return 0;
 }
 
@@ -298,7 +299,7 @@ static float dim_mod(float a, float b, float m)
 void dc_periodic(void)
 {
   static float last_shot_time = 0.;
-
+  dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
   switch (dc_autoshoot) {
 
     case DC_AUTOSHOOT_PERIODIC: {
@@ -343,7 +344,7 @@ void dc_periodic(void)
     case DC_AUTOSHOOT_SURVEY: {
       float dist_x = dc_gps_x - stateGetPositionEnu_f()->x;
       float dist_y = dc_gps_y - stateGetPositionEnu_f()->y;
-	    dc_info();
+	    //dc_info();
       
       if (dist_x * dist_x + dist_y * dist_y >= dc_gps_next_dist * dc_gps_next_dist) {
         dc_gps_next_dist += dc_survey_interval;
@@ -355,8 +356,6 @@ void dc_periodic(void)
       }
 
       dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
-      dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
-
       if (dc_stabilized_shot) {
       	if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
       		
@@ -371,6 +370,7 @@ void dc_periodic(void)
 
       }
     }
+    break;
 
     case DC_AUTOSHOOT_SURVEY_WP: {
       

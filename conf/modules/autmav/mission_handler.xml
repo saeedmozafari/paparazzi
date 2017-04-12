@@ -1,0 +1,21 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="mission_handler" dir="autmav">
+  <doc>
+    <description>
+     The main mission handler module
+    </description>
+  </doc>
+  
+  <header>
+    <file name="mission_handler.h"/>
+  </header>
+
+  <init fun="mission_handler_init()"/>
+
+  <datalink message="SURVEY_MISSION_SETTINGS" fun="parse_DL_SURVEY_MISSION_SETTINGS()"/>
+
+  <makefile target="ap|sim|nps">
+    <file name="mission_handler.c"/>
+  </makefile>
+</module>

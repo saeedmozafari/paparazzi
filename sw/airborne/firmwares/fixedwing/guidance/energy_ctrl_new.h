@@ -80,4 +80,6 @@ extern float ac_char_descend_max;
 extern float ac_char_cruise_throttle;
 extern float ac_char_cruise_pitch;
 
+extern void v_ctl_initialize_variables(void);
+
 #endif /* FW_V_CTL_H */

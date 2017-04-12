@@ -213,10 +213,8 @@ static void body_to_imu_cb(uint8_t sender_id __attribute__((unused)),
   float_quat_invert(&imu_to_body_quat, q_b2i_f);
 }
 
-void v_ctl_init(void)
+void v_ctl_initialize_variables(void)
 {
-  /* mode */
-  v_ctl_mode = V_CTL_MODE_MANUAL;
 
   /* outer loop */
   v_ctl_altitude_setpoint = 0.;
@@ -283,6 +281,13 @@ void v_ctl_init(void)
   v_ctl_throttle_igain = V_CTL_THROTTLE_IGAIN;
   
   v_ctl_throttle_setpoint = 0;
+}
+void v_ctl_init(void)
+{
+  /* mode */
+  v_ctl_mode = V_CTL_MODE_MANUAL;
+
+  v_ctl_initialize_variables();
 
   float_quat_identity(&imu_to_body_quat);
 

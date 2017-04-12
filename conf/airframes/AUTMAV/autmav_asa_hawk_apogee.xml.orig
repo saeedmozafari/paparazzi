@@ -5,9 +5,9 @@
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
       <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <define name="RTK_GPS_LED" value="4"/>
+	  <define name="RTK_GPS_LED" value="5"/>
       <configure name="BARO_LED" value="none"/>
-	  <configure name="RADIO_CONTROL_LED" value="3"/>
+	  <configure name="RADIO_CONTROL_LED" value="none"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
@@ -83,8 +83,13 @@
     <!--load name="gps_ubx_ucenter.xml">
         <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
     </load-->
+<<<<<<< HEAD
     <load name="autmav/sony_camera_handler.xml">
 	<define name="ESP_01_UART_PORT" value="uart6"/>
+=======
+    <load name="autmav/sony_a7r_handler.xml">
+	    <define name="ESP_01_UART_PORT" value="uart6"/>
+>>>>>>> 23c70905eac0007c2286520661144c46218fee47
         <define name="ESP_01_BAUD" value="B115200"/>
     </load>
     <load name="autmav/advanced_landing.xml"/>
@@ -155,7 +160,7 @@
   </command_laws>
 
   <section name="AUTO1" prefix="AUTO1_">
-    <define name="MAX_ROLL" value="45" unit="deg"/>
+    <define name="MAX_ROLL" value="55" unit="deg"/>
     <define name="MAX_PITCH" value="30" unit="deg"/>
     <define name="MAX_YAW_RATE" value="RadOfDeg(100)"/>
   </section>

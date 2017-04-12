@@ -126,7 +126,7 @@ bool nav_vicinity_xy(float x, float y, float approaching_distance)
 {
   /** distance to waypoint in x */
   float pw_x = x - stateGetPositionEnu_f()->x;
-  /** distance to waypoint in y */
+  /** distance to wyapoint in y */
   float pw_y = y - stateGetPositionEnu_f()->y;
 
   if (pw_x * pw_x + pw_y * pw_y <= approaching_distance * approaching_distance){

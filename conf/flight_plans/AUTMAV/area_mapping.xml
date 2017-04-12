@@ -129,6 +129,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
+      <set value="70" var="nav_radius"/>
       <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
@@ -140,13 +141,13 @@
     <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block-->    
+    </block-->
+    <block name="Clear Mission" strip_button="ClearMission">
+      <call_once fun="clean_current_mission()"/>
+      <call_once fun="initialize_mission_vars()"/>  
+    </block>    
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
-      <set value="70" var="nav_radius"/>
-      <set value="0" var="survey_mission_available"/>
-      <call_once fun="nav_survey_photo_init()"/>
-      <call_once fun="initialize_mission_vars()"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">

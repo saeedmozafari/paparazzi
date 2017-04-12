@@ -71,7 +71,7 @@
 #endif
 
 #ifndef DC_STABILIZED_SHOT_CARROT
-#define DC_STABILIZED_SHOT_CARROT 1.5 //units in secondes
+#define DC_STABILIZED_SHOT_CARROT 0.5 //units in secondes
 #endif
 
 #ifndef DC_CAMERA_SHOT_DELAY
@@ -365,7 +365,7 @@ void dc_periodic(void)
       	}
        	else {
        		NavVerticalAutoThrottleMode(0.0);
-  			  //NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
+  			  NavVerticalAltitudeMode(waypoints[survey_current_wp].a, 0.0);
        	}
 
       }

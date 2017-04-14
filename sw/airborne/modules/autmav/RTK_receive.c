@@ -498,9 +498,9 @@ void tag_image_log(void){
       //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
     }
     tagged_image = false;
-   LED_ON(4);
+   //LED_ON(4);
   }
- LED_ON(3);
+ //LED_ON(3);
 }
 #else
 

@@ -19,7 +19,7 @@
       <message name="SEGMENT"             period="1.2"/>
       <message name="CALIBRATION"         period="2.1"/>
       <message name="NAVIGATION_REF"      period="9."/>
-      <message name="PPRZ_MODE"           period="3."/>
+      <message name="PPRZ_MODE"           period="0.25"/>
       <message name="SETTINGS"            period="5."/>
       <message name="STATE_FILTER_STATUS" period="5."/>
       <message name="DATALINK_REPORT"     period="5.1"/>
@@ -41,8 +41,9 @@
       <message name="LOGGER_STATUS"       period="5.1"/>
       <message name="SONY_CAMERA_STATUS"  period="1.5"/>
       <message name="RTOS_MON"            period="2.5"/> <!--log -->
-      <message name="GPS_RTK"      period="0.5"/>
-      <message name="GPS_RXMRTCM"      period="0.5"/>     
+      <message name="GPS_RTK"      period="1.8"/>
+      <message name="GPS_RXMRTCM"      period="2.5"/>  
+      <message name="DC_INFO"      period="0.25"/>   
     </mode>
 
     <mode name="raw_sensors">

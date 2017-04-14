@@ -5,9 +5,9 @@
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
       <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <define name="RTK_GPS_LED" value="4"/>
+	  <define name="RTK_GPS_LED" value="5"/>
       <configure name="BARO_LED" value="none"/>
-	  <configure name="RADIO_CONTROL_LED" value="3"/>
+	  <configure name="RADIO_CONTROL_LED" value="none"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
@@ -107,8 +107,8 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-    <load name="autmav/mission_handler.xml"/>
     <load name="autmav/survey.xml"/>
+    <load name="autmav/mission_handler.xml"/>
     <load name="autmav/digital_cam_wifi.xml"/>	
   </modules>
 

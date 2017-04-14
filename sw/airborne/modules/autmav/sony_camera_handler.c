@@ -49,6 +49,7 @@ bool mode_set = false;
 bool word_processing = false;
 bool dsc_received = false;
 bool jpg_received = false;
+bool result_received = false;
 
 enum camera_state cam_state;
 enum camera_model cam_model;
@@ -455,10 +456,11 @@ void sony_camera_handler_periodic(void){
 				set_rec_mode();
 				time_counter = 0;
 				cam_state = WAIT_FOR_REC_MODE_TO_BE_SET;
+				result_received = false;
 			}
 		break;
 		case WAIT_FOR_REC_MODE_TO_BE_SET:
-			if(GOT_result){
+			if(result_received){
 				cam_state = SET_POSTVIEW_NAME;
 			}
 			else{
@@ -468,6 +470,7 @@ void sony_camera_handler_periodic(void){
 				else{
 					set_rec_mode();
 					time_counter = 0;
+					result_received = false;
 				}
 			}
 		break;
@@ -475,9 +478,10 @@ void sony_camera_handler_periodic(void){
 			set_postview_name();
 			time_counter = 0;
 			cam_state = WAIT_FOR_POSTVIEW_TO_BE_SET;
+			result_received = false;
 		break;
 		case WAIT_FOR_POSTVIEW_TO_BE_SET:
-			if(GOT_result){
+			if(result_received){
 				cam_state = IDLE_MODE;
 			}
 			else{
@@ -487,6 +491,7 @@ void sony_camera_handler_periodic(void){
 				else{
 					set_postview_name();
 					time_counter = 0;
+					result_received = false;
 				}
 			}
 		break;
@@ -517,7 +522,7 @@ void clear_image_name(void){
 }
 
 void shoot(void){
-	if(delay_counter == 20000){
+	if(cam_state == IDLE_MODE){
 		cam_state = SEND_SHOOT;
 	}
 }
@@ -529,8 +534,12 @@ void read_image_name(void){
 	char temp;
 
 	while(wifi_command->char_available(wifi_command->periph)){
+		
 		temp = (char)wifi_command->get_byte(wifi_command->periph);
 		wifi_response_parser(temp);
+		if(cam_parser == GOT_result){
+			result_received = true;
+		}
 		if(dsc_received && !jpg_received){
 			image_name[image_name_counter] = temp;
 			image_name_counter++;

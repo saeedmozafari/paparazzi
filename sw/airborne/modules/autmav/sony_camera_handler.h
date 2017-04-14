@@ -60,6 +60,7 @@ extern bool mode_set;
 extern bool word_processing;
 extern bool dsc_received;
 extern bool jpg_received;
+extern bool result_received;
 extern char image_name[100];
 
 extern void sony_camera_handler_setup(void);

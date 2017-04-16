@@ -33,6 +33,7 @@
 #include "subsystems/datalink/telemetry.h"
 #include "modules/autmav/advanced_landing.h"
 #include "modules/autmav/lidar_sf11.h"
+#include "modules/autmav/RTK_receive.h"
 
 /////// DEFAULT GUIDANCE_V NECESSITIES //////
 
@@ -123,6 +124,7 @@ static struct Int32Vect3 accel_imu_meas;
 static abi_event accel_ev;
 static abi_event body_to_imu_ev;
 
+bool rtk_passthrough_agl;
 
 ///////////// DEFAULT SETTINGS ////////////////
 #ifndef V_CTL_ALTITUDE_MAX_CLIMB
@@ -306,14 +308,20 @@ void v_ctl_altitude_loop(void)
   // Airspeed Command Saturation
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
 #ifndef SITL
+
+  v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
   // Altitude Controller
-  if(!lidar_sf11.update_agl)
-    v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
-  else
+  if(lidar_sf11.update_agl) {
     v_ctl_altitude_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+  }
+  if(rtk_passthrough_agl){
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl;
+  } 
+
 #else
 	v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
 #endif  
+
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter
@@ -468,4 +476,9 @@ void v_ctl_throttle_slew(void)
   pprz_t diff_throttle = v_ctl_throttle_setpoint - v_ctl_throttle_slewed;
   BoundAbs(diff_throttle, TRIM_PPRZ(V_CTL_THROTTLE_SLEW * MAX_PPRZ));
   v_ctl_throttle_slewed += diff_throttle;
+}
+
+void set_rtk_passthrough_agl(bool rtkagl)
+{
+  rtk_passthrough_agl = rtkagl;
 }

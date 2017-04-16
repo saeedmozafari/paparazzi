@@ -126,7 +126,7 @@ bool nav_survey_photo_run(void)
 
     if (!survey_first_time_setup) {
 
-      survey_nav_radius = Max(fabs(survey_side_distance), nav_radius);
+      survey_nav_radius = Max(fabs(survey_side_distance / 2.0), nav_radius);
       survey_last_wp = survey_nb_wp + 10;
       survey_current_wp = 11;
       survey_stage = SRV_TURN_SETUP;

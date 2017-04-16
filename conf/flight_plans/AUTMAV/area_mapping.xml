@@ -129,7 +129,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
-      <set value="70" var="nav_radius"/>
+      <set value="50" var="nav_radius"/>
       <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
@@ -138,10 +138,10 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block>
+    </block-->
     <block name="Clear Mission" strip_button="ClearMission">
       <call_once fun="clean_current_mission()"/>
       <call_once fun="initialize_mission_vars()"/>  
@@ -155,6 +155,7 @@
       <call_once fun="v_ctl_initialize_variables()"/>
       <call_once fun="h_ctl_initialize_variables()"/>
       <call_once fun="set_sf11_agl_mode(false)" />
+      <call_once fun="set_rtk_passthrough_agl(false)" />
       <set value="0" var="autopilot.kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
@@ -191,6 +192,7 @@
 		<go wp="TP" vmode="alt"/>
 		<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
 		<call_once fun="set_sf11_agl_mode(false)" />
+        <call_once fun="set_rtk_passthrough_agl(true)" />
 	</block>
 
 	<block name="Landing">

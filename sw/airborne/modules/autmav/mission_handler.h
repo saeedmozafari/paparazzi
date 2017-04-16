@@ -17,6 +17,8 @@
 #include "std.h"
 #include "paparazzi.h"
 
+#include "advanced_landing.h"
+
 #include <stdio.h>
 #include "subsystems/datalink/datalink.h" // dl_buffer
 
@@ -108,6 +110,7 @@ static inline void parse_DL_SURVEY_MISSION_SETTINGS(void)
 
 		case 7:
 			mission_land_direction = DL_SURVEY_MISSION_SETTINGS_setting_value(dl_buffer);
+			nav_advanced_landing_direction = mission_land_direction;
 			send_mission_ack(LAND_DIRECTION_ALT);
 		break;
 

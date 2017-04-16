@@ -75,7 +75,7 @@
 #endif
 
 #ifndef DC_CAMERA_SHOT_DELAY
-#define DC_CAMERA_SHOT_DELAY 3.0 //units in secondes
+#define DC_CAMERA_SHOT_DELAY 0.1 //units in secondes
 #endif
 
 // Variables with boot defaults

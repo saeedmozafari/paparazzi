@@ -9,7 +9,7 @@
       - guidance_energy modified
     </description>
   </doc>
-  <autoload name="stabilization_adaptive_fw"/>
+  <autoload name="stabilization_adaptive_fw_r"/>
   <autoload name="guidance_energy_new"/>
   <makefile target="ap|sim|nps" firmware="fixedwing"/>
 </module>

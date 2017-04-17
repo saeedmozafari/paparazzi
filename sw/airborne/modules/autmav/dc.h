@@ -4,7 +4,8 @@
  * This file is part of paparazzi.
  *
  * paparazzi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU General Public License
+  as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
  *
@@ -129,7 +130,8 @@ typedef enum {
   DC_AUTOSHOOT_DISTANCE = 2,
   DC_AUTOSHOOT_EXT_TRIG = 3,
   DC_AUTOSHOOT_SURVEY = 4,
-  DC_AUTOSHOOT_CIRCLE = 5
+  DC_AUTOSHOOT_CIRCLE = 5,
+  DC_AUTOSHOOT_SURVEY_WP = 6
 } dc_autoshoot_type;
 extern dc_autoshoot_type dc_autoshoot;
 
@@ -215,7 +217,7 @@ extern uint8_t dc_survey(float interval, float x, float y);
 
 #define dc_Survey(interval) dc_survey(interval, DC_IGNORE, DC_IGNORE)
 
-
+extern void dc_start_shooting(void);
 /**
  * Stop dc control.
  * Sets the dc control in inactive mode,
@@ -231,7 +233,6 @@ extern uint8_t dc_stop(void);
  * course, buffer and all other internal
  * variables used by the dc control.
  */
-extern uint8_t dc_info(void);
 
 
 #endif // DC_H

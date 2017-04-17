@@ -5,12 +5,10 @@
   <firmware name="rotorcraft">
     <target name="ap" board="bebop"/>
 
-<!-- nps currently needs the motor mixing module
     <target name="nps" board="pc">
       <module name="fdm" type="jsbsim"/>
       <module name="udp"/>
     </target>
--->
 
     <!--define name="USE_SONAR" value="TRUE"/-->
 
@@ -60,10 +58,10 @@
   </servos>
 
   <command_laws>
-    <set servo="TOP_LEFT"     value="autopilot_motors_on ? actuators_pprz[0] : -MAX_PPRZ"/>
-    <set servo="TOP_RIGHT"    value="autopilot_motors_on ? actuators_pprz[1] : -MAX_PPRZ"/>
-    <set servo="BOTTOM_RIGHT" value="autopilot_motors_on ? actuators_pprz[2] : -MAX_PPRZ"/>
-    <set servo="BOTTOM_LEFT"  value="autopilot_motors_on ? actuators_pprz[3] : -MAX_PPRZ"/>
+    <set servo="TOP_LEFT"     value="autopilot_get_motors_on() ? actuators_pprz[0] : -MAX_PPRZ"/>
+    <set servo="TOP_RIGHT"    value="autopilot_get_motors_on() ? actuators_pprz[1] : -MAX_PPRZ"/>
+    <set servo="BOTTOM_RIGHT" value="autopilot_get_motors_on() ? actuators_pprz[2] : -MAX_PPRZ"/>
+    <set servo="BOTTOM_LEFT"  value="autopilot_get_motors_on() ? actuators_pprz[3] : -MAX_PPRZ"/>
   </command_laws>
 
   <section name="AIR_DATA" prefix="AIR_DATA_">
@@ -183,8 +181,9 @@
 
   <section name="SIMULATOR" prefix="NPS_">
     <define name="ACTUATOR_NAMES" value="nw_motor, ne_motor, se_motor, sw_motor" type="string[]"/>
-    <define name="JSBSIM_MODEL" value="simple_x_quad_ccw" type="string"/>
+    <define name="JSBSIM_MODEL" value="bebop" type="string"/>
     <define name="SENSORS_PARAMS" value="nps_sensors_params_default.h" type="string"/>
+    <define name="NO_MOTOR_MIXING" value="TRUE"/>
   </section>
 
   <section name="AUTOPILOT">

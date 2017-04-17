@@ -34,7 +34,7 @@
 
 #include "dc.h"
 #include "survey_polygon.h"
-#include "firmwares/fixedwing/autopilot.h"
+#include "autopilot.h"
 #include "firmwares/fixedwing/nav.h"
 #include "firmwares/fixedwing/stabilization/stabilization_attitude.h"
 
@@ -47,6 +47,8 @@
 
 #include "mcu_periph/sys_time.h"
 #include "subsystems/datalink/telemetry.h"
+
+#include "survey.h"
 
 /** default time interval for periodic mode: 1sec */
 #ifndef DC_AUTOSHOOT_PERIOD
@@ -69,11 +71,11 @@
 #endif
 
 #ifndef DC_STABILIZED_SHOT_CARROT
-#define DC_STABILIZED_SHOT_CARROT 1.5 //units in secondes
+#define DC_STABILIZED_SHOT_CARROT 0.5 //units in secondes
 #endif
 
 #ifndef DC_CAMERA_SHOT_DELAY
-#define DC_CAMERA_SHOT_DELAY 3.0 //units in secondes
+#define DC_CAMERA_SHOT_DELAY 0.1 //units in secondes
 #endif
 
 // Variables with boot defaults
@@ -179,22 +181,13 @@ static void send_dc_shot(struct transport_tx *trans, struct link_device *dev)
                         &gps.tow);
 }
 
-void dc_init(void)
-{
-  dc_autoshoot = DC_AUTOSHOOT_STOP;
-  dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
-  dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
-  dc_last_shot_time = get_sys_time_float();
-  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
-}
 
-uint8_t dc_info(void)
+static void dc_info(struct transport_tx *trans, struct link_device *dev)
 {
-#ifdef DOWNLINK_SEND_DC_INFO
   float uav_course = DegOfRad(stateGetNedToBodyEulers_f()->psi);
   int16_t mode = dc_autoshoot;
   uint8_t shutter = dc_autoshoot_period * 10;
-  DOWNLINK_SEND_DC_INFO(DefaultChannel, DefaultDevice,
+  pprz_msg_send_DC_INFO(trans, dev, AC_ID,
                         &mode,
                         &stateGetPositionLla_i()->lat,
                         &stateGetPositionLla_i()->lon,
@@ -210,8 +203,17 @@ uint8_t dc_info(void)
                         &dc_circle_last_block,
                         &dc_gps_count,
                         &shutter);
-#endif
-  return 0;
+
+}
+
+void dc_init(void)
+{
+  dc_autoshoot = DC_AUTOSHOOT_STOP;
+  dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
+  dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
+  dc_last_shot_time = get_sys_time_float();
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_INFO, dc_info);
 }
 
 /* shoot on distance */
@@ -223,7 +225,7 @@ uint8_t dc_distance(float interval)
   last_shot_pos.x = 0;
   last_shot_pos.y = 0;
 
-  dc_info();
+  //dc_info();
   return 0;
 }
 
@@ -245,7 +247,7 @@ uint8_t dc_circle(float interval, float start)
   //dc_circle_last_block = floorf(dc_circle_start_angle/dc_circle_interval);
   dc_circle_last_block = 0;
   dc_circle_max_blocks = floorf(360. / dc_circle_interval);
-  dc_info();
+  //dc_info();
   return 0;
 }
 
@@ -268,14 +270,19 @@ uint8_t dc_survey(float interval, float x, float y)
     dc_gps_y = y;
   }
   dc_gps_next_dist = 0;
-  dc_info();
+  //dc_info();
   return 0;
 }
-
+// shoot on survey waypoints
+void dc_start_shooting(void)
+{
+  dc_autoshoot = DC_AUTOSHOOT_SURVEY_WP;
+}
 uint8_t dc_stop(void)
 {
   dc_autoshoot = DC_AUTOSHOOT_STOP;
-  dc_info();
+  dc_gps_count = 0;
+  //dc_info();
   return 0;
 }
 
@@ -292,7 +299,7 @@ static float dim_mod(float a, float b, float m)
 void dc_periodic(void)
 {
   static float last_shot_time = 0.;
-
+  dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
   switch (dc_autoshoot) {
 
     case DC_AUTOSHOOT_PERIODIC: {
@@ -337,7 +344,7 @@ void dc_periodic(void)
     case DC_AUTOSHOOT_SURVEY: {
       float dist_x = dc_gps_x - stateGetPositionEnu_f()->x;
       float dist_y = dc_gps_y - stateGetPositionEnu_f()->y;
-	    dc_info();
+	    //dc_info();
       
       if (dist_x * dist_x + dist_y * dist_y >= dc_gps_next_dist * dc_gps_next_dist) {
         dc_gps_next_dist += dc_survey_interval;
@@ -349,21 +356,51 @@ void dc_periodic(void)
       }
 
       dc_time_to_next_shot = (dc_gps_next_dist-sqrtf(dist_x * dist_x + dist_y * dist_y)) / stateGetHorizontalSpeedNorm_f();
-      dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
-
       if (dc_stabilized_shot) {
       	if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
       		
       		NavAttitude(0.0);
       		v_ctl_pitch_setpoint = 0.0;
-    		NavVerticalThrottleMode(v_ctl_throttle_setpoint);
+    		  NavVerticalThrottleMode(v_ctl_throttle_setpoint);
       	}
        	else {
        		NavVerticalAutoThrottleMode(0.0);
-  			NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
+  			  NavVerticalAltitudeMode(waypoints[survey_current_wp].a, 0.0);
        	}
 
       }
+    }
+    break;
+
+    case DC_AUTOSHOOT_SURVEY_WP: {
+      
+      if (NavApproaching(survey_current_wp, 0.5)) {
+        if (dc_time_after_last_shot >= dc_camera_shot_delay) {
+          dc_send_command(DC_SHOOT);
+          dc_last_shot_time = get_sys_time_float();
+          survey_current_wp++;
+        }
+      }
+      if((survey_current_wp <= survey_flyover_end_wp) && (survey_flyover_start_wp<=survey_current_wp)) {
+        float dist_x = waypoints[survey_current_wp].x - stateGetPositionEnu_f()->x;
+        float dist_y = waypoints[survey_current_wp].y - stateGetPositionEnu_f()->y;
+        dc_time_to_next_shot = sqrtf(dist_x * dist_x + dist_y * dist_y) / stateGetHorizontalSpeedNorm_f();
+        dc_time_after_last_shot = get_sys_time_float() -  dc_last_shot_time;
+        if (dc_stabilized_shot) {
+          if ((dc_time_to_next_shot <= dc_stabilized_shot_carrot) || (dc_time_after_last_shot <= dc_stabilized_shot_carrot)) {
+          
+            NavAttitude(0.0);
+            v_ctl_pitch_setpoint = 0.0;
+            NavVerticalThrottleMode(v_ctl_throttle_setpoint);
+          }
+          else {
+            NavVerticalAutoThrottleMode(0.0);
+            NavVerticalAltitudeMode(waypoints[survey_current_wp].a, 0.0);
+          }
+
+        }
+      }
+      
     }
     break;
 

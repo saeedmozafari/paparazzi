@@ -94,6 +94,8 @@ struct GpsState {
   uint32_t pacc;                 ///< position accuracy in cm
   uint32_t sacc;                 ///< speed accuracy in cm/s
   uint32_t cacc;                 ///< course accuracy in rad*1e7
+  uint32_t hacc;                 ///< horizontal accuracy in mm
+  uint32_t vacc;                 ///< vertical accuracy in mm
   uint16_t pdop;                 ///< position dilution of precision scaled by 100
   uint8_t num_sv;                ///< number of sat in fix
   uint8_t fix;                   ///< status of fix
@@ -115,6 +117,36 @@ struct GpsTimeSync {
   uint32_t t0_tow;      ///< GPS time of week in ms from last message
   int32_t t0_tow_frac;  ///< fractional ns remainder of tow [ms], range -500000 .. 500000
   uint32_t t0_ticks;    ///< hw clock ticks when GPS message is received
+};
+
+/** data structures for GPS with RTK capabilities */
+struct GpsRelposNED {
+  uint32_t iTOW;
+  uint16_t refStationId;
+  int32_t relPosN;
+  int32_t relPosE;
+  int32_t relPosD;
+  int8_t relPosHPN;
+  int8_t relPosHPE;
+  int8_t relPosHPD;
+  uint32_t accN;
+  uint32_t accE;
+  uint32_t accD;
+  uint8_t carrSoln;
+  uint8_t relPosValid;
+  uint8_t diffSoln;
+  uint8_t gnssFixOK;
+};
+
+struct RtcmMan {
+  uint16_t RefStation;
+  uint16_t MsgType; // Counter variables to count the number of Rtcm msgs in the input stream(for each msg type)
+  uint32_t Cnt105;
+  uint32_t Cnt177;
+  uint32_t Cnt187; // Counter variables to count the number of messages that failed Crc Check
+  uint32_t Crc105;
+  uint32_t Crc177;
+  uint32_t Crc187;
 };
 
 /** global GPS state */

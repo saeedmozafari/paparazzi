@@ -29,6 +29,7 @@
 #define FW_V_CTL_ENERGY_H
 
 #include "firmwares/fixedwing/guidance/guidance_common.h"
+#include "autopilot.h"
 
 /* outer loop */
 // extern float v_ctl_altitude_error;    ///< in meters, (setpoint - alt) -> positive = too low
@@ -79,5 +80,11 @@ extern float ac_char_descend_pitch;
 extern float ac_char_descend_max;
 extern float ac_char_cruise_throttle;
 extern float ac_char_cruise_pitch;
+
+extern bool rtk_passthrough_agl;
+
+extern void v_ctl_initialize_variables(void);
+
+extern void set_rtk_passthrough_agl(bool rtkagl);
 
 #endif /* FW_V_CTL_H */

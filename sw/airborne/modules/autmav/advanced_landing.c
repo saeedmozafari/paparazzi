@@ -2,29 +2,39 @@
 //#include "subsystems/navigation/waypoints.h"
 #include "firmwares/fixedwing/nav.h"
 #include "subsystems/gps.h"
-#include "modules/lidar/lidar_sf11.h"
+#include "modules/autmav/lidar_sf11.h"
+#include "subsystems/abi.h"
+
+abi_event sf11_ev;
 
 #ifndef NAV_ADVANCED_LANDING_APP_DIST
 #define NAV_ADVANCED_LANDING_APP_DIST 300
 #endif
 
 #ifndef NAV_ADVANCED_LANDING_DIRECTION
-#define NAV_ADVANCED_LANDING_DIRECTION 100
+#define NAV_ADVANCED_LANDING_DIRECTION 280
 #endif
 
 #ifndef NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH
-#define NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH 0.5
+#define NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH 2.0
 #endif
 
 float nav_advanced_landing_app_dist;
 float nav_advanced_landing_direction;
 float nav_advanced_landing_flair_time_tresh;
+float sf11_alt;
 
 void advanced_landing_setup(void){
 	
 	nav_advanced_landing_app_dist = NAV_ADVANCED_LANDING_APP_DIST;
 	nav_advanced_landing_direction = NAV_ADVANCED_LANDING_DIRECTION;
 	nav_advanced_landing_flair_time_tresh = NAV_ADVANCED_LANDING_FLAIR_TIME_TRESH;
+
+	AbiBindMsgAGL(ABI_BROADCAST, &sf11_ev, sf11_cb);
+}
+
+void sf11_cb(uint8_t __attribute__((unused)) sender_id, float distance){
+	sf11_alt = distance;
 }
 
 void calc_turning_point(uint8_t home_WP, uint8_t approach_pos, uint8_t target_WP, uint8_t center_WP){

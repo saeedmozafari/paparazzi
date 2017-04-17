@@ -4,29 +4,38 @@
 
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
-          <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <define name="RTK_GPS_LED" value="4"/>
+      <configure name="USE_BARO_BOARD" value="TRUE"/>		
+	  <define name="RTK_GPS_LED" value="5"/>
       <configure name="BARO_LED" value="none"/>
-	  <configure name="RADIO_CONTROL_LED" value="3"/>
+	  <configure name="RADIO_CONTROL_LED" value="none"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
 	  <module name="radio_control" type="sbus">
       	  	<configure name="SBUS_PORT" value="UART2"/>
-          </module>
+      </module>
 	  <define name="USE_KFF_UPDATE_ROLL"/>
-          <define name="USE_KFF_UPDATE_PITCH"/>
+      <define name="USE_KFF_UPDATE_PITCH"/>
   	  <define name="USE_ADC"/>
    	  <define name="USE_ADC_3"/>
 	  <define name="USE_ADC_1"/> 
 	  <define name="ADC_CHANNEL_VSUPPLY" value="ADC_1"/>   <!-- Battery voltage-->
 	  <define name="BAT_CHECKER_DELAY" value="30"/>
-          <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
+      <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
+      <module name="airspeed_ms45xx_i2c.xml">
+            <define name="MS45XX_I2C_DEV" value="i2c1"/>
+            <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
+      </module>
+        <module name="tune_airspeed.xml"/>
     </target>
-    
-    <target name="sim" board="pc">
-    	<module name="radio_control" type="ppm"/>
- 	<define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
+    <configure name="USE_SONAR" value="FALSE"/>
+    <target name="nps" board="pc">
+        <define name="NPS_DISABLE_IVY_DATA"/>
+        <module name="radio_control" type="ppm"/>
+ 	    <module name="fdm"   type="jsbsim"/>
+        <module name="gps" type="ublox"/>
+        <module name="airspeed_ets"/>
+ 	    <define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
     </target>
    
     <define name="USE_AIRSPEED"/>
@@ -37,7 +46,9 @@
     <module name="flight_recorder">
       <configure name="FLIGHTRECORDER_SDLOG" value="TRUE"/>
     </module>
-    <module name="telemetry" type="transparent"/>
+    <module name="telemetry" type="transparent">
+        <configure name="MODEM_BAUD" value="B57600"/>    
+    </module>
     <module name="control" type="energyadaptive_new"/>
     <define name="USE_MAGNETOMETER" value="FALSE"/>
     <module name="imu" type="apogee"/>
@@ -47,38 +58,42 @@
       <configure name="USE_MAGNETOMETER" value="TRUE"/>
       <configure name="AHRS_USE_GPS_HEADING" value="FALSE"/-->
     </module>
-    <module name="gps" type="ublox">
-      <configure name="UBX_GPS_BAUD" value="B115200"/>
-      <configure name="UBX_GPS_PORT" value="UART4"/>
-      <configure name="GPS_UBX_UCENTER_RATE" value="100"/>
-      <!--define name="USE_GPS_UBX_RXM_RAW"/>
-      <define name="USE_GPS_UBX_RXM_SFRB"/-->
-      <!--define name="SECONDARY_GPS" value="nmea"/-->
-    </module>
-    
-    <!--module name="gps" type="nmea">
-      <configure name="NMEA_GPS_PORT" value="UART4"/>
-      <configure name="NMEA_GPS_BAUD" value="115200"/> 
-      <define name="SECONDARY_GPS" value="nmea"/>
+    <!--module name="gps" type="ublox">
+      <configure name="GPS_BAUD" value="B115200"/>
+      <define name="GPS_UBX_UCENTER_RATE" value="100"/>
+      <define name="USE_GPS_UBX_RXM_RAW"/>
+      <define name="USE_GPS_UBX_RXM_SFRB"/>
     </module-->
-    
     <module name="navigation"/>
     <module name="ins" type="alt_float">
     	 <define name="USE_BAROMETER" value="TRUE"/>
     </module>
     <define name="USE_I2C2"/>
+    
   </firmware>
 
-  <modules>
-    <!--load name="airspeed_amsys.xml"/-->
-    <load name="geo_mag.xml"/>
-    <!--load name="gps_ubx_ucenter.xml"/--> 
-	<load name="airspeed_ms45xx_i2c.xml">
-      <define name="MS45XX_I2C_DEV" value="i2c2"/>
-      <define name="USE_AIRSPEED_MS45XX" value="FALSE"/>
+  <modules main_freq="500">
+    <load name="sys_mon.xml"/>
+    <load name="autmav/RTK_receive.xml">
+        <define name="RTK_RTCM3_UART_DEV" value="uart4"/>
+        <define name="UBX_RTK_GPS_LINK" value="uart4"/>
+        <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
     </load>
-    <load name="tune_airspeed.xml"/>
-    <load name="autmav/survey_polygon.xml"/>
+    <load name="geo_mag.xml"/>
+    <!--load name="gps_ubx_ucenter.xml">
+        <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
+    </load-->
+    <load name="autmav/sony_camera_handler.xml">
+	<define name="ESP_01_UART_PORT" value="uart6"/>
+        <define name="ESP_01_BAUD" value="B115200"/>
+    </load>
+    <load name="autmav/advanced_landing.xml"/>
+    <load name="autmav/lidar_sf11.xml">
+	<configure name="LIDAR_SF11_I2C_DEV" value="i2c2"/>
+        <configure name="LIDAR_SF11_I2C_ADDR" value="0xcc"/>
+        <configure name="USE_LIDAR_SF11_AGL" value="0"/>
+        <configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
+    </load>
     <load name="baro_sim.xml"/>
     <!--load name="mag_hmc58xx.xml">
       <configure name="MAG_HMC58XX_I2C_DEV" value="i2c1"/>
@@ -92,29 +107,9 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-	<load name="autmav/advanced_landing.xml"/>
-	<!--load name="autmav/sony_a7r_handler.xml">
-		<define name="ESP_01_UART_PORT" value="uart4"/>
-		    <define name="ESP_01_BAUD" value="B115200"/>
-
-	</load-->
-    <load name="autmav/digital_cam.xml">
-	<define name="DC_SHUTTER_GPIO" value="GPIOC,GPIO5"/>
-  	<define name="DC_PUSH" value="gpio_set"/>
-  	<define name="DC_RELEASE" value="gpio_clear"/>
-    </load>
-    <load name="lidar_sf11.xml">
-		<configure name="LIDAR_SF11_I2C_DEV" value="i2c1"/>
-		<configure name="LIDAR_SF11_I2C_ADDR" value="0xCC"/>
-		<configure name="USE_LIDAR_SF11_AGL" value="1"/>
-		<configure name="LIDAR_SF11_COMPENSATE_ROTATION" value="1"/>
-	</load>
-    <load name="autmav/photogrammetry_calculator.xml"/>  
-    <load name="autmav/RTK_receive.xml">
-        <define name="RTK_RTCM3_UART_DEV" value="uart6"/>
-        <define name="UBX_RTK_GPS_LINK" value="uart6"/>
-        <define name="RTK_RTCM3_UART_BAUD" value="B115200"/>            
-    </load>
+    <load name="autmav/survey.xml"/>
+    <load name="autmav/mission_handler.xml"/>
+    <load name="autmav/digital_cam_wifi.xml"/>	
   </modules>
 
   <!-- commands section -->
@@ -154,7 +149,7 @@
     <set servo="THROTTLE" value="@THROTTLE"/>
     <set servo="ELEVATOR_RIGHT" value="@PITCH - @YAW * COMBI_SWITCH"/>
     <set servo="ELEVATOR_LEFT" value="@PITCH + @YAW * COMBI_SWITCH"/>
-    <set servo="AILERON" value="@ROLL"/>
+    <set servo="AILERON" value="- @ROLL"/>
     <set servo="CAM_PAN" value="@CAM_PAN"/>
     <set servo="CAM_TILT" value="@CAM_TILT"/>  
   </command_laws>
@@ -168,14 +163,15 @@
   <section name="IMU" prefix="IMU_">
     <define name="BODY_TO_IMU_PHI" value="180.0" unit="deg"/>
     <define name="BODY_TO_IMU_THETA" value="0." unit="deg"/>
-    <define name="BODY_TO_IMU_PSI" value="0." unit="deg"/>
-    <!-- Magneto calibration 
+    <define name="BODY_TO_IMU_PSI" value="180.0" unit="deg"/>
+    
     <define name="MAG_X_NEUTRAL" value="-73"/>
     <define name="MAG_Y_NEUTRAL" value="-85"/>
     <define name="MAG_Z_NEUTRAL" value="-218"/>
+
     <define name="MAG_X_SENS" value="4.37279143081" integer="16"/>
     <define name="MAG_Y_SENS" value="4.05366697585" integer="16"/>
-    <define name="MAG_Z_SENS" value="4.48061242164" integer="16"/>  -->
+    <define name="MAG_Z_SENS" value="4.48061242164" integer="16"/>  
   </section>
   
   <section name="AHRS" prefix="AHRS_">
@@ -201,14 +197,14 @@
     <define name="VOLTAGE_ADC_A" value="0.008080808"/>
     <define name="VOLTAGE_ADC_B" value="0.177777778"/>
     <define name="VoltageOfAdc(adc)" value="(VOLTAGE_ADC_A * adc + VOLTAGE_ADC_B)"/>
-    <define name="CATASTROPHIC_BAT_LEVEL" value="13.0" unit="V"/>
+    <define name="CATASTROPHIC_BAT_LEVEL" value="10.0" unit="V"/>
     <define name="CRITIC_BAT_LEVEL" value="14.0" unit="V"/>
-    <define name="LOW_BAT_LEVEL" value="14.8" unit="V"/>
-    <define name="MAX_BAT_LEVEL" value="16.8" unit="V"/>
+    <define name="LOW_BAT_LEVEL" value="14.2" unit="V"/>
+    <define name="MAX_BAT_LEVEL" value="16.2" unit="V"/>
   </section>
 
   <section name="MISC">
-    <define name="NOMINAL_AIRSPEED" value="11.5" unit="m/s"/>
+    <define name="NOMINAL_AIRSPEED" value="10.0" unit="m/s"/>
     <define name="RACE_AIRSPEED" value="18.0" unit="m/s"/>
     <define name="STALL_AIRSPEED" value="7.0" unit="m/s"/>
     <define name="CARROT" value="5." unit="s"/>    
@@ -223,7 +219,7 @@
     <!-- modified loop gains -->
     <define name="MAX_POWER" value="200.0"/>
     <define name="MASS" value="3.2"/>
-    <define name="MAX_THROTTLE" value="1.0"/>
+    <define name="MAX_THROTTLE" value="0.85"/>
 
     <define name="THROTTLE_PGAIN" value="0.25"/>
     <define name="THROTTLE_IGAIN" value="0.1"/>
@@ -234,7 +230,7 @@
     <!-- outer loop saturation -->
     <define name="ALTITUDE_MAX_CLIMB" value="5.0"/> <!--default 2-->
     <!-- auto throttle inner loop -->
-    <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.9"/>
+    <define name="AUTO_THROTTLE_NOMINAL_CRUISE_THROTTLE" value="0.85"/>
     <define name="AUTO_THROTTLE_NOMINAL_CRUISE_PITCH" value="RadOfDeg(30.0)"/>
     <define name="AUTO_THROTTLE_CLIMB_THROTTLE_INCREMENT" value="0.00" unit="%/(m/s)"/>
     <define name="AUTO_THROTTLE_PITCH_OF_VZ_PGAIN" value="0.00"/>
@@ -252,8 +248,8 @@
     <define name="ENERGY_DIFF_IGAIN" value="0.1"/>
 
     <define name="THROTTLE_SLEW_LIMITER" value="1.0" unit="s"/>
-	
-    <define name="AUTO_GROUNDSPEED_SETPOINT" value="11.5"/>	
+  
+    <define name="AUTO_GROUNDSPEED_SETPOINT" value="11.5"/> 
     <define name="AUTO_GROUNDSPEED_PGAIN" value="1.0"/>
     <define name="AUTO_GROUNDSPEED_IGAIN" value="0.2"/>
     
@@ -262,7 +258,7 @@
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
     <define name="COURSE_PGAIN" value="0.8"/>
     <define name="COURSE_DGAIN" value="1.4"/>
-    <define name="ROLL_MAX_SETPOINT" value="35" unit="deg"/>
+    <define name="ROLL_MAX_SETPOINT" value="40" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>
     <define name="PITCH_MIN_SETPOINT" value="-30" unit="deg"/>
     <define name="PITCH_PGAIN" value="20000"/>
@@ -290,7 +286,7 @@
     <define name="HEADING_DELAY" value="3.0" unit="seconds"/>
     <define name="ACCELERATION_THRESHOLD" value="0.2"/>
     <define name="INITIAL_PITCH" value="30.0" unit="deg"/>
-    <define name="INITIAL_THROTTLE" value="1.0"/>
+    <define name="INITIAL_THROTTLE" value="0.85"/>
   </section>
 
   <section name="ADVANCED_LANDING" prefix="NAV_ADVANCED_LANDING_">
@@ -299,25 +295,15 @@
   </section>
   
   <section name="DIGITAL_CAMERA" prefix="DC_">
-    <define name="AUTOSHOOT_PERIOD" value="1.5" unit="sec"/>
+    <define name="AUTOSHOOT_PERIOD" value="5.0" unit="sec"/>
     <define name="AUTOSHOOT_DISTANCE_INTERVAL" value="50" unit="meter"/>
   </section>
   
-  <section name="Photogrammetry" prefix="PHOTOGRAMMETRY_">
-    <!-- Camera Parameters -->
-    <define name="FOCAL_LENGTH" value="35.2" unit="mm"/>
-    <define name="SENSOR_WIDTH" value="22.3" unit="mm"/>    <!-- In direction of the plane's wings -->
-    <define name="SENSOR_HEIGHT" value="14.9" unit="mm"/> 	<!-- In direction of the plane's nose -->
-    <define name="PIXELS_WIDTH" value="5184" unit=""/>
-    <!-- Flight Safety Parameters -->
-    <define name="HEIGHT_MIN" value="35" unit="m"/>
-    <define name="HEIGHT_MAX" value="500" unit="m"/>
-    <define name="RADIUS_MIN" value="100" unit="m"/>
-    <!-- Fligh plan parameters -->
-    <define name="SWEEP_ANGLE" value="0" unit="deg"/> 
-	<define name="OVERLAP" value="50"/> 	<!-- unit = percent-->
-	<define name="SIDELAP" value="50"/>		<!-- unit = percent-->
-	<define name="RESOLUTION" value="50"/>	<!-- unit = mm per pixel -->
+  <section name="SIMULATOR" prefix="NPS_">
+    <define name="JSBSIM_LAUNCHSPEED" value="15"/>
+    <define name="JSBSIM_MODEL" value="easystar" type="string"/>
+    <define name="SENSORS_PARAMS" value="nps_sensors_params_invariant.h" type="string"/>
+    
   </section>
 
   <section name="CAM" prefix="CAM_">

@@ -48,10 +48,13 @@ struct point {
 #define WaypointAlt(_wp) (waypoints[_wp].a)
 #define Height(_h) (_h + ground_alt)
 
-extern void nav_move_waypoint(uint8_t wp_id, float utm_east, float utm_north, float alt);
+extern void nav_move_waypoint(uint16_t wp_id, float utm_east, float utm_north, float alt);
 
-extern const uint8_t nb_waypoint;
+extern const uint16_t nb_waypoint;
 extern struct point waypoints[];
+extern bool start_wp[];
+extern bool end_wp[];
+
 /** size == nb_waypoint, waypoint 0 is a dummy waypoint */
 
 /** altitude of the ground in m above MSL */

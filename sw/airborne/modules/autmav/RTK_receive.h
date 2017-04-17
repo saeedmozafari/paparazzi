@@ -12,13 +12,16 @@
 extern void relay_msg(uint8_t length, uint8_t *relay_data);
 extern void RTK_receive_init(void);
 extern void tag_image_log(void);
+extern void tag_image(void);
 
 static inline void parse_DL_RTCM_INJECT(void)
 {
-	//uint8_t packet_id = DL_RTCM_INJECT_packet_id(dl_buffer);
+#ifndef SITL	
+  //uint8_t packet_id = DL_RTCM_INJECT_packet_id(dl_buffer);
 	uint8_t data_length = DL_RTCM_INJECT_data_length(dl_buffer);
-	uint8_t *RTCM3_data = DL_RTCM_INJECT_data(dl_buffer);
-	relay_msg(data_length, RTCM3_data);
+	uint8_t *RTCM3_data = DL_RTCM_INJECT_data(dl_buffer);	
+  relay_msg(data_length, RTCM3_data);
+#endif
 }
 
 extern void rtk_gps_ubx_init(void);
@@ -50,9 +53,9 @@ struct RTKGpsUbx {
 };
 
 extern struct RTKGpsUbx rtk_gps_ubx;
+extern struct GpsRelposNED rtk_gps_relposned;
 
-#if USE_RTK_GPS_UBX_RXM_RAW
-struct RTKGpsUbxGpsUbxRawMes {
+struct RTKGpsUbxRawMes {
   double cpMes;
   double prMes;
   float doMes;
@@ -62,15 +65,24 @@ struct RTKGpsUbxGpsUbxRawMes {
   uint8_t lli;
 };
 
-struct RTKGpsUbxGpsUbxRaw {
+struct RTKGpsUbxRaw {
   int32_t iTOW;
   int16_t week;
   uint8_t numSV;
-  struct GpsUbxRawMes measures[RTK_GPS_UBX_NB_CHANNELS];
+  struct RTKGpsUbxRawMes measures[RTK_GPS_UBX_NB_CHANNELS];
 };
 
-extern struct GpsUbxRaw rtk_gps_ubx_raw;
-#endif
+extern struct RTKGpsUbxRaw rtk_gps_ubx_raw;
+
+
+extern double log_phi;
+extern double log_theta;
+extern double log_psi;
+extern double log_lat,log_lon,log_alt;
+extern double log_vacc,log_hacc;
+extern double log_shot_command_time_stamp;
+extern double log_target_rtk_time_stamp;
+extern double last_rtk_msg_time;
 
 /*
  * This part is used by the autopilot to read data from a uart
@@ -106,5 +118,13 @@ extern void rtk_gps_ubx_msg(void);
       rtk_gps_ubx.reset = CFG_RST_BBR_Coldstart;                    \
     ubx_send_cfg_rst(&(UBX_RTK_GPS_LINK).device, rtk_gps_ubx.reset, CFG_RST_Reset_Controlled);   \
   }
+
+#ifndef RTK_DATA_LAG_MS
+#define RTK_DATA_LAG_MS 125
+#endif
+
+#ifndef RTK_DATA_PERIOD_MS
+#define RTK_DATA_PERIOD_MS 200
+#endif
 
 #endif

@@ -73,7 +73,7 @@
 #include "firmwares/fixedwing/nav.h"
 #include "generated/airframe.h"
 #include CTRL_TYPE_H
-#include "firmwares/fixedwing/autopilot.h"
+#include "autopilot.h"
 
 
 /* outer loop parameters */
@@ -295,7 +295,7 @@ static void send_ctl_a(struct transport_tx *trans, struct link_device *dev)
 }
 #endif
 
-void h_ctl_init(void)
+void h_ctl_initialize_variables(void) 
 {
   h_ctl_ref.max_p = H_CTL_REF_MAX_P;
   h_ctl_ref.max_p_dot = H_CTL_REF_MAX_P_DOT;
@@ -308,8 +308,6 @@ void h_ctl_init(void)
   h_ctl_course_pgain = H_CTL_COURSE_PGAIN;
   h_ctl_course_dgain = H_CTL_COURSE_DGAIN;
   h_ctl_roll_max_setpoint = H_CTL_ROLL_MAX_SETPOINT;
-
-  h_ctl_disabled = false;
 
   h_ctl_roll_setpoint = 0.;
   h_ctl_roll_attitude_gain = H_CTL_ROLL_ATTITUDE_GAIN;
@@ -349,7 +347,6 @@ void h_ctl_init(void)
   h_ctl_pitch_of_roll = H_CTL_PITCH_OF_ROLL;
 #endif
 
-  use_airspeed_ratio = false;
   airspeed_ratio2 = 1.;
 
 #if USE_PITCH_TRIM
@@ -359,6 +356,12 @@ void h_ctl_init(void)
   v_ctl_pitch_loiter_trim = 0.;
   v_ctl_pitch_dash_trim = 0.;
 #endif
+}
+void h_ctl_init(void)
+{ 
+  use_airspeed_ratio = false;
+  h_ctl_disabled = false;
+  h_ctl_initialize_variables();
 
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_CALIBRATION, send_calibration);
@@ -487,7 +490,7 @@ inline static void h_ctl_roll_loop(void)
   struct FloatRates *body_rate = stateGetBodyRates_f();
   float d_err = h_ctl_ref.roll_rate - body_rate->p;
 
-  if (pprz_mode == PPRZ_MODE_MANUAL || launch == 0) {
+  if (autopilot_get_mode() == PPRZ_MODE_MANUAL || autopilot.launch == false) {
     h_ctl_roll_sum_err = 0.;
   } else {
     if (h_ctl_roll_igain > 0.) {
@@ -604,7 +607,7 @@ inline static void h_ctl_pitch_loop(void)
   last_err = err;
 #endif
 
-  if (pprz_mode == PPRZ_MODE_MANUAL || launch == 0) {
+  if (autopilot_get_mode() == PPRZ_MODE_MANUAL || autopilot.launch == false) {
     h_ctl_pitch_sum_err = 0.;
   } else {
     if (h_ctl_pitch_igain > 0.) {
@@ -646,7 +649,7 @@ inline static void h_ctl_yaw_loop(void)
   float ny = 0.f;
 #endif
 
-  if (pprz_mode == PPRZ_MODE_MANUAL || launch == 0) {
+  if (autopilot_get_mode() == PPRZ_MODE_MANUAL || autopilot.launch == false) {
     h_ctl_yaw_ny_sum_err = 0.;
   } else {
     if (h_ctl_yaw_ny_igain > 0.) {
@@ -729,7 +732,7 @@ inline static void h_ctl_cl_loop(void)
   }
 
   // no control in manual mode
-  if (pprz_mode == PPRZ_MODE_MANUAL) {
+  if (autopilot_get_mode() == PPRZ_MODE_MANUAL) {
     cmd = 0.f;
   }
   // bound max flap angle

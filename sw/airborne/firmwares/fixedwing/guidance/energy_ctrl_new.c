@@ -28,9 +28,12 @@
 #include "state.h"
 #include "firmwares/fixedwing/nav.h"
 #include "generated/airframe.h"
-#include "firmwares/fixedwing/autopilot.h"
+#include "autopilot.h"
 #include "subsystems/abi.h"
 #include "subsystems/datalink/telemetry.h"
+#include "modules/autmav/advanced_landing.h"
+#include "modules/autmav/lidar_sf11.h"
+#include "modules/autmav/RTK_receive.h"
 
 /////// DEFAULT GUIDANCE_V NECESSITIES //////
 
@@ -121,6 +124,7 @@ static struct Int32Vect3 accel_imu_meas;
 static abi_event accel_ev;
 static abi_event body_to_imu_ev;
 
+bool rtk_passthrough_agl;
 
 ///////////// DEFAULT SETTINGS ////////////////
 #ifndef V_CTL_ALTITUDE_MAX_CLIMB
@@ -147,13 +151,20 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 #endif
 
 
-// static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
-//  {
-//    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
-//                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
-//                          &v_ctl_throttle_ppart, 
-//                          &v_ctl_throttle_ipart);
-//  }
+static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
+ {
+  float sf11_ctl_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+  float baro_ctl_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+
+   pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
+                         &v_ctl_auto_throttle_nominal_cruise_throttle, 
+                         &v_ctl_throttle_ppart, 
+                         &v_ctl_throttle_ipart,
+                         &lidar_sf11.distance,
+                         &lidar_sf11.distance_raw,
+                         &sf11_ctl_error,
+                         &baro_ctl_error);
+ }
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
 
@@ -204,10 +215,8 @@ static void body_to_imu_cb(uint8_t sender_id __attribute__((unused)),
   float_quat_invert(&imu_to_body_quat, q_b2i_f);
 }
 
-void v_ctl_init(void)
+void v_ctl_initialize_variables(void)
 {
-  /* mode */
-  v_ctl_mode = V_CTL_MODE_MANUAL;
 
   /* outer loop */
   v_ctl_altitude_setpoint = 0.;
@@ -274,12 +283,19 @@ void v_ctl_init(void)
   v_ctl_throttle_igain = V_CTL_THROTTLE_IGAIN;
   
   v_ctl_throttle_setpoint = 0;
+}
+void v_ctl_init(void)
+{
+  /* mode */
+  v_ctl_mode = V_CTL_MODE_MANUAL;
+
+  v_ctl_initialize_variables();
 
   float_quat_identity(&imu_to_body_quat);
 
   AbiBindMsgIMU_ACCEL_INT32(V_CTL_ENERGY_IMU_ID, &accel_ev, accel_cb);
   AbiBindMsgBODY_TO_IMU_QUAT(V_CTL_ENERGY_IMU_ID, &body_to_imu_ev, body_to_imu_cb);
-  //register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_ENERGYADAPTIVE_NEW, send_energy_new);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_ENERGYADAPTIVE_NEW, send_energy_new);
 }
 
 /**
@@ -291,9 +307,21 @@ void v_ctl_altitude_loop(void)
 {
   // Airspeed Command Saturation
   if (v_ctl_auto_airspeed_setpoint <= STALL_AIRSPEED * 1.23) { v_ctl_auto_airspeed_setpoint = STALL_AIRSPEED * 1.23; }
+#ifndef SITL
 
-  // Altitude Controller
   v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+  // Altitude Controller
+  if(lidar_sf11.update_agl) {
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+  }
+  if(rtk_passthrough_agl){
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl;
+  } 
+
+#else
+	v_ctl_altitude_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
+#endif  
+
   float sp = v_ctl_altitude_pgain * v_ctl_altitude_error + v_ctl_altitude_pre_climb ;
 
   // Vertical Speed Limiter
@@ -348,7 +376,6 @@ void v_ctl_climb_loop(void)
     v_ctl_auto_groundspeed_sum_err = v_ctl_auto_airspeed_controlled / (v_ctl_auto_groundspeed_pgain *
                                      v_ctl_auto_groundspeed_igain);
   }
-  BoundAbs(v_ctl_auto_airspeed_controlled, RACE_AIRSPEED);
 #else
   v_ctl_auto_airspeed_controlled = v_ctl_auto_airspeed_setpoint_slew;
 #endif
@@ -386,12 +413,12 @@ void v_ctl_climb_loop(void)
   v_ctl_throttle_ppart = v_ctl_throttle_pgain * v_ctl_mass * 9.81f / v_ctl_max_power * (v_ctl_climb_setpoint + stateGetAirspeed_f() * v_ctl_desired_acceleration);
   v_ctl_throttle_ipart = v_ctl_throttle_igain * v_ctl_mass * 9.81f / v_ctl_max_power * dt_attidude * (gamma_err * v_ctl_auto_airspeed_controlled + stateGetAirspeed_f() * vdot_err);
   // Auto Cruise Throttle
-  if (launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
+  if (autopilot.launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
     v_ctl_auto_throttle_nominal_cruise_throttle +=
       v_ctl_auto_throttle_of_airspeed_igain * speed_error * dt_attidude
       + en_tot_err * v_ctl_energy_total_igain * dt_attidude
       + v_ctl_throttle_ipart;
-    Bound(v_ctl_auto_throttle_nominal_cruise_throttle, 0.0f, 1.0f);
+    Bound(v_ctl_auto_throttle_nominal_cruise_throttle, 0.0f, V_CTL_MAX_THROTTLE);
   }
 
   // Total Controller
@@ -401,7 +428,7 @@ void v_ctl_climb_loop(void)
                               + v_ctl_energy_total_pgain * en_tot_err
                               + v_ctl_throttle_ppart;
 
-  if ((controlled_throttle >= 1.0f) || (controlled_throttle <= 0.0f) || (kill_throttle == 1)) {
+  if ((controlled_throttle >= V_CTL_MAX_THROTTLE) || (autopilot_throttle_killed() == 1)) {
     // If your energy supply is not sufficient, then neglect the climb requirement
     en_dis_err = -vdot_err;
 
@@ -412,7 +439,7 @@ void v_ctl_climb_loop(void)
 
 
   /* pitch pre-command */
-  if (launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
+  if (autopilot.launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
     v_ctl_auto_throttle_nominal_cruise_pitch +=  v_ctl_auto_pitch_of_airspeed_igain * (-speed_error) * dt_attidude
         + v_ctl_energy_diff_igain * en_dis_err * dt_attidude;
     Bound(v_ctl_auto_throttle_nominal_cruise_pitch, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT);
@@ -423,7 +450,7 @@ void v_ctl_climb_loop(void)
     + v_ctl_auto_pitch_of_airspeed_dgain * vdot
     + v_ctl_energy_diff_pgain * en_dis_err
     + v_ctl_auto_throttle_nominal_cruise_pitch;
-  if (kill_throttle) { v_ctl_pitch_of_vz = v_ctl_pitch_of_vz - 1 / V_CTL_GLIDE_RATIO; }
+  if (autopilot_throttle_killed()) { v_ctl_pitch_of_vz = v_ctl_pitch_of_vz - 1 / V_CTL_GLIDE_RATIO; }
 
   v_ctl_pitch_setpoint = v_ctl_pitch_of_vz + nav_pitch;
   Bound(v_ctl_pitch_setpoint, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT)
@@ -449,4 +476,9 @@ void v_ctl_throttle_slew(void)
   pprz_t diff_throttle = v_ctl_throttle_setpoint - v_ctl_throttle_slewed;
   BoundAbs(diff_throttle, TRIM_PPRZ(V_CTL_THROTTLE_SLEW * MAX_PPRZ));
   v_ctl_throttle_slewed += diff_throttle;
+}
+
+void set_rtk_passthrough_agl(bool rtkagl)
+{
+  rtk_passthrough_agl = rtkagl;
 }

@@ -11,6 +11,8 @@ RP3 Lisa MX
       <module name="radio_control" type="sbus">
         <configure name="SBUS_PORT" value="UART5"/>
       </module>
+      <configure name="HAS_LUFTBOOT" value="1"/>
+      <configure name="FLASH_MODE" value="DFU"/>
     </target>
 
     <!-- NOTE: if you want to use extra_dl module for HITL
@@ -18,7 +20,7 @@ RP3 Lisa MX
     <configure name="PERIODIC_FREQUENCY" value="100"/>
     <define name="CONTROL_FREQUENCY" value="100"/>
     <configure name="TELEMETRY_FREQUENCY" value="100"/>
-    <define name="SERVO_HZ" value="400"/>
+    <define name="SERVO_HZ" value="100"/>
 
     <target name="nps" board="pc">
       <module name="fdm" type="jsbsim"/>

@@ -3,13 +3,20 @@
 #include "RTK_receive.h"
 
 #include "subsystems/gps.h"
+#include "subsystems/abi_sender_ids.h" 
 #include "subsystems/datalink/downlink.h"
 #include "modules/loggers/sdlog_chibios.h"
+#include "modules/autmav/sony_camera_handler.h"
 #include "state.h"
+#include "subsystems/datalink/telemetry.h"
+#include "subsystems/abi.h"
+#include "mcu_periph/sys_time.h"
 
 /** Includes macros generated from ubx.xml */
 #include "ubx_protocol.h"
 #include "led.h"
+#include "wifi_cam_ctrl.h"
+#include "subsystems/gps/librtcm3/CRC24Q.h"
 
 struct link_device *RTK_receive_device;
 
@@ -52,13 +59,47 @@ void relay_msg(uint8_t length, uint8_t *relay_data){
 #define UTM_HEM_NORTH 0
 #define UTM_HEM_SOUTH 1
 
+#define RXM_RTCM_VERSION        0x02
+#define NAV_RELPOSNED_VERSION   0x00
+
+#define RTK_GPS_UBX_ID GPS_UBX_ID
 struct RTKGpsUbx rtk_gps_ubx;
 
-#if USE_RTK_GPS_UBX_RXM_RAW
-struct RTKGpsUbxGpsUbxRaw rtk_gps_rtk_ubx_raw;
-#endif
+struct RTKGpsUbxRaw rtk_gps_ubx_raw;
+
+double log_phi;
+double log_theta;
+double log_psi;
+double log_lat,log_lon,log_alt;
+double log_vacc,log_hacc;
+
+double log_shot_command_time_stamp;
+double log_target_rtk_time_stamp;
+
+double last_rtk_msg_time;
+
+extern struct GpsRelposNED gps_relposned;
+extern struct RtcmMan rtcm_man;
 
 struct GpsTimeSync rtk_gps_rtk_ubx_time_sync;
+
+static void send_rtk_status(struct transport_tx *trans, struct link_device *dev)
+{
+  pprz_msg_send_RTK_STATUS(trans, dev, AC_ID,
+                        &rtk_gps_ubx.state.ecef_pos.x, &rtk_gps_ubx.state.ecef_pos.y, &rtk_gps_ubx.state.ecef_pos.z,
+                        &rtk_gps_ubx.state.lla_pos.lat, &rtk_gps_ubx.state.lla_pos.lon, &rtk_gps_ubx.state.lla_pos.alt,
+                        &rtk_gps_ubx.state.hmsl,
+                        &rtk_gps_ubx.state.ecef_vel.x, &rtk_gps_ubx.state.ecef_vel.y, &rtk_gps_ubx.state.ecef_vel.z,
+                        &rtk_gps_ubx.state.pacc, &rtk_gps_ubx.state.sacc,
+                        &rtk_gps_ubx.state.tow,
+                        &rtk_gps_ubx.state.pdop,
+                        &rtk_gps_ubx.state.num_sv,
+                        &rtk_gps_ubx.state.fix,
+                        &rtk_gps_ubx.state.comp_id,
+                        &rtk_gps_ubx.state.hacc,
+                        &rtk_gps_ubx.state.vacc,
+                        &pprzLogFile);
+}
 
 void rtk_gps_ubx_init(void)
 {
@@ -66,8 +107,15 @@ void rtk_gps_ubx_init(void)
   rtk_gps_ubx.msg_available = false;
   rtk_gps_ubx.error_cnt = 0;
   rtk_gps_ubx.error_last = RTK_GPS_UBX_ERR_NONE;
-
-  //rtk_gps_ubx.state.comp_id = RTK_GPS_UBX_ID;
+  rtk_gps_ubx.state.comp_id = RTK_GPS_UBX_ID;
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_RTK_STATUS, send_rtk_status);
+  log_phi = 0;
+  log_theta = 0;
+  log_psi = 0;
+  log_lat = 0; log_lon = 0; log_alt = 0;
+  log_vacc = 0; log_hacc = 0;
+  log_shot_command_time_stamp = 0.0;
+  log_target_rtk_time_stamp = 0.0;
 }
 
 void rtk_gps_ubx_event(void)
@@ -93,7 +141,7 @@ void rtk_gps_ubx_read_message(void)
       rtk_gps_rtk_ubx_time_sync.t0_tow_frac   = UBX_NAV_SOL_Frac(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.tow        = UBX_NAV_SOL_ITOW(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.week       = UBX_NAV_SOL_week(rtk_gps_ubx.msg_buf);
-      rtk_gps_ubx.state.fix        = UBX_NAV_SOL_GPSfix(rtk_gps_ubx.msg_buf);
+      //rtk_gps_ubx.state.fix        = UBX_NAV_SOL_GPSfix(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.ecef_pos.x = UBX_NAV_SOL_ECEF_X(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.ecef_pos.y = UBX_NAV_SOL_ECEF_Y(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.ecef_pos.z = UBX_NAV_SOL_ECEF_Z(rtk_gps_ubx.msg_buf);
@@ -120,6 +168,10 @@ void rtk_gps_ubx_read_message(void)
       SetBit(rtk_gps_ubx.state.valid_fields, GPS_VALID_POS_LLA_BIT);
       rtk_gps_ubx.state.hmsl        = UBX_NAV_POSLLH_HMSL(rtk_gps_ubx.msg_buf);
       SetBit(rtk_gps_ubx.state.valid_fields, GPS_VALID_HMSL_BIT);
+      rtk_gps_ubx.state.hacc = UBX_NAV_POSLLH_Hacc(rtk_gps_ubx.msg_buf);
+	    rtk_gps_ubx.state.vacc = UBX_NAV_POSLLH_Vacc(rtk_gps_ubx.msg_buf);
+      last_rtk_msg_time = get_sys_time_float();
+
     } else if (rtk_gps_ubx.msg_id == UBX_NAV_POSUTM_ID) {
       rtk_gps_ubx.state.utm_pos.east = UBX_NAV_POSUTM_EAST(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.state.utm_pos.north = UBX_NAV_POSUTM_NORTH(rtk_gps_ubx.msg_buf);
@@ -163,28 +215,92 @@ void rtk_gps_ubx_read_message(void)
       rtk_gps_ubx.state.fix = UBX_NAV_STATUS_GPSfix(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.status_flags = UBX_NAV_STATUS_Flags(rtk_gps_ubx.msg_buf);
       rtk_gps_ubx.sol_flags = UBX_NAV_SOL_Flags(rtk_gps_ubx.msg_buf);
+    } else if (rtk_gps_ubx.msg_id == UBX_NAV_RELPOSNED_ID) {
+      uint8_t version = UBX_NAV_RELPOSNED_VERSION(rtk_gps_ubx.msg_buf);
+      if (version == NAV_RELPOSNED_VERSION) {
+        gps_relposned.iTOW          = UBX_NAV_RELPOSNED_ITOW(rtk_gps_ubx.msg_buf);
+        gps_relposned.refStationId  = UBX_NAV_RELPOSNED_refStationId(rtk_gps_ubx.msg_buf);
+        gps_relposned.relPosN     = UBX_NAV_RELPOSNED_RELPOSN(rtk_gps_ubx.msg_buf);
+        gps_relposned.relPosE     = UBX_NAV_RELPOSNED_RELPOSE(rtk_gps_ubx.msg_buf);
+        gps_relposned.relPosD     = UBX_NAV_RELPOSNED_RELPOSD(rtk_gps_ubx.msg_buf) ;
+        gps_relposned.relPosHPN   = UBX_NAV_RELPOSNED_RELPOSNHP(rtk_gps_ubx.msg_buf);
+        gps_relposned.relPosHPE   = UBX_NAV_RELPOSNED_RELPOSEHP(rtk_gps_ubx.msg_buf);
+        gps_relposned.relPosHPD   = UBX_NAV_RELPOSNED_RELPOSDHP(rtk_gps_ubx.msg_buf);
+        gps_relposned.accN      = UBX_NAV_RELPOSNED_Nacc(rtk_gps_ubx.msg_buf);
+        gps_relposned.accE      = UBX_NAV_RELPOSNED_Eacc(rtk_gps_ubx.msg_buf);
+        gps_relposned.accD      = UBX_NAV_RELPOSNED_Dacc(rtk_gps_ubx.msg_buf);
+        uint8_t flags           = UBX_NAV_RELPOSNED_Flags(rtk_gps_ubx.msg_buf);
+        gps_relposned.carrSoln    = RTCMgetbitu(&flags, 3, 2);
+        gps_relposned.relPosValid   = RTCMgetbitu(&flags, 5, 1);
+        gps_relposned.diffSoln    = RTCMgetbitu(&flags, 6, 1);
+        gps_relposned.gnssFixOK   = RTCMgetbitu(&flags, 7, 1);
+        if (gps_relposned.gnssFixOK > 0) {
+          if (gps_relposned.diffSoln > 0) {
+            if (gps_relposned.carrSoln == 2) {
+              rtk_gps_ubx.state.fix = 5; // rtk
+            } else {
+              rtk_gps_ubx.state.fix = 4; // dgnss
+            }
+          } else {
+            rtk_gps_ubx.state.fix = 3; // 3D
+          }
+        } else {
+          rtk_gps_ubx.state.fix = 0;
+        }
+      }
+
     }
   }
-#if USE_RTK_GPS_UBX_RXM_RAW
   else if (rtk_gps_ubx.msg_class == UBX_RXM_ID) {
     if (rtk_gps_ubx.msg_id == UBX_RXM_RAW_ID) {
-      rtk_gps_rtk_ubx_raw.iTOW = UBX_RXM_RAW_iTOW(rtk_gps_ubx.msg_buf);
-      rtk_gps_rtk_ubx_raw.week = UBX_RXM_RAW_week(rtk_gps_ubx.msg_buf);
-      rtk_gps_rtk_ubx_raw.numSV = UBX_RXM_RAW_numSV(rtk_gps_ubx.msg_buf);
+      rtk_gps_ubx_raw.iTOW = UBX_RXM_RAW_iTOW(rtk_gps_ubx.msg_buf);
+      rtk_gps_ubx_raw.week = UBX_RXM_RAW_week(rtk_gps_ubx.msg_buf);
+      rtk_gps_ubx_raw.numSV = UBX_RXM_RAW_numSV(rtk_gps_ubx.msg_buf);
       uint8_t i;
-      uint8_t max_SV = Min(rtk_gps_rtk_ubx_raw.numSV, GPS_UBX_NB_CHANNELS);
+      uint8_t max_SV = Min(rtk_gps_ubx_raw.numSV, GPS_UBX_NB_CHANNELS);
       for (i = 0; i < max_SV; i++) {
-        rtk_gps_rtk_ubx_raw.measures[i].cpMes = UBX_RXM_RAW_cpMes(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].prMes = UBX_RXM_RAW_prMes(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].doMes = UBX_RXM_RAW_doMes(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].sv = UBX_RXM_RAW_sv(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].mesQI = UBX_RXM_RAW_mesQI(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].cno = UBX_RXM_RAW_cno(rtk_gps_ubx.msg_buf, i);
-        rtk_gps_rtk_ubx_raw.measures[i].lli = UBX_RXM_RAW_lli(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].cpMes = UBX_RXM_RAW_cpMes(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].prMes = UBX_RXM_RAW_prMes(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].doMes = UBX_RXM_RAW_doMes(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].sv = UBX_RXM_RAW_sv(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].mesQI = UBX_RXM_RAW_mesQI(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].cno = UBX_RXM_RAW_cno(rtk_gps_ubx.msg_buf, i);
+        rtk_gps_ubx_raw.measures[i].lli = UBX_RXM_RAW_lli(rtk_gps_ubx.msg_buf, i);
+      }
+    } else if (rtk_gps_ubx.msg_id == UBX_RXM_RTCM_ID) {
+      uint8_t version   = UBX_RXM_RTCM_version(rtk_gps_ubx.msg_buf);
+      if (version == RXM_RTCM_VERSION) {
+        //      uint8_t flags     = UBX_RXM_RTCM_flags(gps_ubx.msg_buf);
+        //      bool crcFailed    = RTCMgetbitu(&flags, 7, 1);
+        //      uint16_t refStation = UBX_RXM_RTCM_refStation(gps_ubx.msg_buf);
+        //      uint16_t msgType  = UBX_RXM_RTCM_msgType(gps_ubx.msg_buf);
+        //      DEBUG_PRINT("Message %i from refStation %i processed (CRCfailed: %i)\n", msgType, refStation, crcFailed);
+
+        rtcm_man.RefStation  = UBX_RXM_RTCM_refStation(rtk_gps_ubx.msg_buf);
+        rtcm_man.MsgType     = UBX_RXM_RTCM_msgType(rtk_gps_ubx.msg_buf);
+        uint8_t flags     = UBX_RXM_RTCM_flags(rtk_gps_ubx.msg_buf);
+        bool crcFailed    = RTCMgetbitu(&flags, 7, 1);
+        switch (rtcm_man.MsgType) {
+          case 1005:
+            rtcm_man.Cnt105 += 1;
+            rtcm_man.Crc105 += crcFailed;
+            break;
+          case 1077:
+            rtcm_man.Cnt177 += 1;
+            rtcm_man.Crc177 += crcFailed;;
+            break;
+          case 1087:
+            rtcm_man.Cnt187 += 1;
+            rtcm_man.Crc187 += crcFailed;;
+            break;
+          default:
+            break;
+        }
+      } else {
+        //DEBUG_PRINT("Unknown RXM_RTCM version: %i\n", version);
       }
     }
-  }
-#endif
+  } 
 }
 
 #if LOG_RAW_GPS
@@ -325,8 +441,8 @@ void rtk_ubx_send_cfg_rst(struct link_device *dev, uint16_t bbr , uint8_t reset_
 
 void rtk_gps_ubx_msg(void)
 {
-  // current timestamp
-  //uint32_t now_ts = get_sys_time_usec();
+  //current timestamp
+  uint32_t now_ts = get_sys_time_usec();
 
   rtk_gps_ubx.state.last_msg_ticks = sys_time.nb_sec_rem;
   rtk_gps_ubx.state.last_msg_time = sys_time.nb_sec;
@@ -340,29 +456,52 @@ void rtk_gps_ubx_msg(void)
       rtk_gps_ubx.state.last_3dfix_ticks = sys_time.nb_sec_rem;
       rtk_gps_ubx.state.last_3dfix_time = sys_time.nb_sec;
     }
-    //AbiSendMsgGPS(RTK_GPS_UBX_ID, now_ts, &rtk_gps_ubx.state);
-	if (pprzLogFile != -1){
-		//sdLogWriteLog(pprzLogFile, "khubi\n");
-		//LED_ON(3);
-	}
+    AbiSendMsgGPS(RTK_GPS_UBX_ID, now_ts, &rtk_gps_ubx.state);
   }
   rtk_gps_ubx.msg_available = false;
 }
+#ifndef SITL
+void tag_image(void){
+  
+  double now = get_sys_time_float();
 
-void tag_image_log(void){
-
-	static uint16_t image_number = 1;
-
-	if (pprzLogFile != -1){
-		//sdLogWriteLog(pprzLogFile, "salam\n");
-		int err = sdLogWriteLog(pprzLogFile, "%d,%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f,%d\n",
-                    image_number, rtk_gps_ubx.state.lla_pos.lat,
-                    rtk_gps_ubx.state.lla_pos.lon, rtk_gps_ubx.state.lla_pos.alt,
-                    stateGetNedToBodyEulers_f()->phi, stateGetNedToBodyEulers_f()->theta,
-                    stateGetNedToBodyEulers_f()->psi, 0.0, 0.0, rtk_gps_ubx.state.fix);
-		DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
-		LED_ON(3);
-	}
-	image_number ++;
-
+  if((tag_next_rtk_msg) && (last_rtk_msg_time < now)) {
+    
+    log_lat = ((double)(rtk_gps_ubx.state.lla_pos.lat)/10000000.0);
+    log_lon = ((double)(rtk_gps_ubx.state.lla_pos.lon)/10000000.0);
+    log_alt = ((double)(rtk_gps_ubx.state.lla_pos.alt)/1000.0);
+    log_vacc = ((double)(rtk_gps_ubx.state.vacc)/1000.0);
+    log_hacc = ((double)(rtk_gps_ubx.state.hacc)/1000.0); 
+    tag_next_rtk_msg = false;
+    tagged_image = true;
+  } 
+	
 }
+void tag_image_log(void){
+  
+  if(tagged_image){
+
+    int image_name_cnt = 0;
+
+    if (pprzLogFile != -1){
+
+       // sdLogWriteLog(pprzLogFile, "%.7f,%.7f\n",
+       //             log_shot_command_time_stamp,log_target_rtk_time_stamp);
+
+      while(image_name[image_name_cnt] != '&'){
+        sdLogWriteLog(pprzLogFile, "%c",image_name[image_name_cnt]);
+        image_name_cnt++;
+      }
+
+      sdLogWriteLog(pprzLogFile, ",%.7f,%.7f,%.2f,%.5f,%.5f,%.5f,%.2f,%.2f\n",
+                  log_lat, log_lon, log_alt, log_phi, log_theta, log_psi, log_hacc, log_vacc);
+      //DOWNLINK_SEND_DEBUG(DefaultChannel, DefaultDevice, 1, err);
+    }
+    tagged_image = false;
+   //LED_ON(4);
+  }
+ //LED_ON(3);
+}
+#else
+
+#endif

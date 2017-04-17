@@ -52,7 +52,7 @@
 #include "autopilot.h"
 uint8_t joystick_block;
 #define JoystickHandeDatalink(_roll_int8, _pitch_int8, _throttle_int8) { \
-    if (pprz_mode == PPRZ_MODE_AUTO2 && nav_block == joystick_block) {  \
+    if (autopilot_get_mode() == PPRZ_MODE_AUTO2 && nav_block == joystick_block) {  \
       h_ctl_roll_setpoint = _roll_int8 * (AUTO1_MAX_ROLL / 0x7f);       \
       h_ctl_pitch_setpoint = _pitch_int8 * (AUTO1_MAX_PITCH / 0x7f);    \
       v_ctl_throttle_setpoint = (MAX_PPRZ/0x7f) * _throttle_int8;       \
@@ -77,7 +77,7 @@ void firmware_parse_msg(struct link_device *dev __attribute__((unused)), struct 
 
     case DL_MOVE_WP: {
       if (DL_MOVE_WP_ac_id(buf) != AC_ID) { break; }
-      uint8_t wp_id = DL_MOVE_WP_wp_id(buf);
+      uint16_t wp_id = DL_MOVE_WP_wp_id(buf);
 
       /* Computes from (lat, long) in the referenced UTM zone */
       struct LlaCoor_f lla;
@@ -93,7 +93,13 @@ void firmware_parse_msg(struct link_device *dev __attribute__((unused)), struct 
          coordinates */
       utm.east = waypoints[wp_id].x + nav_utm_east0;
       utm.north = waypoints[wp_id].y + nav_utm_north0;
+      uint8_t flags = DL_MOVE_WP_flags(buf);
+      
+      if(flags == 1) start_wp[wp_id] = true;
+      if(flags == 2) end_wp[wp_id] = true;
+
       pprz_msg_send_WP_MOVED(trans, dev, AC_ID, &wp_id, &utm.east, &utm.north, &utm.alt, &nav_utm_zone0);
+      pprz_msg_send_WP_ACK(trans, dev, AC_ID, &wp_id);
     }
     break;
 #endif /** NAV */

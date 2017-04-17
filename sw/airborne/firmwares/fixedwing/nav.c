@@ -33,7 +33,7 @@ static unit_t unit __attribute__((unused));
 #define NAV_C
 #include "firmwares/fixedwing/nav.h"
 #include "firmwares/fixedwing/stabilization/stabilization_attitude.h"
-#include "firmwares/fixedwing/autopilot.h"
+#include "autopilot.h"
 #include "inter_mcu.h"
 #include "subsystems/gps.h"
 
@@ -45,7 +45,7 @@ enum oval_status oval_status;
 float last_x, last_y;
 
 /** Index of last waypoint. Used only in "go" stage in "route" horiz mode */
-uint8_t last_wp __attribute__((unused));
+uint16_t last_wp __attribute__((unused));
 
 float rc_pitch;
 float carrot_x, carrot_y;
@@ -155,7 +155,7 @@ void nav_circle_XY(float x, float y, float radius)
 }
 
 
-void nav_glide(uint8_t start_wp, uint8_t wp)
+void nav_glide(uint16_t start_wp, uint16_t wp)
 {
   float start_alt = waypoints[start_wp].a;
   float diff_alt = waypoints[wp].a - start_alt;
@@ -170,7 +170,7 @@ void nav_glide(uint8_t start_wp, uint8_t wp)
 #define MAX_HEIGHT_CARROT 150.
 
 #define Goto3D(radius) {                                                \
-    if (pprz_mode == PPRZ_MODE_AUTO2) {                                 \
+    if (autopilot_get_mode() == PPRZ_MODE_AUTO2) {                                 \
       int16_t yaw = imcu_get_radio(RADIO_YAW);                          \
       if (yaw > MIN_DX || yaw < -MIN_DX) {                              \
         carrot_x += FLOAT_OF_PPRZ(yaw, 0, -20.);                        \
@@ -215,7 +215,7 @@ static void nav_ground_speed_loop(void)
 #endif
 
 float baseleg_out_qdr;
-void nav_compute_baseleg(uint8_t wp_af, uint8_t wp_td, uint8_t wp_baseleg, float radius)
+void nav_compute_baseleg(uint16_t wp_af, uint16_t wp_td, uint16_t wp_baseleg, float radius)
 {
   nav_radius = radius;
 
@@ -236,7 +236,7 @@ void nav_compute_baseleg(uint8_t wp_af, uint8_t wp_td, uint8_t wp_baseleg, float
   }
 }
 
-void nav_compute_final_from_glide(uint8_t wp_af, uint8_t wp_td, float glide)
+void nav_compute_final_from_glide(uint16_t wp_af, uint16_t wp_td, float glide)
 {
 
   float x_0 = waypoints[wp_td].x - waypoints[wp_af].x;
@@ -256,7 +256,7 @@ void nav_compute_final_from_glide(uint8_t wp_af, uint8_t wp_td, float glide)
 /* For a landing UPWIND.
    Computes Top Of Descent waypoint from Touch Down and Approach Fix
    waypoints, using glide airspeed, glide vertical speed and wind */
-static inline void compute_TOD(uint8_t _af, uint8_t _td, uint8_t _tod, float glide_airspeed, float glide_vspeed)
+static inline void compute_TOD(uint16_t _af, uint16_t _td, uint16_t _tod, float glide_airspeed, float glide_vspeed)
 {
   struct FloatVect2 *wind = stateGetHorizontalWindspeed_f();
   float td_af_x = WaypointX(_af) - WaypointX(_td);
@@ -472,7 +472,7 @@ static void send_nav(struct transport_tx *trans, struct link_device *dev)
   SEND_NAVIGATION(trans, dev);
 }
 
-static void DownlinkSendWp(struct transport_tx *trans, struct link_device *dev, uint8_t _wp)
+static void DownlinkSendWp(struct transport_tx *trans, struct link_device *dev, uint16_t _wp)
 {
   float x = nav_utm_east0 +  waypoints[_wp].x;
   float y = nav_utm_north0 + waypoints[_wp].y;
@@ -481,13 +481,13 @@ static void DownlinkSendWp(struct transport_tx *trans, struct link_device *dev, 
 
 static void send_wp_moved(struct transport_tx *trans, struct link_device *dev)
 {
-  static uint8_t i;
+  static uint16_t i;
   i++;
   if (i >= nb_waypoint) { i = 0; }
   DownlinkSendWp(trans, dev, i);
 }
 
-void DownlinkSendWpNr(uint8_t _wp)
+void DownlinkSendWpNr(uint16_t _wp)
 {
   if (_wp >= nb_waypoint) return;
   DownlinkSendWp(&(DefaultChannel).trans_tx, &(DefaultDevice).device, _wp);
@@ -593,7 +593,7 @@ void nav_eight_init(void)
     If necessary, the [c1] waypoint is moved in the direction of [target]
     to be not far than [2*radius].
 */
-void nav_eight(uint8_t target, uint8_t c1, float radius)
+void nav_eight(uint16_t target, uint16_t c1, float radius)
 {
   float aradius = fabs(radius);
   float alt = waypoints[target].a;
@@ -722,7 +722,7 @@ void nav_oval_init(void)
   nav_oval_count = 0;
 }
 
-void nav_oval(uint8_t p1, uint8_t p2, float radius)
+void nav_oval(uint16_t p1, uint16_t p2, float radius)
 {
   radius = - radius; /* Historical error ? */
 

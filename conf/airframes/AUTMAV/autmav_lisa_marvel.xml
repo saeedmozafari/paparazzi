@@ -31,12 +31,11 @@
   </modules>
 
   <servos driver="Pwm">
-    <servo name="FRONT_LEFT" no="0" min="1000" neutral="1050" max="1950"/>
-    <servo name="FRONT_RIGHT" no="1" min="1000" neutral="1050" max="1950"/>
-    <servo name="RIGHT" no="2" min="1000" neutral="1050" max="1950"/>
-    <servo name="BACK_RIGHT" no="3" min="1000" neutral="1050" max="1950"/>
-    <servo name="BACK_LEFT" no="4" min="1000" neutral="1050" max="1950"/>
-    <servo name="LEFT" no="5" min="1000" neutral="1050" max="1950"/>
+    <servo name="FRONT_LEFT" no="0" min="990" neutral="990" max="1950"/>
+    <servo name="FRONT_RIGHT" no="1" min="990" neutral="990" max="1950"/>
+    <servo name="BACK_RIGHT" no="2" min="990" neutral="990" max="1950"/>
+    <servo name="BACK_LEFT" no="3" min="990" neutral="990" max="1950"/>
+    
   </servos>
 
   <commands>
@@ -47,17 +46,16 @@
   </commands>
 
   <section name="MIXING" prefix="MOTOR_MIXING_">
-   <define name="TYPE" value="HEXA_X"/>
+    <define name="TYPE" value="QUAD_X"/>
+    <define name="REVERSE" value="true"/>
   </section>
 
   <command_laws>
     <call fun="motor_mixing_run(autopilot_motors_on,FALSE,values)"/>
     <set servo="FRONT_LEFT" value="motor_mixing.commands[MOTOR_FRONT_LEFT]"/>
     <set servo="FRONT_RIGHT" value="motor_mixing.commands[MOTOR_FRONT_RIGHT]"/>
-    <set servo="RIGHT" value="motor_mixing.commands[MOTOR_RIGHT]"/>
     <set servo="BACK_RIGHT" value="motor_mixing.commands[MOTOR_BACK_RIGHT]"/>
     <set servo="BACK_LEFT" value="motor_mixing.commands[MOTOR_BACK_LEFT]"/>
-	<set servo="LEFT" value="motor_mixing.commands[MOTOR_LEFT]"/>
   </command_laws>
 
   <section name="MISC">

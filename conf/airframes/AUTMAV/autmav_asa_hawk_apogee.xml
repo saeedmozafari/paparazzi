@@ -115,8 +115,8 @@
   <!-- commands section -->
   <servos>
     <servo name="THROTTLE" no="0" min="988" neutral="988" max="2000"/>
-    <servo name="ELEVATOR_RIGHT" no="1" min="1100" neutral="1500" max="1900"/>
-    <servo name="ELEVATOR_LEFT" no="2" min="1900" neutral="1500" max="1100"/>
+    <servo name="ELEVATOR_RIGHT" no="1" min="1000" neutral="1500" max="2000"/>
+    <servo name="ELEVATOR_LEFT" no="2" min="2000" neutral="1500" max="1000"/>
     <servo name="AILERON" no="3" min="1100" neutral="1500" max="1900"/>
     <servo name="CAM_PAN" no="4" min="2100" neutral="1500" max="900"/>
     <servo name="CAM_TILT" no="5" min="1000" neutral="1250" max="1500"/>    
@@ -143,7 +143,7 @@
 	<set command="YAW" value="@YAW"/>
   </auto_rc_commands>
   <section name="MIXER">
-    <define name="COMBI_SWITCH" value="0.5"/>
+    <define name="COMBI_SWITCH" value="1.0"/>
   </section>
   <command_laws>
     <set servo="THROTTLE" value="@THROTTLE"/>
@@ -155,7 +155,7 @@
   </command_laws>
 
   <section name="AUTO1" prefix="AUTO1_">
-    <define name="MAX_ROLL" value="45" unit="deg"/>
+    <define name="MAX_ROLL" value="50" unit="deg"/>
     <define name="MAX_PITCH" value="30" unit="deg"/>
     <define name="MAX_YAW_RATE" value="RadOfDeg(100)"/>
   </section>
@@ -258,7 +258,7 @@
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
     <define name="COURSE_PGAIN" value="0.8"/>
     <define name="COURSE_DGAIN" value="1.4"/>
-    <define name="ROLL_MAX_SETPOINT" value="40" unit="deg"/>
+    <define name="ROLL_MAX_SETPOINT" value="45" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>
     <define name="PITCH_MIN_SETPOINT" value="-30" unit="deg"/>
     <define name="PITCH_PGAIN" value="20000"/>

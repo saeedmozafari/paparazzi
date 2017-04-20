@@ -50,6 +50,7 @@ extern float h_ctl_yaw_ny_igain;
 extern float h_ctl_rudder_i_gain;
 extern float h_ctl_rudder_rate_gain;
 extern float accel_y_cm;
+extern float h_ctl_rudder_threshold;
 #endif
 
 

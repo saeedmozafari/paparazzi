@@ -110,7 +110,7 @@ void clean_current_mission(void)
   approach_waypoint.y = 0.0;
   approach_waypoint.a = 0.0;
   uint16_t i;
-  for (i = 0; i < NB_WAYPOINT; i++) {
+  for (i = 11; i < NB_WAYPOINT; i++) {
     start_wp[i] = false;
     end_wp[i] = false;
   	waypoints[i].x = 0;

@@ -45,7 +45,7 @@
 extern struct EnuCoor_i navigation_target;
 extern struct EnuCoor_i navigation_carrot;
 
-extern uint8_t last_wp __attribute__((unused));
+extern uint16_t last_wp __attribute__((unused));
 
 extern uint8_t horizontal_mode;
 
@@ -113,7 +113,7 @@ extern void nav_run(void);
 
 extern void set_exception_flag(uint8_t flag_num);
 
-extern float get_dist2_to_waypoint(uint8_t wp_id);
+extern float get_dist2_to_waypoint(uint16_t wp_id);
 extern float get_dist2_to_point(struct EnuCoor_i *p);
 extern void compute_dist2_to_home(void);
 extern void nav_home(void);
@@ -128,7 +128,7 @@ extern bool nav_is_in_flight(void);
 extern void nav_set_heading_rad(float rad);
 extern void nav_set_heading_deg(float deg);
 extern void nav_set_heading_towards(float x, float y);
-extern void nav_set_heading_towards_waypoint(uint8_t wp);
+extern void nav_set_heading_towards_waypoint(uint16_t wp);
 extern void nav_set_heading_towards_target(void);
 extern void nav_set_heading_current(void);
 extern void nav_set_failsafe(void);
@@ -171,13 +171,13 @@ bool nav_check_wp_time(struct EnuCoor_i *wp, uint16_t stay_time);
 #define NavCheckWaypointTime(wp, time) nav_check_wp_time(&waypoints[wp].enu_i, time)
 
 
-extern void navigation_update_wp_from_speed(uint8_t wp, struct Int16Vect3 speed_sp, int16_t heading_rate_sp);
+extern void navigation_update_wp_from_speed(uint16_t wp, struct Int16Vect3 speed_sp, int16_t heading_rate_sp);
 
 /* should we really keep this one ??
  * maybe better to use the `goto` flight plan primitive and
  * add a `pre_call` or `call_once` to set the heading?
  */
-static inline void NavGotoWaypointHeading(uint8_t wp)
+static inline void NavGotoWaypointHeading(uint16_t wp)
 {
   vertical_mode = VERTICAL_MODE_ALT;
   horizontal_mode = HORIZONTAL_MODE_WAYPOINT;
@@ -236,7 +236,7 @@ static inline void NavGotoWaypointHeading(uint8_t wp)
  **********************************************************/
 
 /*********** Navigation to  waypoint *************************************/
-static inline void NavGotoWaypoint(uint8_t wp)
+static inline void NavGotoWaypoint(uint16_t wp)
 {
   horizontal_mode = HORIZONTAL_MODE_WAYPOINT;
   VECT3_COPY(navigation_target, waypoints[wp].enu_i);
@@ -245,7 +245,7 @@ static inline void NavGotoWaypoint(uint8_t wp)
 
 /*********** Navigation on a circle **************************************/
 extern void nav_circle(struct EnuCoor_i *wp_center, int32_t radius);
-static inline void NavCircleWaypoint(uint8_t wp_center, float radius)
+static inline void NavCircleWaypoint(uint16_t wp_center, float radius)
 {
   horizontal_mode = HORIZONTAL_MODE_CIRCLE;
   nav_circle(&waypoints[wp_center].enu_i, POS_BFP_OF_REAL(radius));
@@ -261,20 +261,20 @@ static inline void NavCircleWaypoint(uint8_t wp_center, float radius)
 
 /*********** Navigation along an oval *************************************/
 extern void nav_oval_init(void);
-extern void nav_oval(uint8_t, uint8_t, float);
+extern void nav_oval(uint16_t, uint16_t, float);
 extern uint8_t nav_oval_count;
 #define Oval(a, b, c) nav_oval((b), (a), (c))
 
 /*********** Navigation along a line *************************************/
 extern void nav_route(struct EnuCoor_i *wp_start, struct EnuCoor_i *wp_end);
-static inline void NavSegment(uint8_t wp_start, uint8_t wp_end)
+static inline void NavSegment(uint16_t wp_start, uint16_t wp_end)
 {
   horizontal_mode = HORIZONTAL_MODE_ROUTE;
   nav_route(&waypoints[wp_start].enu_i, &waypoints[wp_end].enu_i);
 }
 
 /** Nav glide routine */
-static inline void NavGlide(uint8_t start_wp, uint8_t wp)
+static inline void NavGlide(uint16_t start_wp, uint16_t wp)
 {
   int32_t start_alt = waypoints[start_wp].enu_i.z;
   int32_t diff_alt = waypoints[wp].enu_i.z - start_alt;

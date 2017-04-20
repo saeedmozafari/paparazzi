@@ -46,8 +46,6 @@ extern struct point approach_waypoint;
 
 static inline void parse_DL_SURVEY_MISSION(void)
 {
-  	clean_current_mission();	
-
   	survey_mission_available = DL_SURVEY_MISSION_mission_availabe(dl_buffer);
   	survey_perpendicular = DL_SURVEY_MISSION_perpendicular(dl_buffer);
 	survey_nb_wp = DL_SURVEY_MISSION_total_wp(dl_buffer);

@@ -71,7 +71,6 @@ static void send_survey_status(struct transport_tx *trans, struct link_device *d
 
 void nav_survey_photo_init(void)
 {
-
   clean_current_mission();
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SURVEY_MISSION_STATUS, send_survey_status);
 }
@@ -114,6 +113,9 @@ void clean_current_mission(void)
   for (i = 0; i < NB_WAYPOINT; i++) {
     start_wp[i] = false;
     end_wp[i] = false;
+  	waypoints[i].x = 0;
+  	waypoints[i].y = 0;
+  	waypoints[i].a = 0;
   }
 }
 
@@ -124,7 +126,7 @@ bool nav_survey_photo_run(void)
 
     if (!survey_first_time_setup) {
 
-      survey_nav_radius = Max(fabs(survey_side_distance), nav_radius);
+      survey_nav_radius = Max(fabs(survey_side_distance / 2.0), nav_radius);
       survey_last_wp = survey_nb_wp + 10;
       survey_current_wp = 11;
       survey_stage = SRV_TURN_SETUP;

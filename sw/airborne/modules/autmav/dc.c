@@ -71,11 +71,11 @@
 #endif
 
 #ifndef DC_STABILIZED_SHOT_CARROT
-#define DC_STABILIZED_SHOT_CARROT 1.5 //units in secondes
+#define DC_STABILIZED_SHOT_CARROT 0.5 //units in secondes
 #endif
 
 #ifndef DC_CAMERA_SHOT_DELAY
-#define DC_CAMERA_SHOT_DELAY 3.0 //units in secondes
+#define DC_CAMERA_SHOT_DELAY 0.1 //units in secondes
 #endif
 
 // Variables with boot defaults
@@ -181,22 +181,13 @@ static void send_dc_shot(struct transport_tx *trans, struct link_device *dev)
                         &gps.tow);
 }
 
-void dc_init(void)
-{
-  dc_autoshoot = DC_AUTOSHOOT_STOP;
-  dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
-  dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
-  dc_last_shot_time = get_sys_time_float();
-  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
-}
 
-uint8_t dc_info(void)
+static void dc_info(struct transport_tx *trans, struct link_device *dev)
 {
-#ifdef DOWNLINK_SEND_DC_INFO
   float uav_course = DegOfRad(stateGetNedToBodyEulers_f()->psi);
   int16_t mode = dc_autoshoot;
   uint8_t shutter = dc_autoshoot_period * 10;
-  DOWNLINK_SEND_DC_INFO(DefaultChannel, DefaultDevice,
+  pprz_msg_send_DC_INFO(trans, dev, AC_ID,
                         &mode,
                         &stateGetPositionLla_i()->lat,
                         &stateGetPositionLla_i()->lon,
@@ -212,8 +203,17 @@ uint8_t dc_info(void)
                         &dc_circle_last_block,
                         &dc_gps_count,
                         &shutter);
-#endif
-  return 0;
+
+}
+
+void dc_init(void)
+{
+  dc_autoshoot = DC_AUTOSHOOT_STOP;
+  dc_autoshoot_period = DC_AUTOSHOOT_PERIOD;
+  dc_distance_interval = DC_AUTOSHOOT_DISTANCE_INTERVAL;
+  dc_last_shot_time = get_sys_time_float();
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_SHOT, send_dc_shot);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_DC_INFO, dc_info);
 }
 
 /* shoot on distance */
@@ -365,7 +365,7 @@ void dc_periodic(void)
       	}
        	else {
        		NavVerticalAutoThrottleMode(0.0);
-  			  //NavVerticalAltitudeMode(survey.psa_altitude, 0.0);
+  			  NavVerticalAltitudeMode(waypoints[survey_current_wp].a, 0.0);
        	}
 
       }

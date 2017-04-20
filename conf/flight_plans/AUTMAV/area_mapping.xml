@@ -6,8 +6,7 @@
     #include "modules/sensors/airspeed_ms45xx_i2c.h"
     #include "modules/autmav/catapult.h"
     #include "modules/autmav/advanced_landing.h"
-    #include "modules/autmav/sony_a7r_handler.h"
-    #include "modules/autmav/mission_handler.h"
+    #include "modules/autmav/sony_camera_handler.h"
     #include "modules/autmav/survey.h"
     #include "firmwares/fixedwing/guidance/energy_ctrl_new.h"
     #include "firmwares/fixedwing/stabilization/stabilization_adaptive.h"
@@ -123,56 +122,6 @@
     <waypoint name="98" x="0.0" y="0.0"/>
     <waypoint name="99" x="0.0" y="0.0"/>
     <waypoint name="100" x="0.0" y="0.0"/>
-    <waypoint name="101" x="0.0" y="0.0"/>
-    <waypoint name="102" x="0.0" y="0.0"/>
-    <waypoint name="103" x="0.0" y="0.0"/>
-    <waypoint name="104" x="0.0" y="0.0"/>
-    <waypoint name="105" x="0.0" y="0.0"/>
-    <waypoint name="106" x="0.0" y="0.0"/>
-    <waypoint name="107" x="0.0" y="0.0"/>
-    <waypoint name="108" x="0.0" y="0.0"/>
-    <waypoint name="109" x="0.0" y="0.0"/>
-    <waypoint name="110" x="0.0" y="0.0"/>
-    <waypoint name="111" x="0.0" y="0.0"/>
-    <waypoint name="112" x="0.0" y="0.0"/>
-    <waypoint name="113" x="0.0" y="0.0"/>
-    <waypoint name="114" x="0.0" y="0.0"/>
-    <waypoint name="115" x="0.0" y="0.0"/>
-    <waypoint name="116" x="0.0" y="0.0"/>
-    <waypoint name="117" x="0.0" y="0.0"/>
-    <waypoint name="118" x="0.0" y="0.0"/>
-    <waypoint name="119" x="0.0" y="0.0"/>
-    <waypoint name="120" x="0.0" y="0.0"/>
-    <waypoint name="121" x="0.0" y="0.0"/>
-    <waypoint name="122" x="0.0" y="0.0"/>
-    <waypoint name="123" x="0.0" y="0.0"/>
-    <waypoint name="124" x="0.0" y="0.0"/>
-    <waypoint name="125" x="0.0" y="0.0"/>
-    <waypoint name="126" x="0.0" y="0.0"/>
-    <waypoint name="127" x="0.0" y="0.0"/>
-    <waypoint name="128" x="0.0" y="0.0"/>
-    <waypoint name="129" x="0.0" y="0.0"/>
-    <waypoint name="130" x="0.0" y="0.0"/>
-    <waypoint name="131" x="0.0" y="0.0"/>
-    <waypoint name="132" x="0.0" y="0.0"/>
-    <waypoint name="133" x="0.0" y="0.0"/>
-    <waypoint name="134" x="0.0" y="0.0"/>
-    <waypoint name="135" x="0.0" y="0.0"/>
-    <waypoint name="136" x="0.0" y="0.0"/>
-    <waypoint name="137" x="0.0" y="0.0"/>
-    <waypoint name="138" x="0.0" y="0.0"/>
-    <waypoint name="139" x="0.0" y="0.0"/>
-    <waypoint name="140" x="0.0" y="0.0"/>
-    <waypoint name="141" x="0.0" y="0.0"/>
-    <waypoint name="142" x="0.0" y="0.0"/>
-    <waypoint name="143" x="0.0" y="0.0"/>
-    <waypoint name="144" x="0.0" y="0.0"/>
-    <waypoint name="145" x="0.0" y="0.0"/>
-    <waypoint name="146" x="0.0" y="0.0"/>
-    <waypoint name="147" x="0.0" y="0.0"/>
-    <waypoint name="148" x="0.0" y="0.0"/>
-    <waypoint name="149" x="0.0" y="0.0"/>
-    <waypoint name="150" x="0.0" y="0.0"/>
  </waypoints>
   <exceptions>
     <!--exception cond="datalink_failsafe()" deroute="Loiter"/>
@@ -180,6 +129,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
+      <set value="50" var="nav_radius"/>
       <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
@@ -188,16 +138,16 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
+    </block-->
+    <block name="Clear Mission" strip_button="ClearMission">
+      <call_once fun="clean_current_mission()"/>
+      <call_once fun="initialize_mission_vars()"/>  
     </block>    
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
-      <set value="70" var="nav_radius"/>
-      <set value="0" var="survey_mission_available"/>
-      <call_once fun="nav_survey_photo_init()"/>
-      <call_once fun="initialize_mission_vars()"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
@@ -205,6 +155,7 @@
       <call_once fun="v_ctl_initialize_variables()"/>
       <call_once fun="h_ctl_initialize_variables()"/>
       <call_once fun="set_sf11_agl_mode(false)" />
+      <call_once fun="set_rtk_passthrough_agl(false)" />
       <set value="0" var="autopilot.kill_throttle"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
@@ -232,7 +183,7 @@
 
 	<block name="Loiter" strip_button="Landing">
 		<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
-		<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="50 > (GetPosAlt() - GetAltRef())"/>
+		<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="70 > (GetPosAlt() - GetAltRef())"/>
 	    <call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
 		<circle wp="TD" radius="nav_radius" vmode="alt" alt="50 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
 	</block>
@@ -241,6 +192,7 @@
 		<go wp="TP" vmode="alt"/>
 		<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
 		<call_once fun="set_sf11_agl_mode(false)" />
+        <call_once fun="set_rtk_passthrough_agl(true)" />
 	</block>
 
 	<block name="Landing">

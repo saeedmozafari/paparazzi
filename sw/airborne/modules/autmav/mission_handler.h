@@ -17,6 +17,8 @@
 #include "std.h"
 #include "paparazzi.h"
 
+#include "advanced_landing.h"
+
 #include <stdio.h>
 #include "subsystems/datalink/datalink.h" // dl_buffer
 
@@ -39,12 +41,12 @@ enum mission_ack_enum {
 	LOW_ENDURANCE_FAILSAFE_ACK,
 	CAMERA_MALFUNCTION_FAILSAFE_ACK,
 	LINK_LOSS_FAILSAFE_ACK,
-	GROUND_PROXIMTY_FAILSAFE_ACK
-
+	GROUND_PROXIMTY_FAILSAFE_ACK,
+	SURVEY_CLEAR_MISSION_ACK
 };
 
 enum mission_failsafe_enum {
-	MAXIMUM_DISTANCE_FS ,
+	MAXIMUM_DISTANCE_FS,
 	DATALINK_FS
 
 };
@@ -69,6 +71,7 @@ extern void mission_handler_init(void);
 extern bool max_distance_failsafe(void);
 extern void initialize_mission_vars(void);
 extern bool datalink_failsafe(void);
+extern void clean_current_mission(void);
 
 static inline void parse_DL_SURVEY_MISSION_SETTINGS(void)
 {
@@ -107,6 +110,7 @@ static inline void parse_DL_SURVEY_MISSION_SETTINGS(void)
 
 		case 7:
 			mission_land_direction = DL_SURVEY_MISSION_SETTINGS_setting_value(dl_buffer);
+			nav_advanced_landing_direction = mission_land_direction;
 			send_mission_ack(LAND_DIRECTION_ALT);
 		break;
 
@@ -147,6 +151,11 @@ static inline void parse_DL_SURVEY_MISSION_SETTINGS(void)
 			send_mission_ack(GROUND_PROXIMTY_FAILSAFE_ACK);
 		break;
 
+		case 15:
+			clean_current_mission();
+			initialize_mission_vars();
+			send_mission_ack(SURVEY_CLEAR_MISSION_ACK);
+		break;
 	}
 }
 

@@ -41,7 +41,7 @@
 // Include Standard Camera Control Interface
 #include "dc.h"
 
-#include "modules/autmav/sony_a7r_handler.h"
+#include "modules/autmav/sony_camera_handler.h"
 #include "modules/autmav/RTK_receive.h"
 
 #ifndef WIFI_SHOOT_DELAY_MS

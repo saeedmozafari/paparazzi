@@ -5,9 +5,9 @@
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
       <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <define name="RTK_GPS_LED" value="4"/>
+	  <define name="RTK_GPS_LED" value="3"/>
       <configure name="BARO_LED" value="none"/>
-	  <configure name="RADIO_CONTROL_LED" value="3"/>
+	  <configure name="RADIO_CONTROL_LED" value="none"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
 	  <configure name="GPS_LED" value="none"/>
 	  <configure name="SYS_TIME_LED" value="1"/>
@@ -83,8 +83,8 @@
     <!--load name="gps_ubx_ucenter.xml">
         <define name="DEBUG_GPS_UBX_UCENTER" value="FALSE" />    
     </load-->
-    <load name="autmav/sony_a7r_handler.xml">
-	    <define name="ESP_01_UART_PORT" value="uart6"/>
+    <load name="autmav/sony_camera_handler.xml">
+	<define name="ESP_01_UART_PORT" value="uart6"/>
         <define name="ESP_01_BAUD" value="B115200"/>
     </load>
     <load name="autmav/advanced_landing.xml"/>
@@ -107,16 +107,16 @@
     </load-->
     <load name="air_data.xml"/>
     <load name="autmav/catapult.xml"/>
-    <load name="autmav/mission_handler.xml"/>
     <load name="autmav/survey.xml"/>
+    <load name="autmav/mission_handler.xml"/>
     <load name="autmav/digital_cam_wifi.xml"/>	
   </modules>
 
   <!-- commands section -->
   <servos>
     <servo name="THROTTLE" no="0" min="988" neutral="988" max="2000"/>
-    <servo name="ELEVATOR_RIGHT" no="1" min="1100" neutral="1500" max="1900"/>
-    <servo name="ELEVATOR_LEFT" no="2" min="1900" neutral="1500" max="1100"/>
+    <servo name="ELEVATOR_RIGHT" no="1" min="1000" neutral="1500" max="2000"/>
+    <servo name="ELEVATOR_LEFT" no="2" min="2000" neutral="1500" max="1000"/>
     <servo name="AILERON" no="3" min="1100" neutral="1500" max="1900"/>
     <servo name="CAM_PAN" no="4" min="2100" neutral="1500" max="900"/>
     <servo name="CAM_TILT" no="5" min="1000" neutral="1250" max="1500"/>    
@@ -143,7 +143,7 @@
 	<set command="YAW" value="@YAW"/>
   </auto_rc_commands>
   <section name="MIXER">
-    <define name="COMBI_SWITCH" value="0.5"/>
+    <define name="COMBI_SWITCH" value="1.0"/>
   </section>
   <command_laws>
     <set servo="THROTTLE" value="@THROTTLE"/>
@@ -155,7 +155,7 @@
   </command_laws>
 
   <section name="AUTO1" prefix="AUTO1_">
-    <define name="MAX_ROLL" value="55" unit="deg"/>
+    <define name="MAX_ROLL" value="50" unit="deg"/>
     <define name="MAX_PITCH" value="30" unit="deg"/>
     <define name="MAX_YAW_RATE" value="RadOfDeg(100)"/>
   </section>
@@ -258,7 +258,7 @@
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
     <define name="COURSE_PGAIN" value="0.8"/>
     <define name="COURSE_DGAIN" value="1.4"/>
-    <define name="ROLL_MAX_SETPOINT" value="40" unit="deg"/>
+    <define name="ROLL_MAX_SETPOINT" value="45" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>
     <define name="PITCH_MIN_SETPOINT" value="-30" unit="deg"/>
     <define name="PITCH_PGAIN" value="20000"/>
@@ -278,7 +278,10 @@
     <define name="YAW_LOOP" value="TRUE"/>
     <define name="YAW_DGAIN" value="5000"/>
     <define name="YAW_TRIM_NY" value="TRUE"/>
-    <define name="YAW_NY_IGAIN" value="5000"/> 
+    <define name="YAW_NY_IGAIN" value="5000.0"/>
+    <define name="RUDDER_I_GAIN" value="5000.0"/>
+    <define name="RUDDER_RATE_GAIN" value="5000.0"/>
+ 
   </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">

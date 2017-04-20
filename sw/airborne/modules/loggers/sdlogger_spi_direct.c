@@ -351,7 +351,7 @@ void sdlogger_spi_direct_command(void)
     sdlogger_spi.status = SDLogger_GettingIndexForDownload;
   }
   else if (sdcard1.status == SDCard_Idle && sdlogger_spi.command == 255) {
-    telemetry_mode_Main = TELEMETRY_MODE_Main_empty;
+    //telemetry_mode_Main = TELEMETRY_MODE_Main_empty;
     LOGGER_LED_ON;
     sdcard_spi_read_block(&sdcard1, 0x00002000, NULL);
     sdlogger_spi.download_length = 0;

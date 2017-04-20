@@ -39,6 +39,10 @@
     <module name="ins" type="alt_float">
       <define name="USE_BAROMETER" value="TRUE"/>
     </module>
+    <module name="logger_sd_spi_direct">
+        <configure name="SDLOGGER_DIRECT_SPI" value="SPI1"/>
+        <configure name="SDLOGGER_DIRECT_SPI_SLAVE" value="SPI_SLAVE1"/>
+    </module>
   </firmware>
 
   <modules>

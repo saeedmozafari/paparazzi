@@ -184,6 +184,9 @@ float h_ctl_yaw_dgain;
 float h_ctl_yaw_ny_igain;
 float h_ctl_yaw_ny_sum_err;
 pprz_t h_ctl_rudder_setpoint;
+float h_ctl_rudder_i_gain;
+float h_ctl_rudder_rate_gain;
+float accel_y_cm;
 #endif
 
 /* inner CL loop parameters */
@@ -336,6 +339,8 @@ void h_ctl_initialize_variables(void)
   h_ctl_yaw_ny_igain = H_CTL_YAW_NY_IGAIN;
   h_ctl_yaw_ny_sum_err = 0.;
   h_ctl_rudder_setpoint = 0;
+  h_ctl_rudder_i_gain = H_CTL_RUDDER_I_GAIN;
+  h_ctl_rudder_rate_gain = H_CTL_RUDDER_RATE_GAIN;
 #endif
 
 #if H_CTL_CL_LOOP
@@ -394,6 +399,13 @@ void h_ctl_course_loop(void)
                         + h_ctl_course_dgain * d_err;
 
   BoundAbs(h_ctl_roll_setpoint, h_ctl_roll_max_setpoint);
+
+  if(err < (3.1415 / 180.0 * 5.0)) {
+  	//h_ctl_roll_setpoint = 0;
+  	accel_y_cm = 2 * stateGetHorizontalSpeedNorm_f() * sinf(err) / CARROT;
+  } else {
+  	accel_y_cm = 0;
+  }
 }
 
 #if USE_AIRSPEED
@@ -644,7 +656,7 @@ inline static void h_ctl_yaw_loop(void)
   VECT3_COPY(accel_ned, (*accel_tmp));
   accel_ned.z -= ACCEL_BFP_OF_REAL(9.81f);
   int32_rmat_vmult(&accel_meas_body, ned_to_body_rmat, &accel_ned);
-  float ny = -ACCEL_FLOAT_OF_BFP(accel_meas_body.y) / 9.81f; // Lateral load factor (in g)
+  float ny = ((accel_y_cm * h_ctl_rudder_i_gain)-ACCEL_FLOAT_OF_BFP(accel_meas_body.y)) / 9.81f; // Lateral load factor (in g)
 #else
   float ny = 0.f;
 #endif
@@ -673,7 +685,8 @@ inline static void h_ctl_yaw_loop(void)
 #endif
 
   h_ctl_ref.yaw_rate = h_ctl_yaw_rate_setpoint // set by RC
-                       + 9.81f / Vo * sinf(h_ctl_roll_setpoint); // for turns
+                       + 9.81f / Vo * sinf(h_ctl_roll_setpoint);
+                      // + accel_y_cm * h_ctl_rudder_rate_gain; // for turns
   float d_err = h_ctl_ref.yaw_rate - stateGetBodyRates_f()->r;
 
   float cmd = + h_ctl_yaw_dgain * d_err

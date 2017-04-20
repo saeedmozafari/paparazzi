@@ -47,6 +47,9 @@ extern float h_ctl_pitch_of_roll;
 #if H_CTL_YAW_LOOP
 extern float h_ctl_yaw_dgain;
 extern float h_ctl_yaw_ny_igain;
+extern float h_ctl_rudder_i_gain;
+extern float h_ctl_rudder_rate_gain;
+extern float accel_y_cm;
 #endif
 
 

@@ -138,10 +138,10 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <block name="Airspeed calibration" strip_button="Calibration">
+    <!--block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block>
+    </block-->
     <block name="Clear Mission" strip_button="ClearMission">
       <call_once fun="clean_current_mission()"/>
       <call_once fun="initialize_mission_vars()"/>  

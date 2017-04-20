@@ -5,7 +5,7 @@
   <firmware name="fixedwing">
     <target name="ap" board="apogee_1.0_chibios">
       <configure name="USE_BARO_BOARD" value="TRUE"/>		
-	  <define name="RTK_GPS_LED" value="5"/>
+	  <define name="RTK_GPS_LED" value="3"/>
       <configure name="BARO_LED" value="none"/>
 	  <configure name="RADIO_CONTROL_LED" value="none"/>
 	  <configure name="AHRS_ALIGNER_LED" value="2"/>
@@ -278,7 +278,10 @@
     <define name="YAW_LOOP" value="TRUE"/>
     <define name="YAW_DGAIN" value="5000"/>
     <define name="YAW_TRIM_NY" value="TRUE"/>
-    <define name="YAW_NY_IGAIN" value="5000"/> 
+    <define name="YAW_NY_IGAIN" value="5000.0"/>
+    <define name="RUDDER_I_GAIN" value="5000.0"/>
+    <define name="RUDDER_RATE_GAIN" value="5000.0"/>
+ 
   </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">

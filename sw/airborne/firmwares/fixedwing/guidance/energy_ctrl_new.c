@@ -153,8 +153,8 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 
 static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
  {
-  float sf11_ctl_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
-  float baro_ctl_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
+  float sf11_ctl_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl / 1000.0;
+  float baro_ctl_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
 
    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,
                          &v_ctl_auto_throttle_nominal_cruise_throttle, 
@@ -315,7 +315,7 @@ void v_ctl_altitude_loop(void)
     v_ctl_altitude_error = v_ctl_altitude_setpoint - (GetAltRef() + lidar_sf11.distance);
   }
   if(rtk_passthrough_agl){
-    v_ctl_altitude_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl;
+    v_ctl_altitude_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl / 1000.0;
   } 
 
 #else

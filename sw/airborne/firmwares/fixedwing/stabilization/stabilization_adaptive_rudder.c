@@ -188,6 +188,7 @@ float h_ctl_rudder_i_gain;
 float h_ctl_rudder_rate_gain;
 float accel_y_cm;
 float h_ctl_rudder_threshold;
+float h_ctl_rudder_d_gain;
 #endif
 
 /* inner CL loop parameters */
@@ -343,6 +344,7 @@ void h_ctl_initialize_variables(void)
   h_ctl_rudder_i_gain = H_CTL_RUDDER_I_GAIN;
   h_ctl_rudder_rate_gain = H_CTL_RUDDER_RATE_GAIN;
   h_ctl_rudder_threshold = H_CTL_RUDDER_THRESHOLD;
+  h_ctl_rudder_d_gain = H_CTL_RUDDER_D_GAIN;
 #endif
 
 #if H_CTL_CL_LOOP
@@ -404,7 +406,7 @@ void h_ctl_course_loop(void)
 
   if(fabsf(err) < (h_ctl_rudder_threshold * 3.1415 / 180.0)) {
   	h_ctl_roll_setpoint = 0;
-  	accel_y_cm = 2 * stateGetHorizontalSpeedNorm_f() * sinf(err) / CARROT;
+  	accel_y_cm = 2 * stateGetHorizontalSpeedNorm_f() * sinf(err) / CARROT + 2 * h_ctl_rudder_d_gain * stateGetHorizontalSpeedNorm_f() * sinf(d_err) / CARROT;
   } else {
   	accel_y_cm = 0;
   }

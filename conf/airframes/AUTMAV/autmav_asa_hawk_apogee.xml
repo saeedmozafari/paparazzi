@@ -281,7 +281,8 @@
     <define name="YAW_NY_IGAIN" value="5000.0"/>
     <define name="RUDDER_I_GAIN" value="5000.0"/>
     <define name="RUDDER_RATE_GAIN" value="1.0"/>
-    <define name="RUDDER_THRESHOLD" value="30.0"/>
+    <define name="RUDDER_THRESHOLD" value="15.0"/>
+    <define name="RUDDER_D_GAIN" value="3.0"/>
   </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">

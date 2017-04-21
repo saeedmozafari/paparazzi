@@ -51,6 +51,7 @@ extern float h_ctl_rudder_i_gain;
 extern float h_ctl_rudder_rate_gain;
 extern float accel_y_cm;
 extern float h_ctl_rudder_threshold;
+extern float h_ctl_rudder_d_gain;
 #endif
 
 

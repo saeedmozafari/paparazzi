@@ -129,7 +129,7 @@
   </exceptions>
   <blocks>
     <block name="Wait GPS">
-      <set value="50" var="nav_radius"/>
+      <set value="60" var="nav_radius"/>
       <set value="1" var="autopilot.kill_throttle"/>
       <while cond="!GpsFixValid()"/>
     </block>
@@ -138,16 +138,17 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <!--block name="Airspeed calibration" strip_button="Calibration">
+    <block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block-->
+    </block>
     <block name="Clear Mission" strip_button="ClearMission">
       <call_once fun="clean_current_mission()"/>
       <call_once fun="initialize_mission_vars()"/>  
     </block>    
     <block name="Holding point">
       <set value="1" var="autopilot.kill_throttle"/>
+      <set value="-1." var="h_ctl_rudder_threshold"/>
       <attitude roll="0" throttle="0" vmode="throttle"/>
     </block>
     <block name="Arm Catapult" strip_button="Takeoff">
@@ -157,6 +158,7 @@
       <call_once fun="set_sf11_agl_mode(false)" />
       <call_once fun="set_rtk_passthrough_agl(false)" />
       <set value="0" var="autopilot.kill_throttle"/>
+      <set value="-1" var="h_ctl_rudder_threshold"/>
       <call fun="nav_catapult_setup()"/>
       <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
     </block>
@@ -165,6 +167,7 @@
       <deroute block="Standby"/>
     </block>
     <block name="Standby">
+      <set value="-1" var="h_ctl_rudder_threshold"/>
       <circle radius="nav_radius" wp="STDBY"/>
     </block>
     <block name="Standby2">
@@ -177,11 +180,13 @@
       <circle wp="STDBY" vmode="climb" climb="3.0" radius="nav_radius" until=" GetPosAlt() > WaypointAlt(WP_1)"/>
     </block>
     <block name="Survey">
+      <set value="5." var="h_ctl_rudder_threshold"/>
       <call fun="nav_survey_photo_run()"/>
       <deroute block="Standby"/>
     </block>
 
 	<block name="Loiter" strip_button="Landing">
+        <set value="-1" var="h_ctl_rudder_threshold"/>
 		<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
 		<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="70 > (GetPosAlt() - GetAltRef())"/>
 	    <call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
@@ -196,6 +201,7 @@
 	</block>
 
 	<block name="Landing">
+        <set value="5.0" var="h_ctl_rudder_threshold"/>
 		<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
 	</block>
 

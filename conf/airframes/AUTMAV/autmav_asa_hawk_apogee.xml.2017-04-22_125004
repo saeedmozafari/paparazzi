@@ -32,7 +32,7 @@
     <target name="nps" board="pc">
         <define name="NPS_DISABLE_IVY_DATA"/>
         <module name="radio_control" type="ppm"/>
- 	    <module name="fdm" type="jsbsim"/>
+ 	    <module name="fdm"   type="jsbsim"/>
         <module name="gps" type="ublox"/>
         <module name="airspeed_ets"/>
  	    <define name="INS_BARO_ID" value="BARO_SIM_SENDER_ID"/>
@@ -256,9 +256,8 @@
   </section>
   
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
-    <define name="COURSE_PGAIN" value="0.5"/>
-    <define name="COURSE_IGAIN" value="20."/>
-    <define name="COURSE_DGAIN" value="0.1"/>
+    <define name="COURSE_PGAIN" value="0.8"/>
+    <define name="COURSE_DGAIN" value="1.4"/>
     <define name="ROLL_MAX_SETPOINT" value="45" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>
     <define name="PITCH_MIN_SETPOINT" value="-30" unit="deg"/>
@@ -283,7 +282,7 @@
     <define name="RUDDER_I_GAIN" value="5000.0"/>
     <define name="RUDDER_RATE_GAIN" value="1.0"/>
     <define name="RUDDER_THRESHOLD" value="30.0"/>
-    <define name="RUDDER_D_GAIN" value="0.5"/>
+    <define name="RUDDER_D_GAIN" value="3.0"/>
   </section>
 
   <section name="CATAPULT" prefix="NAV_CATAPULT_">

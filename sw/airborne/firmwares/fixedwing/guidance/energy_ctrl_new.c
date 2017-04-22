@@ -153,7 +153,12 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 
 static void send_energy_new(struct transport_tx *trans, struct link_device *dev)
  {
+#ifndef SITL  
   float sf11_ctl_error = v_ctl_altitude_setpoint - rtk_gps_ubx.state.hmsl / 1000.0;
+#else
+  float sf11_ctl_error = 0;
+#endif
+
   float baro_ctl_error = v_ctl_altitude_setpoint - stateGetPositionUtm_f()->alt;
 
    pprz_msg_send_ENERGYADAPTIVE_NEW(trans, dev, AC_ID,

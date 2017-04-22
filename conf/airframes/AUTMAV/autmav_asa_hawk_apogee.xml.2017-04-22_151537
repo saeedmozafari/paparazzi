@@ -257,7 +257,7 @@
   
   <section name="HORIZONTAL CONTROL" prefix="H_CTL_">
     <define name="COURSE_PGAIN" value="0.5"/>
-    <define name="COURSE_IGAIN" value="20."/>
+    <define name="COURSE_IGAIN" value="0."/>
     <define name="COURSE_DGAIN" value="0.1"/>
     <define name="ROLL_MAX_SETPOINT" value="45" unit="deg"/>
     <define name="PITCH_MAX_SETPOINT" value="30" unit="deg"/>

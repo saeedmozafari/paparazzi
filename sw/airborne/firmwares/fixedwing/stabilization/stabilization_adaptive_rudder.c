@@ -81,7 +81,9 @@ float h_ctl_course_setpoint; /* rad, CW/north */
 float h_ctl_course_pre_bank;
 float h_ctl_course_pre_bank_correction;
 float h_ctl_course_pgain;
+float h_ctl_course_igain;
 float h_ctl_course_dgain;
+float h_ctl_course_sum_err;
 float h_ctl_roll_max_setpoint;
 
 /* roll and pitch disabling */
@@ -298,6 +300,21 @@ static void send_ctl_a(struct transport_tx *trans, struct link_device *dev)
                         &(stateGetNedToBodyEulers_f()->theta),
                         &h_ctl_elevator_setpoint);
 }
+
+static void send_course_params(struct transport_tx *trans, struct link_device *dev)
+{
+  pprz_msg_send_H_CTL_COURSE(trans, dev, AC_ID,
+                        &h_ctl_roll_sum_err,
+                        &h_ctl_roll_setpoint,
+                        &h_ctl_ref.roll_angle,
+                        &(stateGetNedToBodyEulers_f()->phi),
+                        &h_ctl_aileron_setpoint,
+                        &h_ctl_pitch_sum_err,
+                        &h_ctl_pitch_loop_setpoint,
+                        &h_ctl_ref.pitch_angle,
+                        &(stateGetNedToBodyEulers_f()->theta),
+                        &h_ctl_elevator_setpoint);
+}
 #endif
 
 void h_ctl_initialize_variables(void) 
@@ -311,7 +328,9 @@ void h_ctl_initialize_variables(void)
   h_ctl_course_pre_bank = 0.;
   h_ctl_course_pre_bank_correction = H_CTL_COURSE_PRE_BANK_CORRECTION;
   h_ctl_course_pgain = H_CTL_COURSE_PGAIN;
+  h_ctl_course_igain = H_CTL_COURSE_IGAIN;
   h_ctl_course_dgain = H_CTL_COURSE_DGAIN;
+  h_ctl_course_sum_err = 0.;
   h_ctl_roll_max_setpoint = H_CTL_ROLL_MAX_SETPOINT;
 
   h_ctl_roll_setpoint = 0.;
@@ -379,6 +398,18 @@ void h_ctl_init(void)
 #endif
 }
 
+/** Define reference generator time step
+ *  default to control frequency
+ *  and ahrs propagation freq if control is triggered by ahrs
+ */
+#ifdef AHRS_TRIGGERED_ATTITUDE_LOOP
+#define H_CTL_REF_DT (1./AHRS_PROPAGATE_FREQUENCY)
+#else
+#define H_CTL_REF_DT (1./CONTROL_FREQUENCY)
+#endif
+
+#define H_CTL_COURSE_SUM_ERR_MAX (150.0 * 3.1415 / 180.0)
+
 /**
  * \brief
  *
@@ -398,18 +429,26 @@ void h_ctl_course_loop(void)
   float speed_depend_nav = stateGetHorizontalSpeedNorm_f() / NOMINAL_AIRSPEED;
   Bound(speed_depend_nav, 0.66, 1.5);
 
+  if (autopilot_get_mode() == PPRZ_MODE_MANUAL || autopilot.launch == false) {
+    h_ctl_course_sum_err = 0.;
+  } else {
+    if (h_ctl_course_igain > 0.) {
+      h_ctl_course_sum_err += err * H_CTL_REF_DT;
+      BoundAbs(h_ctl_course_sum_err, H_CTL_COURSE_SUM_ERR_MAX / h_ctl_course_igain);
+    } else {
+      h_ctl_course_sum_err = 0.;
+    }
+  }
+
   h_ctl_roll_setpoint = h_ctl_course_pre_bank_correction * h_ctl_course_pre_bank
                         + h_ctl_course_pgain * speed_depend_nav * err
+                        + h_ctl_course_sum_err * h_ctl_course_igain
                         + h_ctl_course_dgain * d_err;
 
   BoundAbs(h_ctl_roll_setpoint, h_ctl_roll_max_setpoint);
+  
+  accel_y_cm = 2 * stateGetHorizontalSpeedNorm_f() * sinf(err) / CARROT + 2 * h_ctl_rudder_d_gain * stateGetHorizontalSpeedNorm_f() * sinf(d_err) / CARROT;
 
-  if(fabsf(err) < (h_ctl_rudder_threshold * 3.1415 / 180.0)) {
-  	h_ctl_roll_setpoint = 0;
-  	accel_y_cm = 2 * stateGetHorizontalSpeedNorm_f() * sinf(err) / CARROT + 2 * h_ctl_rudder_d_gain * stateGetHorizontalSpeedNorm_f() * sinf(d_err) / CARROT;
-  } else {
-  	accel_y_cm = 0;
-  }
 }
 
 #if USE_AIRSPEED
@@ -445,16 +484,6 @@ void h_ctl_attitude_loop(void)
 #endif
   }
 }
-
-/** Define reference generator time step
- *  default to control frequency
- *  and ahrs propagation freq if control is triggered by ahrs
- */
-#ifdef AHRS_TRIGGERED_ATTITUDE_LOOP
-#define H_CTL_REF_DT (1./AHRS_PROPAGATE_FREQUENCY)
-#else
-#define H_CTL_REF_DT (1./CONTROL_FREQUENCY)
-#endif
 
 /** Adaptive control tuning parameters
  *  activate with USE_KFF_UPDATE

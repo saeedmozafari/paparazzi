@@ -1,0 +1,121 @@
+<!DOCTYPE flight_plan SYSTEM "../flight_plan.dtd">
+
+<flight_plan alt="1150" ground_alt="1000" lat0="35.728108" lon0="51.441201" max_dist_from_home="10000" name="Basic" security_height="10">
+  <header>
+    #include "subsystems/datalink/datalink.h"
+    #include "modules/sensors/airspeed_ms45xx_i2c.h"
+    #include "modules/autmav/catapult.h"
+    #include "modules/autmav/advanced_landing.h"
+    #include "modules/autmav/sony_camera_handler.h"
+    #include "modules/autmav/survey.h"
+    #include "firmwares/fixedwing/guidance/energy_ctrl_new.h"
+    #include "firmwares/fixedwing/stabilization/stabilization_adaptive.h"
+</header>
+  <waypoints>
+    <waypoint height="0.0" name="HOME" x="0.0" y="0.0"/>
+    <waypoint height="150" name="AP" x="300.0" y="300.0"/>
+    <waypoint height="150" name="TC" x="-300.0" y="0.0"/>
+    <waypoint height="150" name="TP" x="300.0" y="0.0"/>
+    <waypoint name="TO" x="0.0" y="0.0"/>
+    <waypoint name="CLIMB" x="0.0" y="0.0"/>
+    <waypoint height="150.0" name="STDBY" x="50.0" y="50.0"/>
+    <waypoint height="250.0" name="STDBY2" x="0.0" y="0.0"/>
+    <waypoint height="400.0" name="STDBY3" x="0.0" y="0.0"/>
+    <waypoint height="0.0" name="TD" x="0.0" y="0.0"/>
+    <waypoint name="1" x="0.0" y="0.0"/>
+    <waypoint name="2" x="0.0" y="0.0"/>
+    <waypoint name="3" x="0.0" y="0.0"/>
+    <waypoint name="4" x="0.0" y="0.0"/>
+ </waypoints>
+  <exceptions>
+    <!--exception cond="datalink_failsafe()" deroute="Loiter"/>
+    <exception cond="max_distance_failsafe()" deroute="Loiter"/-->
+  </exceptions>
+  <blocks>
+    <block name="Wait GPS">
+      <set value="60" var="nav_radius"/>
+      <set value="1" var="autopilot.kill_throttle"/>
+      <while cond="!GpsFixValid()"/>
+    </block>
+    <block name="Geo init">
+      <while cond="LessThan(NavBlockTime(), 10)"/>
+      <call fun="NavSetGroundReferenceHere()"/>
+      <call fun="NavSetAltitudeReferenceHere()"/>
+    </block>
+    <!--block name="Airspeed calibration" strip_button="Calibration">
+      <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
+      <deroute block="Holding point"/>
+    </block-->
+    <block name="Clear Mission" strip_button="ClearMission">
+      <call_once fun="clean_current_mission()"/>
+      <call_once fun="initialize_mission_vars()"/>  
+    </block>    
+    <block name="Holding point">
+      <set value="1" var="autopilot.kill_throttle"/>
+      <attitude roll="0" throttle="0" vmode="throttle"/>
+    </block>
+    <block name="Arm Catapult" strip_button="Takeoff">
+      <exception cond="GetPosAlt() > GetAltRef()+30" deroute="Disarm Catapult"/>
+      <call_once fun="v_ctl_initialize_variables()"/>
+      <call_once fun="h_ctl_initialize_variables()"/>
+      <call_once fun="set_sf11_agl_mode(false)" />
+      <call_once fun="set_rtk_passthrough_agl(false)" />
+      <set value="0" var="autopilot.kill_throttle"/>
+      <call fun="nav_catapult_setup()"/>
+      <call fun="nav_catapult_run(WP_TO, WP_CLIMB)"/>
+    </block>
+    <block name="Disarm Catapult">
+      <call fun="nav_catapult_disarm()"/>
+      <deroute block="Standby"/>
+    </block>
+    <block name="Standby">
+      <circle radius="nav_radius" wp="STDBY"/>
+    </block>
+    <block name="Standby2">
+      <circle radius="nav_radius" wp="STDBY2"/>
+    </block>
+    <block name="Standby3">
+      <circle radius="nav_radius" wp="STDBY3"/>
+    </block>
+    <block name="flyover horizontal" strip_button="line1" strip_icon="survey_rect_we.png">
+      <go from="TC" hmode="route" vmode="alt" wp="TP" approaching_time="-1"/>
+      <deroute block="Standby"/>
+    </block>
+    <block name="flyover horizontal2" strip_button="line2" strip_icon="survey_rect_ns.png">
+      <go from="TP" hmode="route" vmode="alt" wp="AP" approaching_time="-1"/>
+      <deroute block="Standby"/>
+    </block>
+    <block name="Climb" strip_button="Survey" strip_icon="survey.png">
+      <circle wp="STDBY" vmode="climb" climb="3.0" radius="nav_radius" until=" GetPosAlt() > WaypointAlt(WP_1)"/>
+    </block>
+    <block name="Survey">
+      <call fun="nav_survey_photo_run()"/>
+      <deroute block="Standby"/>
+    </block>
+
+	<block name="Loiter" strip_button="Landing">
+        
+		<go wp="TD" vmode="alt" alt="GetPosAlt()"/>
+		<circle wp="TD" radius="nav_radius" vmode="climb" climb="-3.0" until="70 > (GetPosAlt() - GetAltRef())"/>
+	    <call_once fun="calc_turning_point(WP_TD, WP_AP, WP_TP, WP_TC)" />
+		<circle wp="TD" radius="nav_radius" vmode="alt" alt="50 + ground_alt" until="NavCourseCloseTo(nav_advanced_landing_direction)" />
+	</block>
+
+	<block name="Approach">
+		<go wp="TP" vmode="alt"/>
+		<circle wp="TC" radius="nav_radius" vmode="alt" until="NavCircleCount() > 0.5" />
+		<call_once fun="set_sf11_agl_mode(false)" />
+        <call_once fun="set_rtk_passthrough_agl(true)" />
+	</block>
+
+	<block name="Landing">
+		<go from="AP" hmode="route" vmode="glide" wp="TD" approaching_time="nav_advanced_landing_flair_time_tresh"/>
+	</block>
+
+	<block name="flare">
+      <exception cond="LessThan(10 ,NavBlockTime())" deroute="Holding point"/>
+      <attitude roll="0.0" throttle="0.0" until="FALSE" vmode="throttle"/>
+	</block>
+	
+  </blocks>
+</flight_plan>

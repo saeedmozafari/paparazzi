@@ -41,9 +41,10 @@
       <message name="LOGGER_STATUS"       period="5.1"/>
       <message name="SONY_CAMERA_STATUS"  period="1.5"/>
       <message name="RTOS_MON"            period="2.5"/> <!--log -->
-      <message name="GPS_RTK"      period="1.8"/>
+      <message name="GPS_RTK"      period="0.2"/>
       <message name="GPS_RXMRTCM"      period="2.5"/>  
-      <message name="DC_INFO"      period="0.25"/>   
+      <message name="DC_INFO"      period="0.25"/>
+      <message name="H_CTL_A"      period="0.25"/>   
     </mode>
 
     <mode name="raw_sensors">

@@ -289,7 +289,7 @@ static void send_tune_roll(struct transport_tx *trans, struct link_device *dev)
 static void send_ctl_a(struct transport_tx *trans, struct link_device *dev)
 {
   pprz_msg_send_H_CTL_A(trans, dev, AC_ID,
-                        &h_ctl_roll_sum_err,
+                        &h_ctl_course_sum_err,
                         &h_ctl_roll_setpoint,
                         &h_ctl_ref.roll_angle,
                         &(stateGetNedToBodyEulers_f()->phi),
@@ -301,20 +301,6 @@ static void send_ctl_a(struct transport_tx *trans, struct link_device *dev)
                         &h_ctl_elevator_setpoint);
 }
 
-static void send_course_params(struct transport_tx *trans, struct link_device *dev)
-{
-  pprz_msg_send_H_CTL_COURSE(trans, dev, AC_ID,
-                        &h_ctl_roll_sum_err,
-                        &h_ctl_roll_setpoint,
-                        &h_ctl_ref.roll_angle,
-                        &(stateGetNedToBodyEulers_f()->phi),
-                        &h_ctl_aileron_setpoint,
-                        &h_ctl_pitch_sum_err,
-                        &h_ctl_pitch_loop_setpoint,
-                        &h_ctl_ref.pitch_angle,
-                        &(stateGetNedToBodyEulers_f()->theta),
-                        &h_ctl_elevator_setpoint);
-}
 #endif
 
 void h_ctl_initialize_variables(void) 
@@ -408,7 +394,7 @@ void h_ctl_init(void)
 #define H_CTL_REF_DT (1./CONTROL_FREQUENCY)
 #endif
 
-#define H_CTL_COURSE_SUM_ERR_MAX (150.0 * 3.1415 / 180.0)
+#define H_CTL_COURSE_SUM_ERR_MAX (H_CTL_ROLL_MAX_SETPOINT / 2.0)
 
 /**
  * \brief

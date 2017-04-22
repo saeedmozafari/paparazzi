@@ -37,6 +37,7 @@ struct link_device *wifi_command;
 #define FNUMBER 2.8
 #endif
 
+uint8_t last_set_setting;
 uint16_t time_counter;
 uint16_t sival = 160;
 uint16_t delay_counter = 0;
@@ -113,43 +114,43 @@ void set_shutter_speed(float val1){
 	char value[9];
 
 	if(val1 == 30 ){
-		char temp_value[9] = "30";
+		char temp_value[9] = "30.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 25){
-		char temp_value[9] = "25";
+		char temp_value[9] = "25.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 20){
-		char temp_value[9] = "20";
+		char temp_value[9] = "20.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 15){
-		char temp_value[9] = "15";
+		char temp_value[9] = "15.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 13){
-		char temp_value[9] = "13";
+		char temp_value[9] = "13.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 10){
-		char temp_value[9] = "10";
+		char temp_value[9] = "10.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 8){
-		char temp_value[9] = "8";
+		char temp_value[9] = "8.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 6){
-		char temp_value[9] = "6";
+		char temp_value[9] = "6.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 5){
-		char temp_value[9] = "5";
+		char temp_value[9] = "5.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 4){
-		char temp_value[9] = "4";
+		char temp_value[9] = "4.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 3.2){
@@ -161,7 +162,7 @@ void set_shutter_speed(float val1){
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 2){
-		char temp_value[9] = "2";
+		char temp_value[9] = "2.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 1.6){
@@ -173,7 +174,7 @@ void set_shutter_speed(float val1){
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 1){
-		char temp_value[9] = "1";
+		char temp_value[9] = "1.0";
 		strncpy(value, temp_value, 9);
 	}
 	if(val1 == 0.8){
@@ -315,88 +316,88 @@ void set_iso(uint16_t val){
 	char value[5];
 
 	if(val == 0){
-		char temp_value[5] = "AUTO ";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "AUTO";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 100){
-		char temp_value[5] = "100";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "100";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 125){
-		char temp_value[5] = "125";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "125";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 160){
-		char temp_value[5] = "160";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "160";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 200){
-		char temp_value[5] = "200";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "200";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 250){
-		char temp_value[5] = "250";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "250";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 320){
-		char temp_value[5] = "320";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "320";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 400){
-		char temp_value[5] = "400";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "400";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 500){
-		char temp_value[5] = "500";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "500";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 640){
-		char temp_value[5] = "640";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "640";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 800){
-		char temp_value[5] = "800";
-		strncpy(value, temp_value, 5);		
+		char temp_value[3] = "800";
+		strncpy(value, temp_value, 3);		
 	}
 	if(val == 1000){
-		char temp_value[5] = "1000";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "1000";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 1250){
-		char temp_value[5] = "1250";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "1250";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 1600){
-		char temp_value[5] = "1600";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "1600";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 2000){
-		char temp_value[5] = "2000";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "2000";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 2500){
-		char temp_value[5] = "2500";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "2500";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 3200){
-		char temp_value[5] = "3200";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "3200";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 4000){
-		char temp_value[5] = "4000";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "4000";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 5000){
-		char temp_value[5] = "5000";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "5000";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 6400){
-		char temp_value[5] = "6400";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "6400";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 8000){
-		char temp_value[5] = "8000";
-		strncpy(value, temp_value, 5);		
+		char temp_value[4] = "8000";
+		strncpy(value, temp_value, 4);		
 	}
 	if(val == 10000){
 		char temp_value[5] = "10000";
@@ -434,6 +435,74 @@ void set_fnumber(float val){
 	if(val == 2.8){
 		char temp_value[3] = "2.8";
 		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 3.5){
+		char temp_value[3] = "3.5";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 4.0){
+		char temp_value[3] = "4.0";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 4.5){
+		char temp_value[3] = "4.5";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 5.0){
+		char temp_value[3] = "5.0";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 5.6){
+		char temp_value[3] = "5.6";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 6.3){
+		char temp_value[3] = "6.3";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 7.1){
+		char temp_value[3] = "7.1";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 8.0){
+		char temp_value[3] = "8.0";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 9.0){
+		char temp_value[3] = "9.0";
+		strncpy(value, temp_value, 3);		 
+	}
+	if(val == 10){
+		char temp_value[2] = "10";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 11){
+		char temp_value[2] = "11";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 13){
+		char temp_value[2] = "13";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 14){
+		char temp_value[2] = "14";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 16){
+		char temp_value[2] = "16";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 18){
+		char temp_value[2] = "18";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 20){
+		char temp_value[2] = "20";
+		strncpy(value, temp_value, 2);		 
+	}
+	if(val == 22){
+		char temp_value[2] = "22";
+		strncpy(value, temp_value, 2);		 
 	}
 
 	char set_fnumber_msg[267] = "POST /sony/camera HTTP/1.1\r\nContent-Type: application/json; charset=utf-8\r\nAccept: Accept-application/json\r\nHost: 192.168.122.1:8080\r\nContent-Length: 63\r\nExpect: 100-continue\r\nConnection: Keep-Alive\r\n\r\n{\"method\":\"setFNumber\",\"params\":[\"   \"],\"id\":1,\"version\":\"1.0\"}\r\n";
@@ -510,6 +579,95 @@ void sony_camera_handler_periodic(void){
 			}
 			else{
 				time_counter++;
+			}
+		break;
+		case SETTING_SHUTTER_SPEED:
+			set_shutter_speed(ssvalue);
+			time_counter = 0;
+			cam_state = WAIT_FOR_SHUTTER_SPEED;
+			result_received = false;
+		break;
+		case WAIT_FOR_SHUTTER_SPEED:
+			if(result_received){
+				cam_state = SETTING_ISO;
+			}
+			else{
+				if(time_counter < 500){
+					time_counter++;
+				}
+				else{
+					cam_state = SETTING_ISO;
+					uint8_t one = 1;
+					last_set_setting = 0;
+					DOWNLINK_SEND_CAMERA_SETTINGS(DefaultChannel, DefaultDevice,
+															&ssvalue,
+															&sival,
+															&sfval,
+															&last_set_setting,
+															&one);
+				}
+			}
+		break;
+		case SETTING_ISO:
+			set_iso(sival);
+			time_counter = 0;
+			cam_state = WAIT_FOR_ISO;
+			result_received = false;
+		break;
+		case WAIT_FOR_ISO:
+			if(result_received){
+				cam_state = SETTING_FNUMBER;
+			}
+			else{
+				if(time_counter < 500){
+					time_counter++;
+				}
+				else{
+					cam_state = SETTING_FNUMBER;
+					uint8_t one = 1;
+					last_set_setting = 1;
+					DOWNLINK_SEND_CAMERA_SETTINGS(DefaultChannel, DefaultDevice,
+															&ssvalue,
+															&sival,
+															&sfval,
+															&last_set_setting,
+															&one);
+				}
+			}
+		break;
+		case SETTING_FNUMBER:
+			set_fnumber(sfval);
+			time_counter = 0;
+			cam_state = WAIT_FOR_FNUMBER;
+			result_received = false;
+		break;
+		case WAIT_FOR_FNUMBER:
+			if(result_received){
+				cam_state = IDLE_MODE;
+				uint8_t one = 1;
+				last_set_setting = 3;
+				DOWNLINK_SEND_CAMERA_SETTINGS(DefaultChannel, DefaultDevice,
+															&ssvalue,
+															&sival,
+															&sfval,
+															&last_set_setting,
+															&one);
+			}
+			else{
+				if(time_counter < 500){
+					time_counter++;
+				}
+				else{
+					cam_state = IDLE_MODE;
+					uint8_t one = 1;
+					last_set_setting = 2;
+					DOWNLINK_SEND_CAMERA_SETTINGS(DefaultChannel, DefaultDevice,
+															&ssvalue,
+															&sival,
+															&sfval,
+															&last_set_setting,
+															&one);
+				}
 			}
 		break;
 	}

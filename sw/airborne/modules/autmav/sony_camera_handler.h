@@ -15,7 +15,12 @@ enum camera_state{
 	IDLE_MODE,
 	SEND_SHOOT,
 	WAIT_FOR_IMAGE_NAME,
-	SETTING_MODE							
+	SETTING_SHUTTER_SPEED,
+	WAIT_FOR_SHUTTER_SPEED,
+	SETTING_ISO,
+	WAIT_FOR_ISO,
+	SETTING_FNUMBER,
+	WAIT_FOR_FNUMBER						
 };
 
 enum camera_model {
@@ -49,6 +54,7 @@ extern enum camera_state cam_state;
 extern enum camera_model cam_model;
 extern enum parser cam_parser;
 
+extern uint8_t last_set_setting;
 extern uint16_t time_counter;
 extern uint16_t delay_counter;
 extern uint16_t sival;
@@ -69,7 +75,13 @@ extern void sony_camera_handler_periodic(void);
 extern void wifi_response_parser(char);
 extern void clear_image_name(void);
 static inline void on_settings_msg_receive(void){
-	
+	ssvalue = DL_CAMERA_SETTINGS_GS_shutter_speed(dl_buffer);
+	sival = DL_CAMERA_SETTINGS_GS_iso(dl_buffer);
+	sfval = DL_CAMERA_SETTINGS_GS_fnumber(dl_buffer);
+
+	if(cam_state == IDLE_MODE){
+		cam_state = SETTING_SHUTTER_SPEED;
+	}
 }
 extern void set_rec_mode(void);
 extern void set_postview_name(void);

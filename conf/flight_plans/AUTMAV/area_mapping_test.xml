@@ -13,9 +13,9 @@
 </header>
   <waypoints>
     <waypoint height="0.0" name="HOME" x="0.0" y="0.0"/>
-    <waypoint height="150" name="AP" x="300.0" y="300.0"/>
-    <waypoint height="150" name="TC" x="-300.0" y="0.0"/>
-    <waypoint height="150" name="TP" x="300.0" y="0.0"/>
+    <waypoint height="150" name="AP" x="300.0" y="0.0"/>
+    <waypoint height="150" name="TC" x="0.0" y="300.0"/>
+    <waypoint height="150" name="TP" x="0.0" y="-300.0"/>
     <waypoint name="TO" x="0.0" y="0.0"/>
     <waypoint name="CLIMB" x="0.0" y="0.0"/>
     <waypoint height="150.0" name="STDBY" x="50.0" y="50.0"/>
@@ -42,10 +42,10 @@
       <call fun="NavSetGroundReferenceHere()"/>
       <call fun="NavSetAltitudeReferenceHere()"/>
     </block>
-    <!--block name="Airspeed calibration" strip_button="Calibration">
+    <block name="Airspeed calibration" strip_button="Calibration">
       <set value="(ms45xx.pressure_offset + ms45xx.diff_pressure)" var="ms45xx.pressure_offset"/>
       <deroute block="Holding point"/>
-    </block-->
+    </block>
     <block name="Clear Mission" strip_button="ClearMission">
       <call_once fun="clean_current_mission()"/>
       <call_once fun="initialize_mission_vars()"/>  

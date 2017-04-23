@@ -289,7 +289,7 @@ static void send_tune_roll(struct transport_tx *trans, struct link_device *dev)
 static void send_ctl_a(struct transport_tx *trans, struct link_device *dev)
 {
   pprz_msg_send_H_CTL_A(trans, dev, AC_ID,
-                        &h_ctl_course_sum_err,
+                        &h_ctl_roll_sum_err,
                         &h_ctl_roll_setpoint,
                         &h_ctl_ref.roll_angle,
                         &(stateGetNedToBodyEulers_f()->phi),

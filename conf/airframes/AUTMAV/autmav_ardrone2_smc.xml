@@ -19,7 +19,7 @@
     <module name="imu" type="ardrone2"/>
     <!-- gps: "ublox" or change to "sirf" for usage with parrot flight recorder -->
     <module name="gps" type="ublox"/>
-    <module name="stabilization" type="ntsmc"/>
+    <module name="stabilization" type="smc"/>
     <module name="ahrs" type="int_cmpl_quat"/>
     <module name="ins" type="extended"/>
   </firmware>
@@ -32,14 +32,14 @@
     <module name="air_data"/>
     <module name="geo_mag"/>
     <!--module name="logger_file"/-->
+    <!--
     <module name="video_thread">
     </module>
-
-    <module name="video_rtp_stream">
-      <define name="VIEWVIDEO_CAMERA" value="front_camera"/>
-      <define name="VIEWVIDEO_DOWNSIZE_FACTOR" value="4"/>
-      <define name="VIEWVIDEO_QUALITY_FACTOR" value="60"/>
+    -->
+    <!--module name="video_rtp_stream">
+        <define name="VIEWVIDEO_CAMERA" value="front_camera"/>
     </module>
+    -->
   </modules>
 
   <commands>
@@ -66,7 +66,7 @@
   </section>
 
   <command_laws>
-    <call fun="motor_mixing_run(autopilot_get_motors_on(),FALSE,values)"/>
+    <call fun="motor_mixing_run(autopilot.motors_on,FALSE,values)"/>
     <set servo="TOP_LEFT" value="motor_mixing.commands[MOTOR_FRONT_LEFT]"/>
     <set servo="TOP_RIGHT" value="motor_mixing.commands[MOTOR_FRONT_RIGHT]"/>
     <set servo="BOTTOM_RIGHT" value="motor_mixing.commands[MOTOR_BACK_RIGHT]"/>
@@ -83,7 +83,7 @@
     <define name="MAG_X_NEUTRAL" value="0"/>
     <define name="MAG_Y_NEUTRAL" value="0"/>
     <define name="MAG_Z_NEUTRAL" value="-180"/>
-    <define name="MAG_X_SENS" value="16." integer="16"/>l
+    <define name="MAG_X_SENS" value="16." integer="16"/>
     <define name="MAG_Y_SENS" value="16." integer="16"/>
     <define name="MAG_Z_SENS" value="16." integer="16"/>
 
@@ -106,6 +106,10 @@
     <define name="H_Y" value="-0.00242783"/>
     <define name="H_Z" value="0.858336"/>
     <!-- Delft -->
+    <!--define name="H_X" value="0.3892503"/>
+    <define name="H_Y" value="0.0017972"/>
+    <define name="H_Z" value="0.9211303"/ -->
+	<!-- AUT -->
     <!--define name="H_X" value="0.3892503"/>
     <define name="H_Y" value="0.0017972"/>
     <define name="H_Z" value="0.9211303"/ -->
@@ -143,22 +147,25 @@
     <define name="REF_MAX_RDOT" value="RadOfDeg(4000.)"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN" value="850"/>
-    <define name="PHI_DGAIN" value="425"/>
-    <define name="PHI_IGAIN" value="0"/>
 
-    <define name="THETA_PGAIN" value="850"/>
-    <define name="THETA_DGAIN" value="425"/>
-    <define name="THETA_IGAIN" value="0"/>
-
-    <define name="PSI_PGAIN" value="1000"/>
-    <define name="PSI_DGAIN" value="700"/>
+    <define name="PSI_PGAIN" value="210"/>
+    <define name="PSI_DGAIN" value="0"/>
     <define name="PSI_IGAIN" value="0"/>
+	<define name="I_xx" value="0.0018"/>
+	<define name="I_yy" value="0.0018"/>
+	<define name="I_zz" value="0.0047"/>
+	<define name="mass" value="0.42"/>
+	<define name="E_center" value="0.02"/>
+	<define name="LAMBDA" value="0.5"/>
+	<define name="MIO" value="6"/>
+	<define name="ALPHA" value="11"/>
+	<define name="BETA" value="13"/>
+	  
+
+    <define name="PSI_RATE_PGAIN" value="16"/>
 
     <!-- feedforward -->
-    <define name="PHI_DDGAIN" value="0"/>
-    <define name="THETA_DDGAIN" value="0"/>
-    <define name="PSI_DDGAIN" value="100"/>
+	  <define name="PSI_DDGAIN" value="100"/>
   </section>
 
   <section name="GUIDANCE_V" prefix="GUIDANCE_V_">
@@ -174,9 +181,9 @@
     <define name="MAX_BANK" value="20" unit="deg"/>
     <!-- Bad weather -->
     <!-- define name="MAX_BANK" value="32" unit="deg"/ -->
-    <define name="PGAIN" value="79"/>
-    <define name="DGAIN" value="100"/>
-    <define name="IGAIN" value="30"/>
+    <define name="PGAIN" value="21"/>
+    <define name="DGAIN" value="0"/>
+    <define name="IGAIN" value="0"/>
   </section>
 
   <section name="SIMULATOR" prefix="NPS_">

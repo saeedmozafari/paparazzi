@@ -22,6 +22,17 @@
    gui_color="#d0d521560a56"
   />
   <aircraft
+   name="AUTMAV_fench_smc"
+   ac_id="4"
+   airframe="airframes/AUTMAV/autmav_lisa_fench_smc.xml"
+   radio="radios/AUTMAV/spektrum_dx7s.xml"
+   telemetry="telemetry/default_rotorcraft.xml"
+   flight_plan="flight_plans/rotorcraft_basic.xml"
+   settings="settings/rotorcraft_basic.xml settings/control/stabilization_att_smc.xml settings/nps.xml"
+   settings_modules="modules/gps_ubx_ucenter.xml modules/geo_mag.xml modules/ins_extended.xml modules/ahrs_int_cmpl_quat.xml modules/nav_basic_rotorcraft.xml modules/guidance_rotorcraft.xml modules/gps.xml modules/imu_common.xml"
+   gui_color="blue"
+  />
+  <aircraft
    name="AUTMAV_lisa"
    ac_id="8"
    airframe="airframes/AUTMAV/autmav_lisa.xml"
@@ -40,7 +51,7 @@
    telemetry="telemetry/default_fixedwing.xml"
    flight_plan="flight_plans/AUTMAV/basic_skua.xml"
    settings="settings/fixedwing_basic.xml settings/control/ctl_adaptive.xml"
-   settings_modules="modules/gps_ubx_ucenter.xml"
+   settings_modules="modules/gps_ubx_ucenter.xml modules/logger_sd_spi_direct.xml modules/nav_basic_fw.xml modules/gps.xml modules/ahrs_int_cmpl_quat.xml modules/imu_common.xml modules/guidance_basic_fw.xml modules/stabilization_adaptive_fw.xml"
    gui_color="blue"
   />
   <aircraft
@@ -68,12 +79,12 @@
   <aircraft
    name="ardrone2_ntsmc"
    ac_id="2"
-   airframe="airframes/examples/microjet.xml"
-   radio="radios/cockpitSX.xml"
-   telemetry="telemetry/default_fixedwing.xml"
-   flight_plan="flight_plans/basic.xml"
-   settings="settings/fixedwing_basic.xml"
-   settings_modules="modules/nav_survey_poly_osam.xml modules/nav_smooth.xml modules/nav_basic_fw.xml modules/guidance_basic_fw.xml modules/stabilization_attitude_fw.xml modules/infrared_adc.xml modules/gps.xml modules/imu_common.xml modules/tune_airspeed.xml"
+   airframe="airframes/AUTMAV/autmav_ardrone2_smc.xml"
+   radio="radios/dummy.xml"
+   telemetry="telemetry/default_rotorcraft.xml"
+   flight_plan="flight_plans/rotorcraft_basic.xml"
+   settings="[settings/control/stabilization_att_smc.xml] [settings/rotorcraft_basic.xml]"
+   settings_modules="modules/geo_mag.xml modules/air_data.xml modules/gps_ubx_ucenter.xml modules/ins_extended.xml modules/ahrs_int_cmpl_quat.xml modules/gps.xml modules/imu_common.xml"
    gui_color="blue"
   />
   <aircraft

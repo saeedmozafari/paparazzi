@@ -1,0 +1,24 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="stabilization_float_euler" dir="stabilization">
+  <doc>
+    <description>
+      Stabilization controller for rotorcraft using float euler implementation
+    </description>
+    
+  </doc>
+  
+  <autoload name="stabilization" type="rotorcraft"/>
+  <header>
+    <file name="stabilization_attitude.h"/>
+    <file name="stabilization_attitude_smc.h"/>
+  </header>
+  <init fun="stabilization_attitude_init()"/>
+  <makefile target="ap|nps" firmware="rotorcraft">
+    <file name="stabilization_attitude_smc.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <file name="stabilization_attitude_ref_euler_float.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <file name="stabilization_attitude_rc_setpoint.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <define name="STABILIZATION_ATTITUDE_TYPE_FLOAT"/>
+    <define name="STABILIZATION_ATTITUDE_TYPE_H" value="stabilization_attitude_smc.h" type="string"/>
+  </makefile>
+</module>

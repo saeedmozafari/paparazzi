@@ -20,7 +20,7 @@
     <module name="telemetry" type="transparent"/>
     <module name="imu" type="aspirin_v2.1"/>
     <module name="gps" type="ublox"/>
-    <module name="stabilization" type="int_quat"/>
+    <module name="stabilization" type="smc"/>
     <module name="ahrs" type="int_cmpl_quat"/>
     <module name="ins" type="extended"/>
   </firmware>
@@ -113,9 +113,9 @@
     <define name="REF_MAX_RDOT" value="RadOfDeg(4000.)"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN" value="240"/>
-    <define name="PHI_DGAIN" value="350"/>
-    <define name="PHI_IGAIN" value="50"/>
+    <define name="PHI_PGAIN" value="0"/>
+    <define name="PHI_DGAIN" value="0"/>
+    <define name="PHI_IGAIN" value="0"/>
 
     <define name="THETA_PGAIN" value="240"/>
     <define name="THETA_DGAIN" value="350"/>
@@ -133,6 +133,16 @@
     <define name="PHI_DDGAIN" value="0"/>
     <define name="THETA_DDGAIN" value="0"/>
     <define name="PSI_DDGAIN" value="0"/>
+
+    <define name="I_xx" value="0.0016"/>
+	<define name="I_yy" value="0.0016"/>
+	<define name="I_zz" value="0.0026"/>
+	<define name="mass" value="0.421"/>
+	<define name="E_center" value="0.005"/>
+	<define name="LAMBDA" value="1."/>
+	<define name="MIO" value="7"/>
+	<define name="ALPHA" value="11"/>
+	<define name="BETA" value="13"/>
   </section>
 
   <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
@@ -171,7 +181,7 @@
     <define name="HOVER_KD" value="80"/>
     <define name="HOVER_KI" value="20"/>
     <define name="NOMINAL_HOVER_THROTTLE" value="0.5"/>
-    <define name="ADAPT_THROTTLE_ENABLED" value="TRUE"/>
+    <define name="ADAPT_THROTTLE_ENABLED" value="FALSE"/>
   </section>
 
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">

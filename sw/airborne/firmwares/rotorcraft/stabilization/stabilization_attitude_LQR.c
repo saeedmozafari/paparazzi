@@ -35,6 +35,7 @@
 #include "paparazzi.h"
 #include "math/pprz_algebra_float.h"
 #include "state.h"
+#include "mcu_periph/sys_time.h"
 
 
 
@@ -77,6 +78,19 @@ float roll_offset;
 float pitch_offset;
 float yaw_offset;
 
+float t_span_roll;
+float t_span_pitch;
+
+
+//float ddd;
+/*float r_pitch;
+float r_yaw;*/
+
+
+/*float roll_time;
+float pitch_time;
+float yaw_time;*/
+
 #if PERIODIC_TELEMETRY
 #include "subsystems/datalink/telemetry.h"
 
@@ -84,7 +98,9 @@ static void send_att(struct transport_tx *trans, struct link_device *dev)
 {
   struct FloatRates *body_rate = stateGetBodyRates_f();
   struct FloatEulers *att = stateGetNedToBodyEulers_f();
-  float foo = 0.0;
+  float foo = t_span_roll;//get_sys_time_float();
+	//float foo = t_span_pitch;
+	//(body_rate->p)
   pprz_msg_send_STAB_ATTITUDE_FLOAT(trans, dev, AC_ID,
                                     &(body_rate->p), &(body_rate->q), &(body_rate->r),
                                     &(att->phi), &(att->theta), &(att->psi),
@@ -178,6 +194,17 @@ void stabilization_attitude_init(void)
 	pitch_offset=STABILIZATION_ATTITUDE_PITCH_OFFSET;
  	yaw_offset=STABILIZATION_ATTITUDE_YAW_OFFSET;
 	
+	t_span_roll=0;
+	t_span_pitch=0;
+	
+	/*ddd=STABILIZATION_ATTITUDE_R_Roll;
+	r_pitch=STABILIZATION_ATTITUDE_R_PITCH;
+	r_yaw=STABILIZATION_ATTITUDE_R_YAW;*/
+	
+	/*roll_time=STABILIZATION_ATTITUDE_ROLL_TIME;
+	pitch_time=STABILIZATION_ATTITUDE_PITCH_TIME;
+	yaw_time=STABILIZATION_ATTITUDE_YAW_TIME;*/
+	
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_STAB_ATTITUDE_FLOAT, send_att);
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_STAB_ATTITUDE_REF_FLOAT, send_att_ref);
@@ -235,8 +262,22 @@ void stabilization_attitude_run(bool  in_flight)
 
 #if USE_ATT_REF
   static const float dt = (1./PERIODIC_FREQUENCY);
-	float tmp_0=0;
-	float tmp=0;
+	
+	
+	float A_phi=0;
+	float A_theta=0;
+	float A_psi=0;
+	
+	float B_phi=0;
+	float B_theta=0;
+	float B_psi=0;
+	
+
+	
+	/*float roll_time=0.5;
+	float pitch_time=0.5;
+	float yaw_time=0.5;*/
+	
 	//stab_att_sp_euler.phi=0;
 	//stab_att_sp_euler.theta=0;
   attitude_ref_euler_float_update(&att_ref_euler_f, &stab_att_sp_euler, dt);
@@ -266,8 +307,10 @@ void stabilization_attitude_run(bool  in_flight)
     /* update integrator */
     EULERS_ADD(stabilization_att_sum_err, att_err);
     EULERS_BOUND_CUBE(stabilization_att_sum_err, -MAX_SUM_ERR, MAX_SUM_ERR);
+	 // t_span=t_span+dt;
   } else {
     FLOAT_EULERS_ZERO(stabilization_att_sum_err);
+	 // t_span=0;
   }
 
   /*  rate error                */
@@ -298,93 +341,28 @@ void stabilization_attitude_run(bool  in_flight)
   stabilization_cmd[COMMAND_PITCH] =
     (stabilization_att_fb_cmd[COMMAND_PITCH] + stabilization_att_ff_cmd[COMMAND_PITCH]);*/
 
-/*if ((paparazzi_U.feddbackdata[3] < 0.0) && (paparazzi_ConstB.Add2_o > floor
-       (paparazzi_ConstB.Add2_o))) {
-    tmp = -rt_powd_snf(-paparazzi_U.feddbackdata[3], paparazzi_ConstB.Add2_o);
-  } else {sb
-    tmp = rt_powd_snf(paparazzi_U.feddbackdata[3], paparazzi_ConstB.Add2_o);
-  }
-
-  if ((paparazzi_U.feddbackdata[3] < 0.0) && (paparazzi_ConstB.Divide_j > floor
-       (paparazzi_ConstB.Divide_j))) {
-    tmp_0 = -rt_powd_snf(-paparazzi_U.feddbackdata[3], paparazzi_ConstB.Divide_j);
-  } else {
-    tmp_0 = rt_powd_snf(paparazzi_U.feddbackdata[3], paparazzi_ConstB.Divide_j);
-  }*/
-
-  if (rate_err.p < 0.0 ) {
-    tmp_0=-pow(-rate_err.p,beta_roll/alpha_roll);
-  } else {
-    tmp_0=pow(rate_err.p,beta_roll/alpha_roll);
-  }
-  if (rate_err.p < 0.0 ) {
-    tmp=-pow(-rate_err.p,2-beta_roll/alpha_roll);
-  } else {
-    tmp=pow(rate_err.p,2-beta_roll/alpha_roll);
-  }
-
-stabilization_cmd[COMMAND_ROLL] = roll_gain*(((tanh(att_err.phi + tmp_0 * lambda_roll-(roll_offset*3.14/180)) * mio_roll + tmp) *
-                    ((STABILIZATION_ATTITUDE_I_xx + STABILIZATION_ATTITUDE_mass*e_center*e_center) * -alpha_roll/(lambda_roll*beta_roll)) +
-                    (STABILIZATION_ATTITUDE_I_zz - STABILIZATION_ATTITUDE_I_yy - STABILIZATION_ATTITUDE_mass*e_center*e_center) * (*rate_float).r * 
-                    (*rate_float).q) + (sinf((*att_float).phi) - sinf(att_ref_euler_f.euler.phi+(roll_offset*3.14/180))) * (STABILIZATION_ATTITUDE_mass*9.81*e_center));
-
-stabilization_cmd[COMMAND_ROLL] *= -1.0;
-/*if ((paparazzi_U.feddbackdata[4] < 0.0) && (paparazzi_ConstB.Add2 > floor
-       (paparazzi_ConstB.Add2))) {
-    tmp = -rt_powd_snf(-paparazzi_U.feddbackdata[4], paparazzi_ConstB.Add2);
-  } else {
-    tmp = rt_powd_snf(paparazzi_U.feddbackdata[4], paparazzi_ConstB.Add2);
-  }
-
-  if ((paparazzi_U.feddbackdata[4] < 0.0) && (paparazzi_ConstB.Divide_b > floor
-       (paparazzi_ConstB.Divide_b))) {
-    tmp_0 = -rt_powd_snf(-paparazzi_U.feddbackdata[4], paparazzi_ConstB.Divide_b);
-  } else {
-    tmp_0 = rt_powd_snf(paparazzi_U.feddbackdata[4], paparazzi_ConstB.Divide_b);
-  }*/
-
-  if (rate_err.q < 0.0 ) {
-    tmp_0=-pow(-rate_err.q,beta_pitch/alpha_pitch);
-  } else {
-    tmp_0=pow(rate_err.q,beta_pitch/alpha_pitch);
-  }
-  if (rate_err.q < 0.0 ) {
-    tmp=-pow(-rate_err.q,2-beta_pitch/alpha_pitch);
-  } else {
-    tmp=pow(rate_err.q,2-beta_pitch/alpha_pitch);
-  }
 	
-stabilization_cmd[COMMAND_PITCH] =pitch_gain*( ((tanh(att_err.theta + tmp_0 * lambda_pitch-(pitch_offset*3.14/180)) * mio_pitch + tmp) *
-                    ((STABILIZATION_ATTITUDE_I_yy + STABILIZATION_ATTITUDE_mass*e_center*e_center) * -alpha_pitch/(lambda_pitch*beta_pitch)) +
-                    (STABILIZATION_ATTITUDE_I_xx - STABILIZATION_ATTITUDE_I_zz + STABILIZATION_ATTITUDE_mass*e_center*e_center) * (*rate_float).r *
-                    (*rate_float).p) + (sinf
-    ((*att_float).theta) - sinf(att_ref_euler_f.euler.theta+(pitch_offset*3.14/180))) *
-    (STABILIZATION_ATTITUDE_mass*9.81*e_center));
-stabilization_cmd[COMMAND_PITCH] *= -1.0;
-/*stateGetBodyRates_f()->q*/
-	/**( ((tanh(att_err.theta + tmp_0 * lambda) * mio_pitch + tmp) *
-                    ((STABILIZATION_ATTITUDE_I_yy + STABILIZATION_ATTITUDE_mass*e_center*e_center) * -alpha/(lambda*beta)) +
-                    (STABILIZATION_ATTITUDE_I_xx - STABILIZATION_ATTITUDE_I_zz + STABILIZATION_ATTITUDE_mass*e_center*e_center) * (*rate_float).r *
-                    (*rate_float).p) + (sinf
-    ((*att_float).theta) - sinf(att_ref_euler_f.euler.theta)) *
-    (STABILIZATION_ATTITUDE_mass*9.81*e_center));*/
-
-	/*stabilization_cmd[COMMAND_YAW] = 0;*/
-
-  /*stabilization_cmd[COMMAND_YAW] =
-    (stabilization_att_fb_cmd[COMMAND_YAW] + stabilization_att_ff_cmd[COMMAND_YAW]); */
+	A_phi=roll_offset*(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_xx)*(STABILIZATION_ATTITUDE_mass*9.81*e_center + sqrt(STABILIZATION_ATTITUDE_mass*9.81*e_center*STABILIZATION_ATTITUDE_mass*9.81*e_center + 1/roll_offset));
+	B_phi=(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_xx)*sqrt(roll_offset*(2*A_phi+1));
 	
-  if (rate_err.r < 0.0 ) {
-    tmp_0=-pow(-rate_err.r,beta_yaw/alpha_yaw);
-  } else {
-    tmp_0=pow(rate_err.r,beta_yaw/alpha_yaw);
-  }
-  if (rate_err.r < 0.0 ) {
-    tmp=-pow(-rate_err.r,2-beta_yaw/alpha_yaw);
-  } else {
-    tmp=pow(rate_err.r,2-beta_yaw/alpha_yaw);
-  }
-	 stabilization_cmd[COMMAND_YAW] =yaw_gain*STABILIZATION_ATTITUDE_I_zz*beta_yaw/(lambda_yaw*alpha_yaw)*(tanh(att_err.psi + tmp_0 * lambda_yaw-(yaw_offset*3.14/180)) * mio_yaw + tmp);
+	A_theta=pitch_offset*(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_yy)*(-STABILIZATION_ATTITUDE_mass*9.81*e_center + sqrt(STABILIZATION_ATTITUDE_mass*9.81*e_center*STABILIZATION_ATTITUDE_mass*9.81*e_center + 1/pitch_offset));
+	B_theta=(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_yy)*sqrt(pitch_offset*(2*A_theta+1));
+	
+	A_psi=STABILIZATION_ATTITUDE_I_zz*sqrt(yaw_offset);
+	B_psi=STABILIZATION_ATTITUDE_I_zz*sqrt(yaw_offset*(2*A_psi+1));
+	//command calculation
+	stabilization_cmd[COMMAND_ROLL] =-roll_gain*((-1/(roll_offset*(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_xx)))*(A_phi*att_err.phi + B_phi*rate_err.p));
+
+	
+	stabilization_cmd[COMMAND_PITCH] =-pitch_gain*((-1/(pitch_offset*(STABILIZATION_ATTITUDE_mass*e_center*e_center+STABILIZATION_ATTITUDE_I_yy)))*(A_theta*att_err.theta + B_theta*rate_err.q));
+
+	 stabilization_cmd[COMMAND_YAW] =-yaw_gain*((-1/(yaw_offset*STABILIZATION_ATTITUDE_I_zz))*(A_psi*att_err.psi + B_psi*rate_err.r));
+//yaw_gain*STABILIZATION_ATTITUDE_I_zz*beta_yaw/(lambda_yaw*alpha_yaw)*(tanh(att_err.psi + tmp_0 * lambda_yaw-(1000*3.14/180)) * mio_yaw + tmp);
+	
+	//stabilization_cmd[COMMAND_YAW] =-yaw_gain*(r_d*STABILIZATION_ATTITUDE_I_zz - (*rate_float).p*(*rate_float).q*(STABILIZATION_ATTITUDE_I_xx-STABILIZATION_ATTITUDE_I_yy));
+	//stabilization_cmd[COMMAND_YAW] =0;
+	//stabilization_cmd[COMMAND_YAW] =get_sys_time_float();
+//yaw_gain*t_span;
   /* bound the result */
   BoundAbs(stabilization_cmd[COMMAND_ROLL], MAX_PPRZ);
   BoundAbs(stabilization_cmd[COMMAND_PITCH], MAX_PPRZ);

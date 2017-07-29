@@ -19,7 +19,7 @@
     <module name="imu" type="ardrone2"/>
     <!-- gps: "ublox" or change to "sirf" for usage with parrot flight recorder -->
     <module name="gps" type="ublox"/>
-    <module name="stabilization" type="float_euler_NTSMC"/>
+    <module name="stabilization" type="float_euler_TVNTSMC"/>
     <module name="ahrs" type="int_cmpl_quat"/>
     <module name="ins" type="extended"/>
   </firmware>
@@ -183,7 +183,9 @@
 	  <define name="ROLL_OFFSET" value="0"/>
 	  <define name="YAW_OFFSET" value="0"/>
 	  
-	  
+	  <!--define name="ROLL_TIME" value="0.1"/>
+	  <define name="PITCH_TIME" value="0.1"/>
+	  <define name="YAW_TIME" value="0.1"/-->
 
     <define name="PSI_RATE_PGAIN" value="16"/>
 

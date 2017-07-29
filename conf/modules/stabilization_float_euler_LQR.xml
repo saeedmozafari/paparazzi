@@ -1,0 +1,161 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="stabilization_float_euler" dir="stabilization">
+  <doc>
+    <description>
+      Stabilization controller for rotorcraft using float euler implementation
+    </description>
+    <section name="STABILIZATION_ATTITUDE" prefix="STABILIZATION_ATTITUDE_">
+      <!--define name="SP_MAX_PHI"   value="45." description="max setpoint for roll angle" unit="deg"/>
+      <define name="SP_MAX_THETA" value="45." description="max setpoint for pitch angle" unit="deg"/>
+      <define name="SP_MAX_R"     value="90." description="max setpoint for yaw rate" unit="deg/s"/>
+      <define name="DEADBAND_R"   value="250" description="deadband on yaw rate input"/>
+      <define name="REF_OMEGA_P"  value="400" description="reference generator omega param on roll rate" unit="deg/s"/>
+      <define name="REF_ZETA_P"   value="0.9" description="reference generator zeta param on roll rate"/>
+      <define name="REF_MAX_P"    value="300." description="reference generator max roll rate" unit="deg/s"/>
+      <define name="REF_MAX_PDOT" value="RadOfDeg(7000.)" description="reference generator max roll acceleration"/>
+      <define name="REF_OMEGA_Q"  value="400" description="reference generator omega param on pitch rate" unit="deg/s"/>
+      <define name="REF_ZETA_Q"   value="0.9" description="reference generator zeta param on pitch rate"/>
+      <define name="REF_MAX_Q"    value="300." description="reference generator max pitch rate" unit="deg/s"/>
+      <define name="REF_MAX_QDOT" value="RadOfDeg(7000.)" description="reference generator max pitch acceleration"/>
+      <define name="REF_OMEGA_R"  value="250" description="reference generator omega param on yaw rate" unit="deg/s"/>
+      <define name="REF_ZETA_R"   value="0.9" description="reference generator zeta param on yaw rate"/>
+      <define name="REF_MAX_R"    value="180." description="reference generator max yaw rate" unit="deg/s"/>
+      <define name="REF_MAX_RDOT" value="RadOfDeg(1800.)" description="reference generator max yaw acceleration"/>
+      <define name="PHI_PGAIN"    value="400" description="feedback roll P gain"/>
+      <define name="PHI_DGAIN"    value="300" description="feedback roll D gain"/>
+      <define name="PHI_IGAIN"    value="100" description="feedback roll I gain"/>
+      <define name="THETA_PGAIN"  value="400" description="feedback pitch P gain"/>
+      <define name="THETA_DGAIN"  value="300" description="feedback pitch D gain"/>
+      <define name="THETA_IGAIN"  value="100" description="feedback pitch I gain"/>
+      <define name="PSI_PGAIN"    value="380" description="feedback yaw P gain"/>
+      <define name="PSI_DGAIN"    value="320" description="feedback yaw D gain"/>
+      <define name="PSI_IGAIN"    value="100" description="feedback yaw I gain"/>
+      <define name="PHI_DDGAIN"   value="300" description="feedforward roll acceleration gain"/>
+      <define name="THETA_DDGAIN" value="300" description="feedforward pitch acceleration gain"/>
+      <define name="PSI_DDGAIN"   value="300" description="feedforward yaw acceleration gain"/-->
+		
+		<define name="LAMBDA_ROLL"   value="1" description="feedfFFFFForward yaw acceleration gain"/>
+		<define name="LAMBDA_PITCH"   value="1" description="feedforqweward yaw acceleration gain"/>
+		<define name="LAMBDA_YAW"   value="0.3" description="feedforwweard yaw acceleration gain"/>
+		
+		<define name="MIO_ROLL"   value="4" description="feedforward yaw acceleration gain"/>
+		<define name="MIO_PITCH"   value="5" description="feedforward yaw acceleration gain"/>
+		<define name="MIO_YAW"   value="3" description="feedforward yaw acceleration gain"/>
+		
+		<define name="ALPHA_ROLL"   value="11" description="feedforward yaw acceleration gain"/>
+		<define name="ALPHA_PITCH"   value="11" description="feedforward yaw acceleration gain"/>
+		<define name="ALPHA_YAW"   value="11" description="feedforward yaw acceleration gain"/>
+		
+		<define name="BETA_ROLL"   value="13" description="feedforward yaw acceleration gain"/>
+		<define name="BETA_PITCH"   value="13" description="feedforward yaw acceleration gain"/>
+		<define name="BETA_YAW"   value="13" description="feedforward yaw acceleration gain"/>
+		
+		<define name="E_center"   value="0.03" description="feedforward yaw acceleration gain"/>
+		
+		<define name="ROLL_GAIN"   value="160000" description="feedforward yaw acceleration gain"/>
+		<define name="PITCH_GAIN"   value="160000" description="feedforward yaw acceleration gain"/>
+		<define name="YAW_GAIN"   value="100000" description="feedforward yaw acceleration gain"/>
+		
+		<define name="PITCH_OFFSET"   value="1000" description="feedforward yaw acceleration gain"/>
+		<define name="ROLL_OFFSET"   value="1000" description="feedforward yaw acceleration gain"/>
+		<define name="YAW_OFFSET"   value="1000" description="feedforward yaw acceleration gain"/>
+		
+		<!--define name="DDD"   value="1000" description="feedforward yaw acceleration gain"/>
+		<define name="R_PITCH"   value="1000" description="feedforward yaw acceleration gain"/>
+		<define name="R_YAW"   value="1000" description="feedforward yaw acceleration gain"/-->
+		
+		<!--define name="ROLL_TIME"   value="0.1" description="feedforward yaw acceleration gain"/>
+		<define name="PITCH_TIME"   value="0.1" description="feedforward yaw acceleration gain"/>
+		<define name="YAW_TIME"   value="0.1" description="feedforward yaw acceleration gain"/-->
+
+    </section>
+  </doc>
+  <settings target="ap|nps">
+    <dl_settings>
+      <dl_settings NAME="Att Loop">
+        <!--dl_setting var="stabilization_gains.p.x" min="1" step="1" max="8000" shortname="pgain phi" param="STABILIZATION_ATTITUDE_PHI_PGAIN" persistent="true" module="stabilization/stabilization_attitude"/>
+        <dl_setting var="stabilization_gains.i.x" min="0" step="1" max="800" shortname="igain phi" param="STABILIZATION_ATTITUDE_PHI_IGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.d.x" min="1" step="1" max="4000" shortname="dgain p" param="STABILIZATION_ATTITUDE_PHI_DGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.rates_d.x" min="0" step="1" max="500" shortname="dgaind p" param="STABILIZATION_ATTITUDE_PHI_DGAIN_D" persistent="true"/>
+        <dl_setting var="stabilization_gains.dd.x" min="0" step="1" max="1000" shortname="ddgain p" param="STABILIZATION_ATTITUDE_PHI_DDGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.p.y" min="1" step="1" max="8000" shortname="pgain theta" param="STABILIZATION_ATTITUDE_THETA_PGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.i.y" min="0"  step="1" max="800" shortname="igain theta" param="STABILIZATION_ATTITUDE_THETA_IGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.d.y" min="1" step="1" max="4000" shortname="dgain q" param="STABILIZATION_ATTITUDE_THETA_DGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.rates_d.y" min="0" step="1" max="500" shortname="dgaind q" param="STABILIZATION_ATTITUDE_THETA_DGAIN_D" persistent="true"/>
+        <dl_setting var="stabilization_gains.dd.y" min="0"    step="1" max="1000" shortname="ddgain q" param="STABILIZATION_ATTITUDE_THETA_DDGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.p.z" min="1" step="1" max="8000" shortname="pgain psi" param="STABILIZATION_ATTITUDE_PSI_PGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.i.z" min="0"  step="1" max="400" shortname="igain psi" param="STABILIZATION_ATTITUDE_PSI_IGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.d.z" min="1" step="1" max="4000" shortname="dgain r" param="STABILIZATION_ATTITUDE_PSI_DGAIN" persistent="true"/>
+        <dl_setting var="stabilization_gains.rates_d.z" min="0" step="1" max="500" shortname="dgaind r" param="STABILIZATION_ATTITUDE_PHI_DGAIN_D" persistent="true"/>
+        <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/-->
+		  
+		  
+		  <dl_setting var="lambda_roll" min="0" step="0.1" max="10" shortname="lambda_roll" param="STABILIZATION_ATTITUDE_LAMBDA_ROLL" persistent="true" module="stabilization/stabilization_attitude_smc" />
+		  <dl_setting var="mio_roll" min="0" step="0.1" max="20" shortname="mu_roll" param="STABILIZATION_ATTITUDE_MIO_ROLL" persistent="true"/>
+		  <dl_setting var="alpha_roll" min="0" step="1" max="100" shortname="alpha_roll" param="STABILIZATION_ATTITUDE_ALPHA_ROLL" persistent="true"/>
+		  <dl_setting var="beta_roll" min="0" step="1" max="100" shortname="beta_roll" param="STABILIZATION_ATTITUDE_BETA_ROLL" persistent="true"/>
+		  <dl_setting var="roll_gain" min="0" step="1000" max="500000" shortname="roll_gain" param="STABILIZATION_ATTITUDE_ROLL_GAIN" persistent="true"/>
+		  
+		  
+		  <dl_setting var="lambda_pitch" min="0" step="0.1" max="10" shortname="lambda_pitch" param="STABILIZATION_ATTITUDE_LAMBDA_PITCH" persistent="true"/>
+		  <dl_setting var="mio_pitch" min="0" step="0.1" max="20" shortname="mu_pitch" param="STABILIZATION_ATTITUDE_MIO_PITCH" persistent="true"/>
+		   <dl_setting var="alpha_pitch" min="0" step="1" max="100" shortname="alpha_pitch" param="STABILIZATION_ATTITUDE_ALPHA_PITCH" persistent="true"/>
+		  		  <dl_setting var="beta_pitch" min="0" step="1" max="100" shortname="beta_pitch" param="STABILIZATION_ATTITUDE_BETA_PITCH" persistent="true"/>
+		  		  <dl_setting var="pitch_gain" min="0" step="1000" max="500000" shortname="pitch_gain" param="STABILIZATION_ATTITUDE_PITCH_GAIN" persistent="true"/>
+		  
+		  
+		  
+		  <dl_setting var="lambda_yaw" min="0" step="0.1" max="10" shortname="lambda_yaw" param="STABILIZATION_ATTITUDE_LAMBDA_YAW" persistent="true"/>
+		  <dl_setting var="mio_yaw" min="0" step="0.1" max="20" shortname="mu_yaw" param="STABILIZATION_ATTITUDE_MIO_YAW" persistent="true"/>
+		  <dl_setting var="alpha_yaw" min="0" step="1" max="100" shortname="alpha_yaw" param="STABILIZATION_ATTITUDE_ALPHA_YAW" persistent="true"/>
+		  <dl_setting var="beta_yaw" min="0" step="1" max="100" shortname="beta_yaw" param="STABILIZATION_ATTITUDE_BETA_YAW" persistent="true"/>
+		  	  <dl_setting var="yaw_gain" min="0" step="1000" max="500000" shortname="yaw_gain" param="STABILIZATION_ATTITUDE_YAW_GAIN" persistent="true"/>
+		  
+		  <dl_setting var="e_center" min="0" step="0.005" max="0.1" shortname="e_center" param="STABILIZATION_ATTITUDE_E_center" persistent="true"/>
+		  
+		  <dl_setting var="roll_offset" min="0.0001"	step="0.0001" max="100000" shortname="roll_offset" param="STABILIZATION_ATTITUDE_ROLL_OFFSET" persistent="true"/>
+		  <dl_setting var="pitch_offset" min="0.0001" step="0.0001" max="100000" shortname="pitch_offset" param="STABILIZATION_ATTITUDE_PITCH_OFFSET" persistent="true"/>
+		  <dl_setting var="yaw_offset" min="0.0001" step="0.0001" max="100000" shortname="yaw_offset" param="STABILIZATION_ATTITUDE_YAW_OFFSET" persistent="true"/>
+		  
+		  <!--dl_setting var="ddd" min="0" step="10" max="10000" shortname="r_roll" param="STABILIZATION_ATTITUDE_DDD" persistent="true"/>
+		  <dl_setting var="r_pitch" min="0" step="10" max="10000" shortname="r_pitch" param="STABILIZATION_ATTITUDE_R_PITCH" persistent="true"/>
+		  <dl_setting var="r_yaw" min="0" step="10" max="10000" shortname="r_yaw" param="STABILIZATION_ATTITUDE_R_YAW" persistent="true"/-->
+
+		  
+		  
+		  <!--dl_setting var="roll_time" min="-40" step="0.1" max="40" shortname="roll_time" param="STABILIZATION_ATTITUDE_ROLL_TIME" persistent="true"/>
+		  <dl_setting var="pitch_time" min="-40" step="0.1" max="40" shortname="pitch_time" param="STABILIZATION_ATTITUDE_PITCH_TIME" persistent="true"/>
+		  <dl_setting var="yaw_time" min="-40" step="0.1" max="40" shortname="yaw_time" param="STABILIZATION_ATTITUDE_YAW_TIME" persistent="true"/-->
+		  
+		  
+		  <!--dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/>
+		  <dl_setting var="stabilization_gains.dd.z" min="0" step="1" max="1000" shortname="ddgain r" param="STABILIZATION_ATTITUDE_PSI_DDGAIN" persistent="true"/-->
+		  
+		  
+      </dl_settings>
+    </dl_settings>
+  </settings>
+  <autoload name="stabilization" type="rotorcraft"/>
+  <header>
+    <file name="stabilization_attitude.h"/>
+    <file name="stabilization_attitude_LQR.h"/>
+  </header>
+  <init fun="stabilization_attitude_init()"/>
+  <makefile target="ap|nps" firmware="rotorcraft">
+    <file name="stabilization_attitude_LQR.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <file name="stabilization_attitude_ref_euler_float.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <file name="stabilization_attitude_rc_setpoint.c" dir="$(SRC_FIRMWARE)/stabilization"/>
+    <define name="STABILIZATION_ATTITUDE_TYPE_FLOAT"/>
+    <define name="STABILIZATION_ATTITUDE_TYPE_H" value="stabilization_attitude_LQR.h" type="string"/>
+  </makefile>
+</module>

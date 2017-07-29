@@ -63,4 +63,12 @@ extern float roll_offset;
 extern float pitch_offset;
 extern float yaw_offset;
 
+extern float t_span_roll;
+extern float t_span_pitch;
+extern float t_span_yaw;
+
+/*extern float roll_time;
+extern float pitch_time;
+extern float yaw_time;*/
+
 #endif /* STABILIZATION_ATTITUDE_EULER_FLOAT_H */

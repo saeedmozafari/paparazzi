@@ -21,19 +21,22 @@
 struct link_device *RTK_receive_device;
 
 void RTK_receive_init(void){
-    
-    RTK_receive_device = &((RTK_RTCM3_UART_DEV).device);
-	uart_periph_set_bits_stop_parity(&RTK_RTCM3_UART_DEV, UBITS_8, USTOP_1, UPARITY_NO);
+
+#ifndef USE_HITL    
+  RTK_receive_device = &((RTK_RTCM3_UART_DEV).device);
+  uart_periph_set_bits_stop_parity(&RTK_RTCM3_UART_DEV, UBITS_8, USTOP_1, UPARITY_NO);
 	uart_periph_set_baudrate(&RTK_RTCM3_UART_DEV, RTK_RTCM3_UART_BAUD);
+#endif
 
 }
 
 void relay_msg(uint8_t length, uint8_t *relay_data){
-
+#ifndef USE_HITL
 	int i;
 	for (i = 0; i < length; i++) {
     	RTK_receive_device->put_byte(RTK_receive_device->periph, 0, relay_data[i]);
   	}
+#endif    
 }
 
 
@@ -120,6 +123,7 @@ void rtk_gps_ubx_init(void)
 
 void rtk_gps_ubx_event(void)
 {
+#ifndef USE_HITL
   struct link_device *dev = &((UBX_RTK_GPS_LINK).device);
 
   while (dev->char_available(dev->periph)) {
@@ -128,6 +132,7 @@ void rtk_gps_ubx_event(void)
       rtk_gps_ubx_msg();
     }
   }
+#endif  
 }
 
 void rtk_gps_ubx_read_message(void)
@@ -394,13 +399,16 @@ restart:
 
 static void rtk_ubx_send_1byte(struct link_device *dev, uint8_t byte)
 {
+#ifndef USE_HITL
   dev->put_byte(dev->periph, 0, byte);
   rtk_gps_ubx.send_ck_a += byte;
   rtk_gps_ubx.send_ck_b += rtk_gps_ubx.send_ck_a;
+#endif 
 }
 
 void rtk_ubx_header(struct link_device *dev, uint8_t nav_id, uint8_t msg_id, uint16_t len)
 {
+#ifndef USE_HITL
   dev->put_byte(dev->periph, 0, UBX_SYNC1);
   dev->put_byte(dev->periph, 0, UBX_SYNC2);
   rtk_gps_ubx.send_ck_a = 0;
@@ -409,21 +417,26 @@ void rtk_ubx_header(struct link_device *dev, uint8_t nav_id, uint8_t msg_id, uin
   rtk_ubx_send_1byte(dev, msg_id);
   rtk_ubx_send_1byte(dev, (uint8_t)(len&0xFF));
   rtk_ubx_send_1byte(dev, (uint8_t)(len>>8));
+#endif
 }
 
 void rtk_ubx_trailer(struct link_device *dev)
 {
+#ifndef USE_HITL
   dev->put_byte(dev->periph, 0, rtk_gps_ubx.send_ck_a);
   dev->put_byte(dev->periph, 0, rtk_gps_ubx.send_ck_b);
   dev->send_message(dev->periph, 0);
+#endif
 }
 
 void rtk_ubx_send_bytes(struct link_device *dev, uint8_t len, uint8_t *bytes)
 {
+#ifndef USE_HITL
   int i;
   for (i = 0; i < len; i++) {
     rtk_ubx_send_1byte(dev, bytes[i]);
   }
+#endif
 }
 
 void rtk_ubx_send_cfg_rst(struct link_device *dev, uint16_t bbr , uint8_t reset_mode)

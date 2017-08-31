@@ -132,8 +132,10 @@ void imu_drotek2_event(void)
     imu_drotek2.mpu.data_available = false;
     imu_scale_gyro(&imu);
     imu_scale_accel(&imu);
+#ifndef USE_HITL
     AbiSendMsgIMU_GYRO_INT32(IMU_DROTEK_ID, now_ts, &imu.gyro);
     AbiSendMsgIMU_ACCEL_INT32(IMU_DROTEK_ID, now_ts, &imu.accel);
+#endif
   }
 
   /* HMC58XX event task */
@@ -148,7 +150,9 @@ void imu_drotek2_event(void)
 #endif
     imu_drotek2.hmc.data_available = false;
     imu_scale_mag(&imu);
+#ifndef USE_HITL
     AbiSendMsgIMU_MAG_INT32(IMU_DROTEK_ID, now_ts, &imu.mag);
+#endif
   }
 }
 

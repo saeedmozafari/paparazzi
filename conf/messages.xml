@@ -319,7 +319,9 @@
       <field name="power"   type="float" unit="W"/>
     </message>
 
-    <!-- 38 is free -->
+      <message name="SONAR_ALTITUDE" id="38">
+      <field name="altitude"      type="float" unit="m"/>
+    </message>
     <!-- 39 is free -->
     <!-- 40 is free -->
 

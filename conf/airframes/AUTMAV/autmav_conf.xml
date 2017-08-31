@@ -1,5 +1,16 @@
 <conf>
   <aircraft
+   name="AUTMAV_F150_lisam2"
+   ac_id="30"
+   airframe="airframes/AUTMAV/autmav_fench_PID.xml"
+   radio="radios/AUTMAV/FrSkyX9D.xml"
+   telemetry="telemetry/default_rotorcraft.xml"
+   flight_plan="flight_plans/rotorcraft_basic.xml"
+   settings="settings/rotorcraft_basic.xml settings/nps.xml"
+   settings_modules="modules/gps_ubx_ucenter.xml modules/geo_mag.xml modules/ins_extended.xml modules/ahrs_int_cmpl_quat.xml modules/stabilization_PID.xml modules/nav_basic_rotorcraft.xml modules/guidance_rotorcraft.xml modules/gps.xml modules/imu_common.xml"
+   gui_color="blue"
+  />
+  <aircraft
    name="AUTMAV_arddrone2_classic_smc"
    ac_id="11"
    airframe="airframes/AUTMAV/autmav_ardrone2_classic_smc.xml"
@@ -347,7 +358,7 @@
    radio="radios/dummy.xml"
    telemetry="telemetry/default_rotorcraft.xml"
    flight_plan="flight_plans/rotorcraft_basic.xml"
-   settings="settings/rotorcraft_basic.xml settings/nps.xml"
+   settings="settings/rotorcraft_basic.xml settings/nps.xml settings/estimation/ins_sonar.xml"
    settings_modules="modules/video_rtp_stream.xml modules/geo_mag.xml modules/air_data.xml modules/gps_ubx_ucenter.xml modules/ins_extended.xml modules/ahrs_int_cmpl_quat.xml modules/stabilization_int_quat.xml modules/nav_basic_rotorcraft.xml modules/guidance_rotorcraft.xml modules/gps.xml modules/imu_common.xml"
    gui_color="red"
   />
@@ -393,6 +404,17 @@
    flight_plan="flight_plans/rotorcraft_basic.xml"
    settings="settings/rotorcraft_basic.xml"
    settings_modules="modules/geo_mag.xml modules/gps_ubx_ucenter.xml modules/ahrs_int_cmpl_quat.xml modules/stabilization_int_euler.xml modules/nav_basic_rotorcraft.xml modules/guidance_rotorcraft.xml modules/gps.xml modules/imu_common.xml"
+   gui_color="blue"
+  />
+  <aircraft
+   name="papa_chat_test"
+   ac_id="29"
+   airframe="airframes/papa_chat/quadrotor_lisa_m_2_pwm_ppmrec.xml"
+   radio="radios/AUTMAV/FrSkyX9D.xml"
+   telemetry="telemetry/default_rotorcraft.xml"
+   flight_plan="flight_plans/rotorcraft_basic.xml"
+   settings="settings/rotorcraft_basic.xml"
+   settings_modules="modules/air_data.xml modules/geo_mag.xml modules/gps_ubx_ucenter.xml modules/ins_extended.xml modules/ahrs_int_cmpl_quat.xml modules/stabilization_int_quat.xml modules/nav_basic_rotorcraft.xml modules/guidance_rotorcraft.xml modules/gps.xml modules/imu_common.xml"
    gui_color="blue"
   />
   <aircraft

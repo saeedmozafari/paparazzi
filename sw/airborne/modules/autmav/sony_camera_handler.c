@@ -67,9 +67,11 @@ static void send_camera_state(struct transport_tx *trans, struct link_device *de
 }
 
 void sony_camera_handler_setup(void){
+#ifndef USE_HITL
 	wifi_command = &((ESP_01_UART_PORT).device);
 	uart_periph_set_bits_stop_parity(&ESP_01_UART_PORT, UBITS_8, USTOP_1, UPARITY_NO);
 	uart_periph_set_baudrate(&ESP_01_UART_PORT, ESP_01_BAUD);
+#endif
 	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SONY_CAMERA_STATUS, send_camera_state);
 	clear_image_name();
 	cam_model = SONY_A6000;

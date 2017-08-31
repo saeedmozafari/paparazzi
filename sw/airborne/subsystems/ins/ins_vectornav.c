@@ -34,6 +34,12 @@ struct InsVectornav ins_vn;
 #if PERIODIC_TELEMETRY
 #include "subsystems/datalink/telemetry.h"
 
+static void send_ins_port_char(struct transport_tx *trans, struct link_device *dev)
+{
+  pprz_msg_send_INS_PORT_CHAR(trans, dev, AC_ID,
+                                  &ins_char, &glob_counter_1, &glob_counter_2, &glob_counter_3);
+}
+
 static void send_ins(struct transport_tx *trans, struct link_device *dev)
 {
   pprz_msg_send_INS(trans, dev, AC_ID,
@@ -80,7 +86,8 @@ static void send_vn_info(struct transport_tx *trans, struct link_device *dev)
                                &ins_vn.vn_data.err,
                                &ins_vn.vn_data.ypr_u.phi,
                                &ins_vn.vn_data.ypr_u.theta,
-                               &ins_vn.vn_data.ypr_u.psi);
+                               &ins_vn.vn_data.ypr_u.psi
+                               );
 
   // update counter
   last_cnt = ins_vn.vn_packet.counter;
@@ -183,6 +190,8 @@ void ins_vectornav_init(void)
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_IMU_GYRO, send_gyro);
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_IMU_ACCEL_SCALED, send_accel_scaled);
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_IMU_GYRO_SCALED, send_gyro_scaled);
+
+     register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_INS_PORT_CHAR, send_ins_port_char);
 #endif
 }
 

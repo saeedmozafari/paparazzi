@@ -7,12 +7,11 @@
     <target name="nps" board="pc">
       <module name="fdm" type="jsbsim"/>
     </target>
-<define name="UART6_BAUD" value="B9600"/>
 
     <module name="radio_control" type="sbus">
       <configure name="SBUS_PORT" value="UART2"/>
     </module>
-<module name="autmav/sonar_uart.xml"/>
+
     <module name="motor_mixing"/>
     <module name="actuators" type="pwm">
       <define name="SERVO_HZ" value="400"/>
@@ -28,7 +27,6 @@
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
   </modules>
-
 
 
   <commands>
@@ -132,11 +130,11 @@
     <define name="REF_MAX_RDOT" value="RadOfDeg(4000.)"/>
 
     <!-- feedback -->
-    <define name="PHI_PGAIN" value="2762"/>
-    <define name="PHI_DGAIN" value="520"/>
+    <define name="PHI_PGAIN" value="3916"/>
+    <define name="PHI_DGAIN" value="591"/>
     <define name="PHI_IGAIN" value="51"/>
 
-    <define name="THETA_PGAIN" value="2762"/>
+    <define name="THETA_PGAIN" value="5498"/>
     <define name="THETA_DGAIN" value="1187"/>
     <define name="THETA_IGAIN" value="49"/>
 

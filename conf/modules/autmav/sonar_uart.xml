@@ -1,0 +1,25 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="sonar_uart" dir="autmav">
+  <doc>
+    <description>
+      get altitude from sonar
+    </description>
+    <define name="SONAR_PORT" value="uart6" description="the port on autopilot which is connected to camera handler computer"/>
+    <define name="SONAR_BAUD" value="B9600" description="baudrate of the port"/>
+  </doc>
+  
+  <header>
+    <file name="sonar_uart.h"/>
+  </header>
+  <init fun="sonar_init()"/>
+  <periodic fun="sonar_get_periodic()" freq="40"/>
+  <makefile target="ap">
+    <define name="USE_UART6"/>
+  </makefile>
+  <makefile target="ap">
+    <define name="UART_RX_BUFFER_SIZE" value="512"/>
+    <define name="UART_TX_BUFFER_SIZE" value="512"/>
+    <file name="sonar_uart.c"/>
+  </makefile>
+</module>

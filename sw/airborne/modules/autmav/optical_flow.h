@@ -31,6 +31,7 @@ extern int write_idx;
 extern int msg_length;
 extern int ack_fail;
 extern int counter;
+extern bool use_of;
 
 extern void optical_flow_init(void);
 extern void optical_flow_periodic(void);

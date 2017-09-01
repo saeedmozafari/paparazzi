@@ -6,11 +6,12 @@
     </description>
     <define name="OF_PORT" value="uart4" description="the port which optical flow data comes from."/>
     <define name="OF_BAUDRATE" value="B57600" description="baudrate of the optical flow port"/>
+    <define name="USE_OF_STAB" value="TRUE|FALSE" description="determines whether to use optical flow stabilization or not"/>
   </doc>
   <settings>
     <dl_settings name="control">
       <dl_settings name="optical_flow">
-        
+        <dl_setting min="0" max="1" step="1" var="use_of" module="autmav/optical_flow" shortname="use of" param="USE_OF_STAB" type="uint8" persistent="true"/>
       </dl_settings>
     </dl_settings>
   </settings>

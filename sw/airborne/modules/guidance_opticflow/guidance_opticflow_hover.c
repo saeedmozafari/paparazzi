@@ -171,6 +171,7 @@ static void stabilization_opticflow_vel_cb(uint8_t sender_id __attribute__((unus
                                + opticflow_stab.theta_igain * opticflow_stab.err_vx_int);
 
   /* Bound the roll and pitch commands */
+
   BoundAbs(opticflow_stab.cmd.phi, CMD_OF_SAT);
   BoundAbs(opticflow_stab.cmd.theta, CMD_OF_SAT);
 }

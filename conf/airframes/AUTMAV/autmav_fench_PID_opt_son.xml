@@ -37,6 +37,14 @@
 	<define name="OF_PORT" value="uart6"/>
     	<define name="OF_BAUDRATE" value="B57600"/>
     </load>
+    <load name="opticflow_hover.xml">
+	<define name="PHI_PGAIN" value="400"/>
+      	<define name="PHI_IGAIN" value="20"/>
+      	<define name="THETA_PGAIN" value="400" />
+      	<define name="THETA_IGAIN" value="20"/>
+      	<define name="DESIRED_VX" value="0"/>
+      	<define name="DESIRED_VY" value="0" />
+    </load>
   </modules>
 
 
@@ -191,7 +199,7 @@
 
   <section name="AUTOPILOT">
     <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
-    <define name="MODE_AUTO1" value="AP_MODE_HOVER_Z_HOLD"/>
+    <define name="MODE_AUTO1" value="AP_MODE_MODULE"/>
     <define name="MODE_AUTO2" value="AP_MODE_NAV"/>
   </section>
 

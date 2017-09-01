@@ -3,6 +3,7 @@
 #include "mcu_periph/uart.h"
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
+#include "subsystems/abi.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16,6 +17,10 @@ struct link_device *of_dev;
 #define OF_BAUDRATE B57600
 #endif
 
+#ifndef USE_OF_STAB
+#define USE_OF_STAB FALSE
+#endif
+
 union float_to_byte b2f;
 struct optical_flow_data of_raw_data;
 struct optical_flow_data of_metric_data;
@@ -27,6 +32,7 @@ float focal_length = 150.0;
 int write_idx = 0;
 int msg_length = 0;
 int ack_fail = 0;
+bool use_of;
 
 
 static void send_optical_flow(struct transport_tx *trans, struct link_device *dev)
@@ -41,6 +47,8 @@ static void send_optical_flow(struct transport_tx *trans, struct link_device *de
 }
 
 void optical_flow_init(void){
+	use_of = USE_OF_STAB;
+
 	of_dev = &((OF_PORT).device);
   	uart_periph_set_bits_stop_parity(&OF_PORT, UBITS_8, USTOP_1, UPARITY_NO);
   	uart_periph_set_baudrate(&OF_PORT, OF_BAUDRATE);
@@ -54,6 +62,14 @@ void optical_flow_periodic(void){
 
 	of_metric_data = pixel_per_sec_to_meter_per_sec(of_raw_data);
 	of_corrected_metric_data = correct_velocity(of_metric_data);
+
+	if(use_of)
+		AbiSendMsgVELOCITY_ESTIMATE(PX4FLOW_VELOCITY_ID,
+                                0,
+                                of_metric_data.vx,
+                                of_metric_data.vy,
+                                0.0f,
+                                0.0f);
 
 	if (of_dev->char_available(of_dev->periph)){
 		uint8_t response = of_dev->get_byte(of_dev->periph);

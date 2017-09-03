@@ -19,7 +19,8 @@
     <file name="optical_flow.h"/>
   </header>
   <init fun="optical_flow_init()"/>
-  <periodic fun="optical_flow_periodic()" freq="500" autorun="TRUE"/>
+  <periodic fun="optical_flow_periodic()" freq="100" autorun="TRUE"/>
+  <periodic fun="send_rates()" freq="100" autorun="TRUE"/>
   <makefile target="ap">
     <define name="UART_RX_BUFFER_SIZE" value="512"/>
     <define name="UART_TX_BUFFER_SIZE" value="512"/>

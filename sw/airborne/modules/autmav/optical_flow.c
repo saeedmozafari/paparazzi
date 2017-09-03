@@ -56,6 +56,51 @@ void optical_flow_init(void){
   	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_OPTICAL_FLOW, send_optical_flow);
 }
 
+void send_rates(void){
+	struct FloatRates *angular_rates = stateGetBodyRates_f();
+
+	uint8_t send_buffer[128];
+	union float_to_byte send_f2b;
+
+	send_buffer[0] = 153;
+	send_buffer[1] = 18;
+	send_buffer[2] = 0;
+	send_buffer[3] = 1;
+
+	send_f2b.value = angular_rates->p;
+
+	send_buffer[4] = send_f2b.bytes[0];
+	send_buffer[5] = send_f2b.bytes[1];
+	send_buffer[6] = send_f2b.bytes[2];
+	send_buffer[7] = send_f2b.bytes[3];
+
+	send_f2b.value = angular_rates->q;
+
+	send_buffer[8] = send_f2b.bytes[0];
+	send_buffer[9] = send_f2b.bytes[1];
+	send_buffer[10] = send_f2b.bytes[2];
+	send_buffer[11] = send_f2b.bytes[3];
+
+	send_f2b.value = angular_rates->r;
+
+	send_buffer[12] = send_f2b.bytes[0];
+	send_buffer[13] = send_f2b.bytes[1];
+	send_buffer[14] = send_f2b.bytes[2];
+	send_buffer[15] = send_f2b.bytes[3];
+
+	uint8_t checksum_a, checksum_b;
+
+	calc_checksums(&checksum_a, &checksum_b, send_buffer, 18);
+
+	send_buffer[16] = checksum_a;
+	send_buffer[17] = checksum_b;
+
+	for(int i=0; i<18; i++){
+		of_dev->put_byte(of_dev->periph, 0, (uint8_t)send_buffer[i]);
+	}
+
+}
+
 void optical_flow_periodic(void){
 
 	sonar_range = sonar_i2c.distance;
@@ -91,7 +136,7 @@ void optical_flow_periodic(void){
 					
 			uint8_t a, b;
 					
-			calc_checksums(&a, &b);
+			calc_checksums(&a, &b, of_buffer, msg_length);
 			if(a == of_buffer[msg_length - 2] && b == of_buffer[msg_length - 1]){
 				parse();
 				return;
@@ -126,13 +171,13 @@ struct optical_flow_data correct_velocity(struct optical_flow_data not_corrected
 	return corrected;
 }
 
-void calc_checksums(uint8_t *a, uint8_t *b){
-	*a = msg_length;
-	*b = msg_length;
+void calc_checksums(uint8_t *a, uint8_t *b, uint8_t *send_buffer, int length){
+	*a = length;
+	*b = length;
 	
 	int i;
-	for(i=2; i<msg_length - 2; i++){
-		*a = *a + of_buffer[i];
+	for(i=2; i<length - 2; i++){
+		*a = *a + send_buffer[i];
 		*b = *b + *a;
 	}
 }

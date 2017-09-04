@@ -7,12 +7,21 @@
     <target name="nps" board="pc">
       <module name="fdm" type="jsbsim"/>
     </target>
-<define name="UART6_BAUD" value="B9600"/>
+
+    <!--define name="USE_SONAR" value="TRUE"/>
+    <define name="USE_BARO_BOARD" value="FALSE"/>
+    <define name="UART6_BAUD" value="B57600"/-->
+<!--define name="UART6_BAUD" value="B9600"/-->
 
     <module name="radio_control" type="sbus">
       <configure name="SBUS_PORT" value="UART2"/>
     </module>
-<module name="autmav/sonar_uart.xml"/>
+<!--module name="autmav/sonar_uart.xml"/-->
+
+    <!--module name="autmav/sonar_i2c.xml">
+	    <define name="SENSOR_SYNC_SEND_SONAR"/>
+    </module-->
+
     <module name="motor_mixing"/>
     <module name="actuators" type="pwm">
       <define name="SERVO_HZ" value="400"/>
@@ -27,6 +36,10 @@
   <modules>
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
+        <!--load name="autmav/optical_flow.xml">
+	<define name="OF_PORT" value="uart6"/>
+    	<define name="OF_BAUDRATE" value="B57600"/>
+    </load-->
   </modules>
 
 

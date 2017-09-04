@@ -30,6 +30,8 @@
       <message name="DIVERGENCE"             period="0.05"/>
 
 <message name="SONAR_ALTITUDE"             period="1"/>
+<message name="OPTICAL_FLOW"             period="0.05"/>
+
 
 
     </mode>

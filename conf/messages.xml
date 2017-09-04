@@ -1090,7 +1090,15 @@
       <field name="airspeed" type="float" unit="m/s"/>
     </message>
 
-    <!-- 139 is free -->
+    
+    <message name="OPTICAL_FLOW" id="139">
+      <field name="raw_vx"              type="float" values="pix/s"/>
+      <field name="raw_vy"              type="float" values="pix/s"/>
+      <field name="metric_vx"           type="float" values="m/s"/>
+      <field name="metric_vy"           type="float" values="m/s"/>
+      <field name="metric_corrected_vx" type="float" values="m/s"/>
+      <field name="metric_corrected_vy" type="float" values="m/s"/>
+    </message>
 
     <message name="STAB_ATTITUDE_INT" id="140">
       <field name="est_p"         type="int32" alt_unit="deg/s" alt_unit_coef="0.0139882"/>

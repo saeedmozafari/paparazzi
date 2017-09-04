@@ -1,0 +1,29 @@
+
+<module name="optical_flow" dir="autmav">
+  <doc>
+    <description>
+     	This module is an interface between onboard optical flow module
+    </description>
+    <define name="OF_PORT" value="uart4" description="the port which optical flow data comes from."/>
+    <define name="OF_BAUDRATE" value="B57600" description="baudrate of the optical flow port"/>
+  </doc>
+  <settings>
+    <dl_settings name="control">
+      <dl_settings name="optical_flow">
+        
+      </dl_settings>
+    </dl_settings>
+  </settings>
+  <header>
+    <file name="optical_flow.h"/>
+  </header>
+  <init fun="optical_flow_init()"/>
+  <periodic fun="optical_flow_periodic()" freq="500" autorun="TRUE"/>
+  <makefile target="ap">
+    <define name="UART_RX_BUFFER_SIZE" value="512"/>
+    <define name="UART_TX_BUFFER_SIZE" value="512"/>
+    <define name="USE_UART6"/>
+    <!--define name="UART4_BAUD" value="OF_BAUDRATE"/-->
+    <file name="optical_flow.c"/>
+  </makefile>
+</module>

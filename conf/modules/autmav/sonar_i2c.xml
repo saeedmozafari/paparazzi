@@ -1,0 +1,32 @@
+
+<module name="sonar_i2c" dir="autmav">
+  <doc>
+    <description>
+     Sonar I2C driver.
+     Reads an I2C sonar sensor and outputs sonar distance in [m]
+    </description>
+    <configure name="SONAR_I2C_DEV" value="i2cx" description="select i2c peripheral to use (default i2c0)"/>
+    <define name="SONAR_I2C_ADD" value="0x70"   description="sonar i2c address"/>
+    <define name="USE_SONAR" value="" description="activate use of sonar in INS extended filter (only rotorcraft)"/>
+    <define name="SENSOR_SYNC_SEND_SONAR" description="flag to transmit the data as it is acquired"/>
+  </doc>
+
+  <header>
+    <file name="sonar_i2c.h"/>
+  </header>
+
+  <init fun="sonar_i2c_init()"/>
+  <periodic fun="sonar_i2c_read()" freq="30"/>
+
+  <makefile target="ap">
+      <raw>
+          SONAR_I2C_DEV ?= i2c1
+          SONAR_I2C_DEV_LOWER=$(shell echo $(SONAR_I2C_DEV) | tr A-Z a-z)
+          SONAR_I2C_DEV_UPPER=$(shell echo $(SONAR_I2C_DEV) | tr a-z A-Z)
+      </raw>
+      <define name="USE_$(SONAR_I2C_DEV_UPPER)"/>
+      <define name="SONAR_I2C_DEV" value="$(SONAR_I2C_DEV_LOWER)"/>
+      <file name="sonar_i2c.c"/>
+  </makefile>
+
+</module>

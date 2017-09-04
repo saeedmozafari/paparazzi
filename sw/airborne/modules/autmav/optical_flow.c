@@ -130,14 +130,14 @@ void parse(void){
 			b2f.bytes[2] = of_buffer[6];
 			b2f.bytes[3] = of_buffer[7];
 
-			of_raw_data.vy = -1 * b2f.value;
+			of_raw_data.vy = b2f.value;
 
 			b2f.bytes[0] = of_buffer[8];
 			b2f.bytes[1] = of_buffer[9];
 			b2f.bytes[2] = of_buffer[10];
 			b2f.bytes[3] = of_buffer[11];
 
-			of_raw_data.vx = b2f.value;
+			of_raw_data.vx = -1 * b2f.value;
 
 			break;
 		case 2:

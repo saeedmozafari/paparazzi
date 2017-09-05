@@ -24,13 +24,19 @@ extern struct optical_flow_data of_raw_data;
 extern struct optical_flow_data of_metric_data;
 extern struct optical_flow_data of_corrected_metric_data;
 
+extern float ma_buffer[10];
+extern float ma_buffer1[10];
 extern uint8_t of_buffer[512];
 extern float sonar_range;
 extern float focal_length;
+extern float current_p;
+extern float current_q;
+extern float current_r;
 extern int write_idx;
 extern int msg_length;
 extern int ack_fail;
 extern int counter;
+extern int ma_idx;
 extern bool use_of;
 
 extern void optical_flow_init(void);

@@ -4,10 +4,13 @@
 #include "state.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/abi.h"
+#include "filters/median_filter.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 struct link_device *of_dev;
+struct MedianFilterInt optical_flow_vx_median_filter;
+struct MedianFilterInt optical_flow_vy_median_filter;
 
 #ifndef OF_PORT
 #define OF_PORT uart4
@@ -26,12 +29,18 @@ struct optical_flow_data of_raw_data;
 struct optical_flow_data of_metric_data;
 struct optical_flow_data of_corrected_metric_data;
 
+float ma_buffer[10];
+float ma_buffer1[10];
 uint8_t of_buffer[512];
 float sonar_range = 1.0;
 float focal_length = 150.0;
+float current_p;
+float current_q;
+float current_r;
 int write_idx = 0;
 int msg_length = 0;
 int ack_fail = 0;
+int ma_idx = 0;
 bool use_of;
 
 
@@ -54,6 +63,9 @@ void optical_flow_init(void){
   	uart_periph_set_baudrate(&OF_PORT, OF_BAUDRATE);
 
   	register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_OPTICAL_FLOW, send_optical_flow);
+
+  	init_median_filter(&optical_flow_vx_median_filter);
+  	init_median_filter(&optical_flow_vy_median_filter);
 }
 
 void send_rates(void){
@@ -103,20 +115,7 @@ void send_rates(void){
 
 void optical_flow_periodic(void){
 
-	sonar_range = sonar_i2c.distance;
-
-	of_metric_data = pixel_per_sec_to_meter_per_sec(of_raw_data);
-	of_corrected_metric_data = correct_velocity(of_metric_data);
-
-	if(use_of)
-		AbiSendMsgVELOCITY_ESTIMATE(PX4FLOW_VELOCITY_ID,
-                                0,
-                                of_metric_data.vx,
-                                of_metric_data.vy,
-                                0.0f,
-                                0.0f);
-
-	if (of_dev->char_available(of_dev->periph)){
+	while (of_dev->char_available(of_dev->periph)){
 		uint8_t response = of_dev->get_byte(of_dev->periph);
 
 		if(((int)response == 153) && (write_idx == 0)){ 
@@ -151,6 +150,19 @@ void optical_flow_periodic(void){
 			write_idx++;
 		}
 	}
+
+	sonar_range = sonar_i2c.distance;
+
+	of_metric_data = pixel_per_sec_to_meter_per_sec(of_raw_data);
+	of_corrected_metric_data = correct_velocity(of_metric_data);
+
+	if(use_of)
+		AbiSendMsgVELOCITY_ESTIMATE(PX4FLOW_VELOCITY_ID,
+                                0,
+                                of_metric_data.vx,
+                                of_metric_data.vy,
+                                0.0f,
+                                0.0f);
 }
 
 struct optical_flow_data pixel_per_sec_to_meter_per_sec(struct optical_flow_data pixel_per_sec){
@@ -165,8 +177,13 @@ struct optical_flow_data pixel_per_sec_to_meter_per_sec(struct optical_flow_data
 struct optical_flow_data correct_velocity(struct optical_flow_data not_corrected){
 	struct optical_flow_data corrected;
 
-	corrected.vx = not_corrected.vx - state.body_rates_f.q * sonar_range;
-	corrected.vy = not_corrected.vy + state.body_rates_f.p * sonar_range;
+	int32_t res_vx, res_vy;
+
+	res_vx = (not_corrected.vx - current_q * sonar_range) * 10000.0;
+	res_vy = (not_corrected.vy + current_p * sonar_range) * 10000.0;
+
+	corrected.vx = update_median_filter(&optical_flow_vx_median_filter, res_vx) / 10000.0;
+	corrected.vy = update_median_filter(&optical_flow_vy_median_filter, res_vy) / 10000.0;
 
 	return corrected;
 }
@@ -199,6 +216,27 @@ void parse(void){
 			b2f.bytes[3] = of_buffer[11];
 
 			of_raw_data.vx = -1 * b2f.value;
+
+			b2f.bytes[0] = of_buffer[12];
+			b2f.bytes[1] = of_buffer[13];
+			b2f.bytes[2] = of_buffer[14];
+			b2f.bytes[3] = of_buffer[15];
+
+			current_p = b2f.value;
+
+			b2f.bytes[0] = of_buffer[16];
+			b2f.bytes[1] = of_buffer[17];
+			b2f.bytes[2] = of_buffer[18];
+			b2f.bytes[3] = of_buffer[19];
+
+			current_q = b2f.value;
+
+			b2f.bytes[0] = of_buffer[20];
+			b2f.bytes[1] = of_buffer[21];
+			b2f.bytes[2] = of_buffer[22];
+			b2f.bytes[3] = of_buffer[23];
+
+			current_r = b2f.value;
 
 			break;
 		case 2:

@@ -9,8 +9,8 @@
     </target>
 
     <module name="radio_control" type="spektrum">
-      <define name="RADIO_KILL_SWITCH" value="RADIO_AUX2"/>
-      <define name="RADIO_MODE" value="RADIO_GEAR"/>
+      <!--define name="RADIO_KILL_SWITCH" value="RADIO_AUX2"/-->
+      <define name="RADIO_MODE" value="RADIO_FLAP"/>
     </module>
 
     <module name="motor_mixing"/>
@@ -153,8 +153,8 @@
     <define name="HOVER_KP" value="283"/>
     <define name="HOVER_KD" value="82"/>
     <define name="HOVER_KI" value="13"/>
-    <define name="NOMINAL_HOVER_THROTTLE" value="0.655"/>
-    <define name="ADAPT_THROTTLE_ENABLED" value="FALSE"/>
+    <define name="NOMINAL_HOVER_THROTTLE" value="0.50"/>
+    <define name="ADAPT_THROTTLE_ENABLED" value="TRUE"/>
   </section>
 
   <section name="GUIDANCE_H" prefix="GUIDANCE_H_">

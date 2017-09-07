@@ -163,8 +163,8 @@
 	<define name="LAMBDA_PITCH" value="1"/>
 	  <define name="LAMBDA_YAW" value="0.3"/>
 	  
-	<define name="MIO_ROLL" value="4."/>
-	  <define name="MIO_PITCH" value="4."/>
+	<define name="MIO_ROLL" value="5."/>
+	  <define name="MIO_PITCH" value="5"/>
 	  <define name="MIO_YAW" value="3"/>
 	  
 	<define name="ALPHA_ROLL" value="11"/>

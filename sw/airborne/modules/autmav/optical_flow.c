@@ -58,7 +58,7 @@ void optical_flow_init(void){
 
 void optical_flow_periodic(void){
 
-	sonar_range = sonar_i2c.distance;
+	/// sonar_range = sonar_i2c.distance;
 
 	of_metric_data = pixel_per_sec_to_meter_per_sec(of_raw_data);
 	of_corrected_metric_data = correct_velocity(of_metric_data);

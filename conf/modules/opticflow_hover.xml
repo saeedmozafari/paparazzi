@@ -45,7 +45,7 @@
   <makefile>
     <file name="guidance_opticflow_hover.c"/>
     <raw>
-      ap.CFLAGS += -DGUIDANCE_V_MODE_MODULE_SETTING=GUIDANCE_V_MODE_RC_DIRECT
+      ap.CFLAGS += -DGUIDANCE_V_MODE_MODULE_SETTING=GUIDANCE_V_MODE_MODULE
       ap.CFLAGS += -DGUIDANCE_H_MODE_MODULE_SETTING=GUIDANCE_H_MODE_MODULE
     </raw>
   </makefile>

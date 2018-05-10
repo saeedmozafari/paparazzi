@@ -1,0 +1,33 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="sonar_SRF05" dir="autmav">
+  <doc>
+    <description>
+    Driver for sonar SF05 module
+    </description>
+
+  <define name="TRIGGER_GPIO" value="GPIOC,GPIO5"/>
+  <define name="ECHO_GPIO" value="GPIOB,GPIO15"/>
+  </doc>
+
+  <conflicts>sonar_i2c</conflicts>
+
+  <header>
+    <file name="sonar_SRF05.h"/>
+  </header>
+
+  <init fun="sonar_srf05_init()"/>
+
+  <periodic fun="sonar_srf05_periodic()" freq="10" autorun="TRUE"/>
+  <!--periodic fun="time_streamer()" freq="500" autorun="TRUE"/-->
+
+  <makefile target="ap">
+    <file name="sonar_SRF05.c"/>
+    <configure name="SONAR_PWM_CHANNEL" default="PWM_INPUT1"/>
+    <define name="SONAR_PWM_CHANNEL" value="$(SONAR_PWM_CHANNEL)"/>
+    <!--define name="$(SONAR_PWM_CHANNEL)_TICKS_PER_USEC" value="1" /-->
+    <define name="USE_$(SONAR_PWM_CHANNEL)" value="PWM_PULSE_TYPE_ACTIVE_HIGH" />
+    <!--flag name="LDFLAGS" value="lpthread"/-->
+  </makefile>
+
+</module>

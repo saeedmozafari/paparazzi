@@ -1,0 +1,35 @@
+
+<module name="Simulink_Command_Bridge" dir="autmav">
+  <doc>
+    <description>
+      This module is an interface between onboard ArUco positioning module and paparazzi flight controller
+    </description>
+    <define name="SCB_PORT" value="uart3" description="the port which simulink command comes from."/>
+    <define name="SCB_BAUDRATE" value="B57600" description="baudrate of the simulink command port"/>
+    <define name="USE_SCB" value="TRUE|FALSE" description="determines whether to use simulink commands or not"/>
+  </doc>
+  <settings>
+    <dl_settings name="control">
+      <dl_settings name="simulink_command_bridge">
+        <dl_setting min="0" max="1" step="1" var="use_scb" module="autmav/Simulink_Command_Bridge" shortname="use scb" param="USE_SCB" type="uint8" persistent="true"/>
+      </dl_settings>
+    </dl_settings>
+  </settings>
+  <header>
+    <file name="Simulink_Command_Bridge.h"/>
+  </header>
+  <init fun="simulink_command_bridge_init()"/>
+  <periodic fun="simulink_command_bridge_periodic()" freq="500" autorun="TRUE"/>
+  <periodic fun="send_sensor_data()" freq="30" autorun="TRUE"/>
+  <makefile target="ap">
+    <define name="UART_RX_BUFFER_SIZE" value="512"/>
+    <define name="UART_TX_BUFFER_SIZE" value="512"/>
+    <define name="USE_UART6"/>
+    <!--define name="UART4_BAUD" value="OF_BAUDRATE"/-->
+    <file name="Simulink_Command_Bridge.c"/>
+    <raw>
+      ap.CFLAGS += -DGUIDANCE_V_MODE_MODULE_SETTING=GUIDANCE_V_MODE_MODULE
+      ap.CFLAGS += -DGUIDANCE_H_MODE_MODULE_SETTING=GUIDANCE_H_MODE_MODULE
+    </raw>
+  </makefile>
+</module>

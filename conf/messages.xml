@@ -322,7 +322,12 @@
       <message name="SONAR_ALTITUDE" id="38">
       <field name="altitude"      type="float" unit="m"/>
     </message>
-    <!-- 39 is free -->
+    
+      <message name="SONAR_DEBUG" id="39">
+      <field name="filtered"      type="uint32" />
+      <field name="no_filtered"      type="uint32" />
+      <field name="raw"      type="uint32" />
+    </message>
     <!-- 40 is free -->
 
     <message name="ALT_KALMAN" id="41">
@@ -1418,7 +1423,12 @@
       <field name="save_cnt"    type="int16"/>
     </message>
 
-    <!-- 167 is free -->
+    <message name="SIMULINK_COMMANDS" id="167">
+      <field name="roll"     type="int16"/>
+      <field name="pitch"    type="int16"/>
+      <field name="yaw"      type="int16"/>
+      <field name="throttle" type="int16"/>
+    </message>
 
     <message name="ROTORCRAFT_CAM" id="168">
       <field name="tilt" type="int16" unit="2^12rad" alt_unit="deg" alt_unit_coef="0.0139882"/>
@@ -2243,7 +2253,7 @@
       <field name="index" type="uint8"/>
     </message>
 
-    <message name="GOTO_MISSION" id="30" link="forwarded">
+    <message name="GOTO_MISSION" id="30" link="broadcasted">
       <field name="ac_id" type="uint8"/>
       <field name="mission_id" type="uint8"/>
     </message>

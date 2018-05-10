@@ -1,0 +1,20 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="toshiba_led_handler" dir="autmav">
+  <doc>
+    <description>
+       toshiba led handler
+    </description>
+	  
+  </doc>
+  <header>
+    <file name="toshiba_LED_driver.h"/>
+  </header>
+  <init fun="toshiba_led_init()"/>
+  <periodic fun="toshiba_led_periodic()" freq="20" autorun="TRUE"/> <!-- for debug -->
+  <makefile>
+    <file name="toshiba_LED_driver.c"/>
+  </makefile>
+</module>
+
+

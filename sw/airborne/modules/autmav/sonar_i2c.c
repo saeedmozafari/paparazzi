@@ -66,13 +66,14 @@ void sonar_i2c_read(void)
   {
     distance = ((sonar_i2c.i2c_trans.buf[0] << 8) | sonar_i2c.i2c_trans.buf[1]);
     sonar_i2c.meas = distance;
-    sonar_i2c.distance = distance / 100;  //module is cm
+    sonar_i2c.distance = distance / 10000;  //module is cm
     // Send ABI message
-    // AbiSendMsgAGL(AGL_SONAR_ADC_ID, sonar_i2c.distance);
+    AbiSendMsgAGL(AGL_SONAR_ADC_ID, sonar_i2c.distance);
       
 #ifdef SENSOR_SYNC_SEND_SONAR
     // Send Telemetry report
-    DOWNLINK_SEND_SONAR_ALTITUDE(DefaultChannel, DefaultDevice, &sonar_i2c.distance);
+    uint8_t zero = 0;
+    DOWNLINK_SEND_LIDAR(DefaultChannel, DefaultDevice, &sonar_i2c.distance, &zero, &zero);
 #endif
   }
 

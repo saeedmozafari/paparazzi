@@ -110,6 +110,7 @@ void dl_parse_msg(struct link_device *dev, struct transport_tx *trans, uint8_t *
                                 DL_RC_4CH_roll(buf),
                                 DL_RC_4CH_pitch(buf),
                                 DL_RC_4CH_yaw(buf));
+
         }
         break;
 #endif // RADIO_CONTROL_TYPE_DATALINK

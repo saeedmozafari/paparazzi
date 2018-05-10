@@ -59,7 +59,7 @@ void parse_rc_4ch_datalink(
   int8_t roll,
   int8_t pitch,
   int8_t yaw)
-{
+{ 
   rc_dl_values[RADIO_MODE] = (int8_t)mode;
   rc_dl_values[RADIO_THROTTLE] = (int8_t)throttle;
   rc_dl_values[RADIO_ROLL] = roll;

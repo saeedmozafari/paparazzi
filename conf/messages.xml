@@ -324,8 +324,8 @@
     </message>
     
       <message name="SONAR_DEBUG" id="39">
-      <field name="filtered"      type="uint32" />
-      <field name="no_filtered"      type="uint32" />
+      <field name="filtered"      type="float" />
+      <field name="no_filtered"      type="float" />
       <field name="raw"      type="uint32" />
     </message>
     <!-- 40 is free -->

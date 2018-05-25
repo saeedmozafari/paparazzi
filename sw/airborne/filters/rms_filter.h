@@ -26,7 +26,7 @@
 #endif
 
 #ifndef RMS_DATASIZE
-#define RMS_DATASIZE 15
+#define RMS_DATASIZE 5
 #endif
 
 #include <math.h>
@@ -34,12 +34,13 @@
 #include "math/pprz_algebra_int.h"
 
 struct RMSFilterInt {
-  int32_t data[RMS_DATASIZE], rms_data;
+  float data[RMS_DATASIZE];
+  float rms_data;
   int8_t dataIndex;
 };
 
 inline void init_rms_filter(struct RMSFilterInt *filter);
-inline int32_t update_rms_filter(struct RMSFilterInt *filter, int32_t new_data);
+inline float update_rms_filter(struct RMSFilterInt *filter, float new_data);
 inline int32_t get_rms_filter(struct RMSFilterInt *filter);
 
 inline void init_rms_filter(struct RMSFilterInt *filter)
@@ -52,12 +53,12 @@ inline void init_rms_filter(struct RMSFilterInt *filter)
   filter->dataIndex = 0;
 }
 
-inline int32_t update_rms_filter(struct RMSFilterInt *filter, int32_t new_data)
+inline float update_rms_filter(struct RMSFilterInt *filter, float new_data)
 {
   int i; // used to sort array
-  int32_t rms_avg=0;
-  int32_t rms_sum=0;
-  int32_t tmp=0;
+  float rms_avg=0;
+  float rms_sum=0;
+  float tmp=0;
 
     // Insert new data into raw data array round robin style
   filter->data[filter->dataIndex] = new_data;

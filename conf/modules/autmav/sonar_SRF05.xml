@@ -18,7 +18,7 @@
 
   <init fun="sonar_srf05_init()"/>
 
-  <periodic fun="sonar_srf05_periodic()" freq="10" autorun="TRUE"/>
+  <periodic fun="sonar_srf05_periodic()" freq="20" autorun="TRUE"/>
   <!--periodic fun="time_streamer()" freq="500" autorun="TRUE"/-->
 
   <makefile target="ap">

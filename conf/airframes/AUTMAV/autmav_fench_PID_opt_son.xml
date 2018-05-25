@@ -22,9 +22,9 @@
 
     <module name="radio_control" type="sbus"/>
 
-    <module name="autmav/sonar_i2c.xml">
+    <!--module name="autmav/sonar_i2c.xml">
 	    <define name="SENSOR_SYNC_SEND_SONAR"/>
-    </module>
+    </module-->
     <!--module name="autmav/toshiba_led_handler.xml">
         <define name="TOSHIBA_I2C_DEV" value="i2c2"/>
     </module-->
@@ -83,14 +83,17 @@
   </firmware>
   <modules>
     <load name="geo_mag.xml"/>
-    <load name="gps_ubx_ucenter.xml"/>
-	<module name="pwm_meas">
-      <define name="USE_PWM_INPUT1" value="PWM_PULSE_TYPE_ACTIVE_HIGH"/>
-      <!--define name="USE_PWM_INPUT2" value="PWM_PULSE_TYPE_ACTIVE_LOW"/-->
-    </module>
-    <load name="autmav/sonar_SRF05.xml">
-    <define name="TRIGGER_GPIO" value="GPIOC,GPIO5"/>
+    <load name="autmav/sonar_i2c_srf08.xml">
+    <configure name="SONAR_I2C_DEV" value="i2c2" description="select i2c peripheral to use (default i2c0)"/>
     </load>
+    <!--load name="gps_ubx_ucenter.xml"/>
+	<module name="pwm_meas">
+      <define name="USE_PWM_INPUT1" value="PWM_PULSE_TYPE_ACTIVE_HIGH"/-->
+      <!--define name="USE_PWM_INPUT2" value="PWM_PULSE_TYPE_ACTIVE_LOW"/-->
+    <!--/module-->
+    <!--load name="autmav/sonar_SRF05.xml">
+    <define name="TRIGGER_GPIO" value="GPIOC,GPIO5"/>
+    </load-->
     <!--load name="autmav/optical_flow.xml">
 	<define name="OF_PORT" value="uart6"/>
     	<define name="OF_BAUDRATE" value="B57600"/>
@@ -202,7 +205,7 @@
   </section>
 
   <section name="INS" prefix="INS_">
-    <define name="SONAR_MAX_RANGE" value="3.0"/>
+    <define name="SONAR_MAX_RANGE" value="2.8"/>
     <define name="SONAR_UPDATE_ON_AGL" value="TRUE"/>
   </section>
 

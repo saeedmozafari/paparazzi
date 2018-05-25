@@ -49,8 +49,8 @@
 #error DC: Please specify  a TRIGGER_GPIO (e.g. <define name="TRIGGER_GPIO" value="GPIOC,GPIO12"/>)
 #endif
 
-uint32_t distance_cm_f;
-uint32_t distance_nof;
+float distance_cm_f;
+float distance_nof;
 uint32_t read_sonar;
 float max_timeout = 32000 ;
 float update_flag = 0;
@@ -79,12 +79,13 @@ void sonar_srf05_init(void)
 void sonar_srf05_periodic(void)
 {
   TRIG_HIGH(TRIGGER_GPIO);
-  for (i = 0; i < 600; i++) { /* Wait a bit. */
+  for (i = 0; i < 1500; i++) { /* Wait a bit. */
     __asm__("nop");
   }
   TRIG_LOW(TRIGGER_GPIO);//to ensure clean high pulse
   read_sonar = get_pwm_input_duty_in_usec(SONAR_PWM_CHANNEL);
   distance_nof=read_sonar/58;
+  distance_nof=distance_nof/100;
   distance_cm_f=update_rms_filter(&sonar_srf_filter, distance_nof);
   //distance_cm_f = distance_cm_f / 58;
 

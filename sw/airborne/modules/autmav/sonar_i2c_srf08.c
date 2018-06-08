@@ -150,6 +150,8 @@ void sonar_i2c_read(void)
      distance=(uint32_t)((srf08_trans.buf[0] << 8) | srf08_trans.buf[1]);
   //  }
     buf0=distance/100;
+    uint8_t zero = 0;
+    DOWNLINK_SEND_LIDAR(DefaultChannel, DefaultDevice, &buf0, &zero, &zero);
     AbiSendMsgAGL(AGL_SONAR_ADC_ID, buf0);
      /*buf0=srf08_trans.buf[0];
      buf1=srf08_trans.buf[1];*/

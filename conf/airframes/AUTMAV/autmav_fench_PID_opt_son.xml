@@ -19,8 +19,10 @@
     <define name="BAT_CHECKER_DELAY" value="30"/>
     <define name="CATASTROPHIC_BATTERY_KILL_DELAY" value="60"/>
     <define name="UART6_BAUD" value="B57600"/>
+    <define name="USE_UART4"/>
+    <define name="UART4_BAUD" value="B9600"/>
 
-    <module name="radio_control" type="sbus"/>
+    <module name="radio_control" type="datalink"/>
 
     <!--module name="autmav/sonar_i2c.xml">
 	    <define name="SENSOR_SYNC_SEND_SONAR"/>
@@ -66,7 +68,7 @@
      <define name="MS5611_SLAVE_ADDR=0xEE"/> 
      <define name="MS5611_SEND_BARO_ALTITUDE"/>
    </module>
-    <module name="gps" type="ublox"/>
+    <!--module name="gps" type="ublox"/-->
     <module name="stabilization" type="int_euler"/>
     <module name="ahrs" type="int_cmpl_quat">
     <define name="AHRS_ICQ_MAG_ID" value="MAG_HMC58XX_SENDER_ID"/>
@@ -82,15 +84,25 @@
     </module>
   </firmware>
   <modules>
-    <load name="geo_mag.xml"/>
-    <load name="autmav/sonar_i2c_srf08.xml">
+    <!--load name="geo_mag.xml"/-->
+    <!--load name="autmav/sonar_i2c_srf08.xml">
     <configure name="SONAR_I2C_DEV" value="i2c2" description="select i2c peripheral to use (default i2c0)"/>
+    </load-->
+    <!--load name="autmav/sonar_maxbotix_MB1200.xml"/-->
+    <load name="autmav/sonar_maxbotix_uart.xml"> 
+      <configure name="SONAR_PORT" value="UART4"/>
+      <configure name="SONAR_BAUD" value="B9600"/>
     </load>
-    <!--load name="gps_ubx_ucenter.xml"/>
+    <!--load name="alt_srf08.xml">
+    <define name="SRF08_I2C_DEV" value="i2c2"/>
+    </load-->
+    
+
+    <!--load name="gps_ubx_ucenter.xml"/-->
 	<module name="pwm_meas">
-      <define name="USE_PWM_INPUT1" value="PWM_PULSE_TYPE_ACTIVE_HIGH"/-->
+      <define name="USE_PWM_INPUT1" value="PWM_PULSE_TYPE_ACTIVE_HIGH"/>
       <!--define name="USE_PWM_INPUT2" value="PWM_PULSE_TYPE_ACTIVE_LOW"/-->
-    <!--/module-->
+    </module>
     <!--load name="autmav/sonar_SRF05.xml">
     <define name="TRIGGER_GPIO" value="GPIOC,GPIO5"/>
     </load-->

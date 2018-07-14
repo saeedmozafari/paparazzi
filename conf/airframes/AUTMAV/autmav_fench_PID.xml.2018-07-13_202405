@@ -167,13 +167,13 @@
     <define name="PSI_DGAIN" value="176"/>
     <define name="PSI_IGAIN" value="0"/-->
 
-    <define name="PHI_PGAIN" value="312"/>
-    <define name="PHI_DGAIN" value="170"/>
-    <define name="PHI_IGAIN" value="0"/>
+    <define name="PHI_PGAIN" value="170"/>
+    <define name="PHI_DGAIN" value="180"/>
+    <define name="PHI_IGAIN" value="160"/>
 
-    <define name="THETA_PGAIN" value="338"/>
+    <define name="THETA_PGAIN" value="165"/>
     <define name="THETA_DGAIN" value="170"/>
-    <define name="THETA_IGAIN" value="0"/>
+    <define name="THETA_IGAIN" value="160"/>
 
     <define name="PSI_PGAIN" value="250"/>
     <define name="PSI_DGAIN" value="440"/>

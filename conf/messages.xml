@@ -321,6 +321,9 @@
 
       <message name="SONAR_ALTITUDE" id="38">
       <field name="altitude"      type="float" unit="m"/>
+      <field name="update_rate"      type="uint16" unit="hz"/>
+      <field name="foo"      type="uint16" unit="hz"/>
+      <field name="foo2"      type="uint16" unit="hz"/>
     </message>
     
       <message name="SONAR_DEBUG" id="39">

@@ -28,7 +28,7 @@
       <message name="OPTIC_FLOW_EST"           period="0.05"/>
       <message name="VECTORNAV_INFO"           period="0.5"/>
       <message name="DIVERGENCE"               period="0.05"/-->
-      <message name="SONAR_ALTITUDE"           period="0.03"/>
+      <message name="SONAR_ALTITUDE"           period="1"/>
       <message name="STAB_ATTITUDE_INT"        period="0.03"/>
       <!--message name="IMU_GYRO_SCALED"          period=".05"/>
       <message name="IMU_ACCEL_SCALED"         period=".05"/>

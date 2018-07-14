@@ -105,8 +105,8 @@
     <define name="MAG_Y_SENS" value="5.29702744632" integer="16"/>
     <define name="MAG_Z_SENS" value="5.65287938992" integer="16"/>
 
-    <define name="BODY_TO_IMU_PHI" value="-4.39997209696" unit="deg"/>
-    <define name="BODY_TO_IMU_THETA" value="6.60001544121" unit="deg"/>
+    <define name="BODY_TO_IMU_PHI" value="0." unit="deg"/>
+    <define name="BODY_TO_IMU_THETA" value="0." unit="deg"/>
     <define name="BODY_TO_IMU_PSI" value="-90.0" unit="deg"/>
   </section>
 
@@ -167,13 +167,13 @@
     <define name="PSI_DGAIN" value="176"/>
     <define name="PSI_IGAIN" value="0"/-->
 
-    <define name="PHI_PGAIN" value="312"/>
-    <define name="PHI_DGAIN" value="170"/>
-    <define name="PHI_IGAIN" value="0"/>
+    <define name="PHI_PGAIN" value="170"/>
+    <define name="PHI_DGAIN" value="180"/>
+    <define name="PHI_IGAIN" value="160"/>
 
-    <define name="THETA_PGAIN" value="338"/>
+    <define name="THETA_PGAIN" value="165"/>
     <define name="THETA_DGAIN" value="170"/>
-    <define name="THETA_IGAIN" value="0"/>
+    <define name="THETA_IGAIN" value="160"/>
 
     <define name="PSI_PGAIN" value="250"/>
     <define name="PSI_DGAIN" value="440"/>

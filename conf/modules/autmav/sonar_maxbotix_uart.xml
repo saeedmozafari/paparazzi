@@ -13,13 +13,13 @@
     <file name="sonar_maxbotix_uart.h"/>
   </header>
   <init fun="sonar_init()"/>
-  <periodic fun="sonar_get_periodic()" freq="1"/>
+  <periodic fun="sonar_get_periodic()" freq="20"/>
   <makefile target="ap">
-    <define name="USE_UART4"/>
+    <define name="USE_UART5"/>
   </makefile>
   <makefile target="ap">
-    <define name="UART_RX_BUFFER_SIZE" value="512"/>
-    <define name="UART_TX_BUFFER_SIZE" value="512"/>
+    <!--define name="UART_RX_BUFFER_SIZE" value="512"/>
+    <define name="UART_TX_BUFFER_SIZE" value="512"/-->
     <file name="sonar_maxbotix_uart.c"/>
   </makefile>
 </module>

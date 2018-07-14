@@ -9,7 +9,7 @@
     </target>
 
     <define name="USE_UART5"/>
-    <define name="UART5_BAUD" value="B9600"/>
+    <define name="UART5_BAUD" value="B57600"/>
 
     <define name="USE_SONAR"/>
     <define name="INS_INT_SONAR_ID" value="AGL_SONAR_ADC_ID" description="The ABI sender id of the sonar to use"/>
@@ -22,9 +22,11 @@
       <!--define name="RADIO_MODE" value="RADIO_FLAP"/>
     </module-->
 
-      <module name="radio_control" type="sbus">
+ <module name="radio_control" type="datalink"/>
+
+      <!--module name="radio_control" type="sbus">
         <configure name="SBUS_PORT" value="UART1"/>
-      </module>
+      </module-->
 
     <module name="motor_mixing"/>
     <module name="actuators" type="pwm">
@@ -39,15 +41,20 @@
     <module name="stabilization" type="int_quat"/>
     <module name="ahrs" type="int_cmpl_quat"/>
     <module name="ins" type="extended"/>
+<module name="extra_dl">
+      <configure name="EXTRA_DL_PORT" value="UART5"/>
+      <configure name="EXTRA_DL_BAUD" value="B57600"/>
+    </module>
   </firmware>
   <modules>
-    <load name="autmav/sonar_maxbotix_uart.xml"> 
+    <!--load name="autmav/sonar_maxbotix_uart.xml"> 
       <configure name="SONAR_PORT" value="uart5"/>
       <configure name="SONAR_BAUD" value="B9600"/>
-    </load>
+    </load-->
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
   </modules>
+
 
 
   <commands>

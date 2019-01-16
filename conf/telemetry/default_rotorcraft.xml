@@ -31,8 +31,8 @@
       <message name="SONAR_ALTITUDE"           period="1"/>
       <message name="STAB_ATTITUDE_INT"        period="0.03"/>
       <!--message name="IMU_GYRO_SCALED"          period=".05"/>
-      <message name="IMU_ACCEL_SCALED"         period=".05"/>
-      <message name="IMU_MAG_SCALED"           period=".05"/-->
+      <message name="IMU_ACCEL_SCALED"         period=".05"/-->
+      <message name="IMU_MAG_SCALED"           period=".025"/>
       <message name="BARO_RAW"                 period=".1"/>
       <message name="VFF_EXTENDED"                 period=".1"/>
       <message name="ROTORCRAFT_RADIO_CONTROL" period="0.5"/>

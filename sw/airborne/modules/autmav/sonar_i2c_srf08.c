@@ -65,7 +65,7 @@ int32_t buf1 = 0;
 int32_t buf2 = 0;
 int32_t buf3 = 0;
 int32_t flag1 = 0;
-int32_t flag2 = 0;
+//int32_t flag2 = 0;
 int32_t flag3 = 0;
 int32_t flag4 = 0;
 float distance;
@@ -136,10 +136,10 @@ void sonar_i2c_read(void)
     //if(use_rms){
     flag1=get_sys_time_msec();
     if(flag1>30000){
-      flag2++;
+     // flag2++;
     }
     if(flag1>50000 && flag3==0){
-      flag3=flag2/20;
+      //flag3=flag2/20;
     }
      // distance=update_rms_filter(&srf08_rms_filter, (int32_t)((srf08_trans.buf[0] << 8) | srf08_trans.buf[1]));
 
@@ -150,9 +150,10 @@ void sonar_i2c_read(void)
      distance=(uint32_t)((srf08_trans.buf[0] << 8) | srf08_trans.buf[1]);
   //  }
     buf0=distance/100;
-    uint8_t zero = 0;
+    /*uint8_t zero = 0;
     DOWNLINK_SEND_LIDAR(DefaultChannel, DefaultDevice, &buf0, &zero, &zero);
-    AbiSendMsgAGL(AGL_SONAR_ADC_ID, buf0);
+    AbiSendMsgAGL(AGL_SONAR_ADC_ID, buf0);*/
+
      /*buf0=srf08_trans.buf[0];
      buf1=srf08_trans.buf[1];*/
     sonar_status=REQ_LIGHT;

@@ -34,6 +34,7 @@
 #include "subsystems/ins/vf_extended_float.h"
 #include "generated/airframe.h"
 #include "std.h"
+#include "subsystems/datalink/downlink.h"
 
 #ifndef DEBUG_VFF_EXTENDED
 #define DEBUG_VFF_EXTENDED 0
@@ -246,6 +247,8 @@ static void update_alt_conf(float z_meas, float conf)
 {
   vff.z_meas = z_meas;
 
+        uint8_t zero = 0;
+    DOWNLINK_SEND_LIDAR(DefaultChannel, DefaultDevice, &vff.z_meas, &zero, &zero);
   const float y = z_meas - vff.z;
   const float S = vff.P[0][0] + conf;
   const float K0 = vff.P[0][0] * 1 / S;

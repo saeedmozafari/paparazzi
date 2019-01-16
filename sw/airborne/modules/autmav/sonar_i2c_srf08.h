@@ -17,6 +17,8 @@ extern uint8_t sonar_range;
 extern uint8_t analog_gain;
 extern bool use_rms;
 
+extern float buf0;
+
 extern void sonar_i2c_init(void);
 extern void sonar_i2c_read(void);
 extern void sonar_srf08_event(void);

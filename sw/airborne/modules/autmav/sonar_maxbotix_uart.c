@@ -14,6 +14,8 @@
 #include <string.h>
 #include "subsystems/abi.h"
 #include "sonar_maxbotix_uart.h"
+#include "subsystems/datalink/downlink.h"
+#include "modules/autmav/sonar_i2c_srf08.h"
 
 struct link_device *sonar_dev;
 
@@ -33,6 +35,7 @@ uint8_t final_time = 0;
 char sonbuf2[10];
 uint8_t sonbuf2_len=0;
 float range;
+uint8_t change_mode;
 static void send_sonar_altitude(struct transport_tx *trans, struct link_device *dev)
 {
   pprz_msg_send_SONAR_ALTITUDE(trans, dev, AC_ID,
@@ -41,6 +44,7 @@ static void send_sonar_altitude(struct transport_tx *trans, struct link_device *
 
 void sonar_init(void)
 {
+  change_mode=0;
 	range=0;
  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_SONAR_ALTITUDE, send_sonar_altitude);
   sonar_dev = &((SONAR_PORT).device);
@@ -63,11 +67,21 @@ void sonar_get_periodic(void)
     //range = 0;
     char c = (char) sonar_dev->get_byte(sonar_dev->periph);
 
+            if(flag==0 && get_sys_time_usec()>=20000000){
+          init_time=get_sys_time_usec();
+           flag=1;
+           frq_count=0;
+        }
+
+
+
+
     if (c == 'R') {
             sonbuf2[sonbuf2_len] = 0;
             sum += (int)atoi(sonbuf2);
             count++;
             sonbuf2_len = 0;
+            frq_count++;
         } else if (isdigit(c)) {
             sonbuf2[sonbuf2_len++] = c;
             if (sonbuf2_len == sizeof(sonbuf2)) {
@@ -78,14 +92,7 @@ void sonar_get_periodic(void)
 }
 
         range = (2.54f * sum / count)/100;
-        if(flag==0 && get_sys_time_usec()>=20000000){
-          init_time=get_sys_time_usec();
-           flag=1;
-           frq_count=0;
-        }
 
-
-        frq_count++;
 
         if((get_sys_time_usec()-init_time)>=20000000 && flag2==0){
         	final_time=((get_sys_time_usec()-init_time)/1000000);
@@ -99,9 +106,9 @@ void sonar_get_periodic(void)
       write_idx=1;
     }*/
     
+  AbiSendMsgAGL(AGL_SONAR_ADC_ID, range);
 
 
-      AbiSendMsgAGL(AGL_SONAR_ADC_ID, range);
     
   }
     

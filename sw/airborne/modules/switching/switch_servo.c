@@ -33,18 +33,18 @@ bool switch_servo_on;
 #define _SwitchServo(_n, _v) ActuatorSet(_n, _v)
 #define SwitchServo(_n, _v) _SwitchServo(_n, _v)
 
-// static inline void parse_DL_GOTO_MISSION(void)
-// {
-//   uint8_t servo_stat = DL_GOTO_MISSION_mission_id(dl_buffer);
+static inline void parse_DL_GOTO_MISSION(void)
+{
+  uint8_t servo_stat = DL_GOTO_MISSION_mission_id(dl_buffer);
 
-//   DOWNLINK_SEND_MKK(DefaultChannel, DefaultDevice, &servo_stat, &servo_stat, &servo_stat, &servo_stat);
+  DOWNLINK_SEND_MKK(DefaultChannel, DefaultDevice, &servo_stat, &servo_stat, &servo_stat, &servo_stat);
 
-//   if (servo_stat == 1) {
-//     SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_ON_VALUE);
-//   } else if(servo_stat == 0) {
-//     SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_OFF_VALUE);
-//   }
-// }
+  if (servo_stat == 1) {
+    SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_ON_VALUE);
+  } else if(servo_stat == 0) {
+    SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_OFF_VALUE);
+  }
+}
 
 void switch_servo_init(void)
 {
@@ -54,6 +54,13 @@ void switch_servo_init(void)
 
 void switch_servo_periodic(void)
 {
+
+ /* if (switch_servo_on == TRUE) {
+    SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_ON_VALUE);
+  } else {
+    SwitchServo(SWITCH_SERVO_SERVO, SWITCH_SERVO_OFF_VALUE);
+}*/
+
   uint8_t servo_stat = DL_GOTO_MISSION_mission_id(extra_dl_buffer);
   if ((int)servo_stat == 1) {
     switch_servo_on = true;

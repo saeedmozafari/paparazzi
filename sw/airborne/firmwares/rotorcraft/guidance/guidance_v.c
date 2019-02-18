@@ -411,6 +411,7 @@ void run_hover_loop(bool in_flight)
   guidance_v_z_ref = (int32_t)tmp;
   guidance_v_zd_ref = gv_zd_ref << (INT32_SPEED_FRAC - GV_ZD_REF_FRAC);
   guidance_v_zdd_ref = gv_zdd_ref << (INT32_ACCEL_FRAC - GV_ZDD_REF_FRAC);
+  //guidance_v_zdd_ref=0;
   /* set flag to indicate that desired zd was updated */
   desired_zd_updated = true;
   /* compute the error to our reference */

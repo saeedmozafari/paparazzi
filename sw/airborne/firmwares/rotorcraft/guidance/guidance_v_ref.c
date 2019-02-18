@@ -82,7 +82,8 @@ int64_t gv_z_ref;
 /* first order time constant */
 #define GV_REF_THAU_F  0.25
 #define GV_REF_INV_THAU_FRAC 16
-#define GV_REF_INV_THAU  BFP_OF_REAL((1./0.25), GV_REF_INV_THAU_FRAC)
+//(1./0.25)
+#define GV_REF_INV_THAU  BFP_OF_REAL(16, GV_REF_INV_THAU_FRAC) //(1./0.25)
 
 void gv_set_ref(int32_t alt, int32_t speed, int32_t accel)
 {

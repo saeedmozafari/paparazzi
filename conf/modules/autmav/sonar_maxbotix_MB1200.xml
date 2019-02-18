@@ -1,0 +1,31 @@
+<!DOCTYPE module SYSTEM "../module.dtd">
+
+<module name="sonar_maxbotix_MB1200" dir="autmav">
+  <doc>
+    <description>
+    Driver for MaxBotix sonar family 
+    using palse width option
+    </description>
+  </doc>
+
+  <conflicts>sonar_i2c</conflicts>
+
+  <header>
+    <file name="sonar_maxbotix.h"/>
+  </header>
+
+  <init fun="sonar_maxbotix_init()"/>
+
+  <periodic fun="sonar_maxbotix_periodic()" freq="10"  autorun="TRUE"/>
+  <!--periodic fun="time_streamer()" freq="500" autorun="TRUE"/-->
+
+  <makefile target="ap">
+    <file name="sonar_maxbotix.c"/>
+    <configure name="SONAR_PWM_CHANNEL" default="PWM_INPUT1"/>
+    <define name="SONAR_PWM_CHANNEL" value="$(SONAR_PWM_CHANNEL)"/>
+    <!--define name="$(SONAR_PWM_CHANNEL)_TICKS_PER_USEC" value="1" /-->
+    <define name="USE_$(SONAR_PWM_CHANNEL)" value="PWM_PULSE_TYPE_ACTIVE_HIGH" />
+    <!--flag name="LDFLAGS" value="lpthread"/-->
+  </makefile>
+
+</module>

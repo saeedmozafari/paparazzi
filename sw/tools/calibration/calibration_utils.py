@@ -261,7 +261,7 @@ def plot_imu_scaled_fft(sensor, measurements, attrs):
     """Plot imu scaled fft results."""
     #dt = 0.0769
     #Fs = 1/dt
-    Fs = 26.0
+    Fs = 800
 
     plt.figure("Sensor Scaled - FFT")
 

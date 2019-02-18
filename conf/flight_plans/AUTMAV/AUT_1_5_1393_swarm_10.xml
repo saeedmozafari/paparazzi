@@ -14,33 +14,33 @@
     <waypoint name="land_here" x="12.4" y="5.9"/>
   </waypoints>
   <blocks>
-    <block name="Wait GPS">
-      <call fun="NavKillThrottle()"/>
+    <!--block name="Wait GPS">
+      <call_once fun="NavKillThrottle()"/>
       <while cond="!GpsFixValid()"/>
     </block>
     <block name="Geo init">
       <while cond="LessThan(NavBlockTime(),5)"/>
-      <call fun="NavSetGroundReferenceHere()"/>
-      <call fun="NavSetAltitudeReferenceHere()"/>
-      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
-      <call fun="nav_set_heading_current()"/>
-    </block>
+      <call_once fun="NavSetGroundReferenceHere()"/>
+      <call_once fun="NavSetAltitudeReferenceHere()"/>
+      <call_once fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call_once fun="nav_set_heading_current()"/>
+    </block-->
     <block name="Holding point">
-      <call fun="NavKillThrottle()"/>
+      <call_once fun="NavKillThrottle()"/>
       <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
     </block>
     <block name="Start Engine" strip_button="StartEngine" strip_icon="takeoff.png">
-      <call fun="NavResurrect()"/>
+      <call_once fun="NavResurrect()"/>
       <attitude pitch="0" roll="0" throttle="0" until="FALSE" vmode="throttle"/>
     </block>
     <block name="Takeoff" strip_button="Takeoff" strip_icon="takeoff.png">
       <exception cond="stateGetPositionEnu_f()->z > 4.0" deroute="Standby"/>
-      <call fun="NavSetWaypointHere(WP_CLIMB)"/>
-      <call fun="nav_set_heading_current()"/>
+      <call_once fun="NavSetWaypointHere(WP_CLIMB)"/>
+      <call_once fun="nav_set_heading_current()"/>
       <stay climb="0.5" vmode="climb" wp="CLIMB"/>
     </block>
     <block name="Standby">
-      <call fun="NavSetWaypointHere(WP_CLIMB)"/>      
+      <call_once fun="NavSetWaypointHere(WP_CLIMB)"/>      
       <stay height="4" vmode="alt" wp="CLIMB"/>
     </block>
     <block name="go_p1">
@@ -61,14 +61,14 @@
       <stay height="4" until="stage_time>5" wp="land"/>
     </block>
     <block name="flare">
-      <call fun="NavStartDetectGround()"/>
+      <call_once fun="NavStartDetectGround()"/>
       <exception cond="NavDetectGround()" deroute="landed"/>
       <exception cond="!nav_is_in_flight()" deroute="landed"/>
       <stay climb="-0.5" vmode="climb" wp="land"/>
     </block>
     <block name="flare_here">
-      <call fun="NavStartDetectGround()"/>
-      <call fun="NavSetWaypointHere(WP_land_here)"/>
+      <call_once fun="NavStartDetectGround()"/>
+      <call_once fun="NavSetWaypointHere(WP_land_here)"/>
       <exception cond="NavDetectGround()" deroute="landed"/>
       <exception cond="!nav_is_in_flight()" deroute="landed"/>
       <stay climb="-0.5" vmode="climb" wp="land_here"/>

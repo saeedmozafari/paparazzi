@@ -28,6 +28,11 @@
   <modules>
     <load name="geo_mag.xml"/>
     <load name="gps_ubx_ucenter.xml"/>
+    <load name="autmav/Simulink_Command_Bridge.xml">
+	<define name="SCB_PORT" value="uart3"/>
+    	<define name="SCB_BAUDRATE" value="B57600"/>
+    	<define name="USE_SCB" value="TRUE"/>
+    </load>
   </modules>
 
   <servos driver="Pwm">
@@ -194,7 +199,7 @@
   <section name="AUTOPILOT">
     <define name="MODE_MANUAL" value="AP_MODE_ATTITUDE_DIRECT"/>
     <define name="MODE_AUTO1" value="AP_MODE_HOVER_Z_HOLD"/>
-    <define name="MODE_AUTO2" value="AP_MODE_NAV"/>
+    <define name="MODE_AUTO2" value="AP_MODE_MODULE"/>
   </section>
 
   <section name="BAT">

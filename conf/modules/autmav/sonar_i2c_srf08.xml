@@ -1,0 +1,43 @@
+
+<module name="sonar_i2c_srf08" dir="autmav">
+  <doc>
+    <description>
+     Sonar I2C driver.
+     Reads an I2C sonar sensor and outputs sonar distance in [m]
+    </description>
+    <configure name="SONAR_I2C_DEV" value="i2cx" description="select i2c peripheral to use (default i2c0)"/>
+    <define name="SONAR_I2C_ADD" value="0x70"   description="sonar i2c address"/>
+    <define name="USE_SONAR" value="" description="activate use of sonar in INS extended filter (only rotorcraft)"/>
+    <define name="SENSOR_SYNC_SEND_SONAR" description="flag to transmit the data as it is acquired"/>
+  </doc>
+
+<settings>
+    <dl_settings NAME="Sonar SRF08">
+      <dl_settings NAME="sonar">
+        <dl_setting MAX="31" MIN="0" STEP="1" VAR="analog_gain"  param="GAIN_REG" persistent="true" shortname="Gain"/>
+        <dl_setting MAX="11" MIN="0" STEP="1" VAR="sonar_range"  param="GAIN_REG" persistent="true" shortname="Range"/>
+        <dl_setting min="0" max="1" step="1" values="FALSE|TRUE" var="use_rms" type="bool" shortname="Use rms" param="USE_RMS_FILTER" persistent="true"/>
+        <!--dl_setting MAX="1" MIN="0" STEP="1" VAR="lidar_sf11.update_agl" shortname="update_agl"/-->
+      </dl_settings>
+    </dl_settings>
+  </settings>
+
+  <header>
+    <file name="sonar_i2c_srf08.h"/>
+  </header>
+
+  <init fun="sonar_i2c_init()"/>
+  <periodic fun="sonar_i2c_read()" freq="400"/>
+  <event fun="sonar_srf08_event()"/>
+  <makefile target="ap">
+      <raw>
+          SONAR_I2C_DEV ?= i2c2
+          SONAR_I2C_DEV_LOWER=$(shell echo $(SONAR_I2C_DEV) | tr A-Z a-z)
+          SONAR_I2C_DEV_UPPER=$(shell echo $(SONAR_I2C_DEV) | tr a-z A-Z)
+      </raw>
+      <define name="USE_$(SONAR_I2C_DEV_UPPER)"/>
+      <define name="SONAR_I2C_DEV" value="$(SONAR_I2C_DEV_LOWER)"/>
+      <file name="sonar_i2c_srf08.c"/>
+  </makefile>
+
+</module>
